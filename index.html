@@ -660,7 +660,7 @@
           atk: 9,
           def: 15,
           passiveName: "불굴의 육체",
-          passiveDesc: "높은 HP와 방어력으로 오래 버티는 방어형 캐릭터",
+          passiveDesc: "HP가 40% 이하일 때 받는 피해 20% 감소",
           skillIds: ["shield_bash", "fortress", "heavy_strike"],
         },
 
@@ -670,7 +670,7 @@
           atk: 22,
           def: 4,
           passiveName: "피의 갈망",
-          passiveDesc: "공격 시 20% 확률로 추가 피해 8",
+          passiveDesc: "HP가 50% 이하일 때 공격 피해 +10",
           skillIds: ["berserk_axe", "blood_slash", "rage"],
         },
 
@@ -680,7 +680,7 @@
           atk: 10,
           def: 7,
           passiveName: "성스러운 가호",
-          passiveDesc: "회복 스킬을 가진 안정적인 지원형 캐릭터",
+          passiveDesc: "회복 스킬의 회복량 20% 증가",
           skillIds: ["priest_heal", "judgment", "blessing"],
         },
 
@@ -700,7 +700,7 @@
           atk: 16,
           def: 4,
           passiveName: "저주의 낙인",
-          passiveDesc: "약화 스킬과 강한 마법 피해를 가진 디버프형 캐릭터",
+          passiveDesc: "독 또는 공격감소 상태의 적에게 피해 +8",
           skillIds: ["curse", "soul_drain", "dark_orb"],
         },
       };
@@ -957,6 +957,35 @@
           logs.push(`${attacker.character}의 패시브 [마력 순환] 발동!`);
         }
 
+        if (
+          attacker.character === "광전사" &&
+          attacker.hp <= attacker.maxHp * 0.5
+        ) {
+          damage += 10;
+          logs.push(`${attacker.character}의 패시브 [피의 갈망] 발동!`);
+        }
+
+        if (attacker.character === "궁수" && Math.random() < 0.15) {
+          damage += 10;
+          logs.push(`${attacker.character}의 패시브 [매의 눈] 발동!`);
+        }
+
+        if (
+          attacker.character === "주술사" &&
+          (defender.poison > 0 || defender.atkDebuff > 0)
+        ) {
+          damage += 8;
+          logs.push(`${attacker.character}의 패시브 [저주의 낙인] 발동!`);
+        }
+
+        if (
+          defender.character === "탱커" &&
+          defender.hp <= defender.maxHp * 0.4
+        ) {
+          damage = Math.floor(damage * 0.8);
+          logs.push(`${defender.character}의 패시브 [불굴의 육체] 발동!`);
+        }
+
         if (defender.guardRate > 0) {
           damage = Math.floor(damage * (1 - defender.guardRate));
           defender.guardRate = 0;
@@ -1031,7 +1060,15 @@
           }
         } else if (skill.type === "heal") {
           const before = attacker.hp;
-          attacker.hp = Math.min(attacker.maxHp, attacker.hp + skill.heal);
+
+          let healAmount = skill.heal;
+
+          if (attacker.character === "성직자") {
+            healAmount = Math.floor(healAmount * 1.2);
+            log += `${attacker.character}의 패시브 [성스러운 가호] 발동!\n`;
+          }
+
+          attacker.hp = Math.min(attacker.maxHp, attacker.hp + healAmount);
           const healed = attacker.hp - before;
           log += `HP를 ${healed} 회복했다!`;
         } else if (skill.type === "attackDebuff") {
