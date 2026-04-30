@@ -30,6 +30,11 @@
       text-align: center;
     }
 
+    h2 {
+      text-align: center;
+      margin: 8px 0;
+    }
+
     .subtitle {
       text-align: center;
       color: #9ca3af;
@@ -92,6 +97,18 @@
       font-size: 14px;
       color: #d1d5db;
       text-align: center;
+      line-height: 1.6;
+    }
+
+    .mode-title {
+      font-size: 18px;
+      font-weight: 900;
+      margin-bottom: 8px;
+    }
+
+    .mode-desc {
+      color: #d1d5db;
+      font-size: 14px;
       line-height: 1.6;
     }
 
@@ -185,7 +202,7 @@
       border: 1px solid #374151;
       border-radius: 14px;
       padding: 14px;
-      min-height: 100px;
+      min-height: 110px;
       line-height: 1.6;
       color: #e5e7eb;
     }
@@ -212,21 +229,45 @@
       background: #34d399;
       color: #111827;
     }
+
+    .yellow {
+      background: #facc15;
+      color: #111827;
+    }
+
+    .line {
+      border: 0;
+      border-top: 1px solid #374151;
+      margin: 18px 0;
+    }
   </style>
 </head>
 
 <body>
   <div class="app">
     <h1>온라인 배틀</h1>
-    <div class="subtitle">모바일 1대1 캐릭터 선택 테스트</div>
+    <div class="subtitle">모바일 턴제 대전 테스트</div>
 
-    <section id="lobby" class="card">
+    <section id="modeSelect" class="card">
+      <div class="mode-title">모드 선택</div>
+      <div class="mode-desc">
+        온라인 멀티는 친구와 방 코드로 대전합니다.<br>
+        싱글 AI 배틀은 혼자 캐릭터를 골라 AI와 싸웁니다.
+      </div>
+
+      <button id="onlineModeBtn">온라인 멀티</button>
+      <button id="singleModeBtn" class="yellow">싱글 AI 배틀</button>
+    </section>
+
+    <section id="lobby" class="card hidden">
       <button id="createRoomBtn">방 만들기</button>
 
-      <hr style="border: 0; border-top: 1px solid #374151; margin: 18px 0;">
+      <hr class="line">
 
       <input id="roomInput" maxlength="4" placeholder="방 코드 입력" />
       <button id="joinRoomBtn">방 참가</button>
+
+      <button id="backToModeBtn" class="secondary">모드 선택으로</button>
 
       <div class="small">
         한 명이 방을 만들고, 나온 코드를 친구에게 보내면 됨.
@@ -236,18 +277,21 @@
     <section id="waiting" class="card hidden">
       <div class="status">방 코드</div>
       <div id="roomCodeView" class="room-code">----</div>
-      <div id="waitingText" class="status">친구를 기다리는 중...</div>
+      <div id="waitingText" class="status">기다리는 중...</div>
       <button id="copyCodeBtn" class="secondary">방 코드 복사</button>
+      <button id="waitingBackBtn" class="danger">나가기</button>
     </section>
 
     <section id="selectCharacter" class="card hidden">
-      <div class="status">방 코드</div>
+      <div class="status" id="selectTopLabel">방 코드</div>
       <div id="selectRoomCodeView" class="room-code">----</div>
 
-      <h2 style="text-align:center; margin: 8px 0;">캐릭터 선택</h2>
+      <h2>캐릭터 선택</h2>
       <div id="myRoleText" class="status">당신은 1P입니다.</div>
 
       <div id="characterList" class="character-grid"></div>
+
+      <button id="selectBackBtn" class="secondary">뒤로가기</button>
     </section>
 
     <section id="battle" class="card hidden">
@@ -309,7 +353,7 @@
       appId: "1:316801652493:web:b0ed3da0dba57b244bc244",
       measurementId: "G-LLLPMSVRXP"
     };
-
+    
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
@@ -340,25 +384,36 @@
       }
     };
 
+    let currentMode = null; // online or single
     let currentRoomCode = null;
     let myRole = null;
+    let singleState = null;
+    let singleBusy = false;
 
+    const modeSelect = document.getElementById("modeSelect");
     const lobby = document.getElementById("lobby");
     const waiting = document.getElementById("waiting");
     const selectCharacter = document.getElementById("selectCharacter");
     const battle = document.getElementById("battle");
 
+    const onlineModeBtn = document.getElementById("onlineModeBtn");
+    const singleModeBtn = document.getElementById("singleModeBtn");
+
     const createRoomBtn = document.getElementById("createRoomBtn");
     const joinRoomBtn = document.getElementById("joinRoomBtn");
     const roomInput = document.getElementById("roomInput");
+    const backToModeBtn = document.getElementById("backToModeBtn");
 
     const roomCodeView = document.getElementById("roomCodeView");
+    const selectTopLabel = document.getElementById("selectTopLabel");
     const selectRoomCodeView = document.getElementById("selectRoomCodeView");
     const waitingText = document.getElementById("waitingText");
     const copyCodeBtn = document.getElementById("copyCodeBtn");
+    const waitingBackBtn = document.getElementById("waitingBackBtn");
 
     const myRoleText = document.getElementById("myRoleText");
     const characterList = document.getElementById("characterList");
+    const selectBackBtn = document.getElementById("selectBackBtn");
 
     const p1Name = document.getElementById("p1Name");
     const p2Name = document.getElementById("p2Name");
@@ -379,11 +434,13 @@
     const leaveBtn = document.getElementById("leaveBtn");
 
     function showScreen(name) {
+      modeSelect.classList.add("hidden");
       lobby.classList.add("hidden");
       waiting.classList.add("hidden");
       selectCharacter.classList.add("hidden");
       battle.classList.add("hidden");
 
+      if (name === "mode") modeSelect.classList.remove("hidden");
       if (name === "lobby") lobby.classList.remove("hidden");
       if (name === "waiting") waiting.classList.remove("hidden");
       if (name === "select") selectCharacter.classList.remove("hidden");
@@ -429,7 +486,7 @@
       };
     }
 
-    function initialState() {
+    function initialOnlineState() {
       return {
         players: {
           p1: true,
@@ -445,6 +502,68 @@
         },
         updatedAt: Date.now()
       };
+    }
+
+    function clone(obj) {
+      return JSON.parse(JSON.stringify(obj));
+    }
+
+    function roleLabel(role) {
+      if (currentMode === "single") {
+        return role === "p1" ? "플레이어" : "AI";
+      }
+      return role === "p1" ? "1P" : "2P";
+    }
+
+    function processBasicAttack(oldState, attackerRole, defenderRole) {
+      const state = clone(oldState);
+
+      const attacker = state[attackerRole];
+      const defender = state[defenderRole];
+
+      attacker.turnCount = (attacker.turnCount || 0) + 1;
+
+      let log = `${roleLabel(attackerRole)} ${attacker.character}의 [기본 공격]!\n`;
+
+      if (defender.character === "도적" && Math.random() < 0.15) {
+        log += `${roleLabel(defenderRole)} ${defender.character}의 패시브 [그림자 걸음] 발동!\n`;
+        log += "공격을 회피했다!";
+
+        state.turn = defenderRole;
+        state.log = log + `\n${roleLabel(defenderRole)}의 턴입니다.`;
+        return state;
+      }
+
+      let randomBonus = Math.floor(Math.random() * 5);
+      let damage = 10 + attacker.atk - defender.def + randomBonus;
+
+      if (attacker.character === "검사" && Math.random() < 0.20) {
+        damage += 8;
+        log += `${attacker.character}의 패시브 [검의 호흡] 발동!\n`;
+      }
+
+      if (attacker.character === "마법사" && attacker.turnCount % 3 === 0) {
+        damage += 10;
+        log += `${attacker.character}의 패시브 [마력 순환] 발동!\n`;
+      }
+
+      damage = Math.max(1, damage);
+
+      defender.hp = Math.max(0, defender.hp - damage);
+
+      log += `${roleLabel(defenderRole)} ${defender.character}에게 ${damage} 데미지!`;
+
+      if (defender.hp <= 0) {
+        state.winner = attackerRole;
+        state.turn = attackerRole;
+        log += `\n${roleLabel(defenderRole)} ${defender.character}이 쓰러졌습니다!\n${roleLabel(attackerRole)} 승리!`;
+      } else {
+        state.turn = defenderRole;
+        log += `\n${roleLabel(defenderRole)}의 턴입니다.`;
+      }
+
+      state.log = log;
+      return state;
     }
 
     function renderCharacterList() {
@@ -472,7 +591,33 @@
       });
     }
 
+    function openOnlineMode() {
+      currentMode = "online";
+      currentRoomCode = null;
+      myRole = null;
+      singleState = null;
+      roomInput.value = "";
+      showScreen("lobby");
+    }
+
+    function openSingleMode() {
+      currentMode = "single";
+      currentRoomCode = null;
+      myRole = "p1";
+      singleState = null;
+      singleBusy = false;
+
+      selectTopLabel.textContent = "싱글 모드";
+      selectRoomCodeView.textContent = "AI";
+      myRoleText.textContent = "내 캐릭터를 선택하세요.";
+
+      renderCharacterList();
+      showScreen("select");
+    }
+
     async function createRoom() {
+      currentMode = "online";
+
       let code = makeRoomCode();
       let roomRef = ref(db, "rooms/" + code);
 
@@ -484,11 +629,12 @@
         snapshot = await get(roomRef);
       }
 
-      await set(roomRef, initialState());
+      await set(roomRef, initialOnlineState());
 
       currentRoomCode = code;
       myRole = "p1";
 
+      selectTopLabel.textContent = "방 코드";
       roomCodeView.textContent = code;
       selectRoomCodeView.textContent = code;
       myRoleText.textContent = "당신은 1P입니다.";
@@ -499,6 +645,8 @@
     }
 
     async function joinRoom() {
+      currentMode = "online";
+
       const code = roomInput.value.trim().toUpperCase();
 
       if (code.length !== 4) {
@@ -530,6 +678,7 @@
       currentRoomCode = code;
       myRole = "p2";
 
+      selectTopLabel.textContent = "방 코드";
       selectRoomCodeView.textContent = code;
       myRoleText.textContent = "당신은 2P입니다.";
 
@@ -539,6 +688,11 @@
     }
 
     async function selectMyCharacter(charName) {
+      if (currentMode === "single") {
+        startSingleBattle(charName);
+        return;
+      }
+
       if (!currentRoomCode || !myRole) return;
 
       const playerData = makePlayerFromCharacter(charName);
@@ -554,10 +708,30 @@
       waitingText.textContent = "상대의 캐릭터 선택을 기다리는 중...";
     }
 
+    function startSingleBattle(myCharName) {
+      const charNames = Object.keys(characters);
+      let aiCharName = charNames[Math.floor(Math.random() * charNames.length)];
+
+      singleState = {
+        started: true,
+        turn: "p1",
+        winner: null,
+        p1: makePlayerFromCharacter(myCharName),
+        p2: makePlayerFromCharacter(aiCharName),
+        log: `싱글 AI 배틀 시작!\n플레이어 ${myCharName} vs AI ${aiCharName}\n플레이어의 턴입니다.`
+      };
+
+      singleBusy = false;
+      showScreen("battle");
+      renderBattle(singleState);
+    }
+
     function listenRoom(code) {
       const roomRef = ref(db, "rooms/" + code);
 
       onValue(roomRef, async (snapshot) => {
+        if (currentMode !== "online") return;
+
         if (!snapshot.exists()) {
           alert("방이 삭제되었습니다.");
           location.reload();
@@ -566,7 +740,7 @@
 
         const room = snapshot.val();
         await tryStartGame(room);
-        renderRoom(room);
+        renderOnlineRoom(room);
       });
     }
 
@@ -592,7 +766,7 @@
       }
     }
 
-    function renderRoom(room) {
+    function renderOnlineRoom(room) {
       const state = room.state;
       if (!state) return;
 
@@ -611,7 +785,6 @@
       }
 
       showScreen("battle");
-
       renderBattle(state);
     }
 
@@ -619,8 +792,8 @@
       const p1 = state.p1;
       const p2 = state.p2;
 
-      p1Name.textContent = `1P ${p1.character}`;
-      p2Name.textContent = `2P ${p2.character}`;
+      p1Name.textContent = `${currentMode === "single" ? "플레이어" : "1P"} ${p1.character}`;
+      p2Name.textContent = `${currentMode === "single" ? "AI" : "2P"} ${p2.character}`;
 
       p1StatText.textContent = `공격 ${p1.atk} / 방어 ${p1.def}`;
       p2StatText.textContent = `공격 ${p2.atk} / 방어 ${p2.def}`;
@@ -640,8 +813,26 @@
       battleLog.textContent = state.log || "";
 
       if (state.winner) {
-        turnText.textContent = state.winner === myRole ? "승리!" : "패배!";
+        if (currentMode === "single") {
+          turnText.textContent = state.winner === "p1" ? "승리!" : "패배!";
+        } else {
+          turnText.textContent = state.winner === myRole ? "승리!" : "패배!";
+        }
         attackBtn.disabled = true;
+        return;
+      }
+
+      if (currentMode === "single") {
+        if (singleBusy) {
+          turnText.textContent = "AI 행동 중...";
+          attackBtn.disabled = true;
+        } else if (state.turn === "p1") {
+          turnText.textContent = "내 턴";
+          attackBtn.disabled = false;
+        } else {
+          turnText.textContent = "AI 턴";
+          attackBtn.disabled = true;
+        }
         return;
       }
 
@@ -654,7 +845,7 @@
       }
     }
 
-    async function attack() {
+    async function onlineAttack() {
       if (!currentRoomCode || !myRole) return;
 
       const roomRef = ref(db, "rooms/" + currentRoomCode);
@@ -673,69 +864,74 @@
       }
 
       const enemyRole = myRole === "p1" ? "p2" : "p1";
+      const newState = processBasicAttack(state, myRole, enemyRole);
 
-      const attacker = state[myRole];
-      const defender = state[enemyRole];
+      await update(roomRef, {
+        state: newState,
+        updatedAt: Date.now()
+      });
+    }
 
-      let log = `${myRole === "p1" ? "1P" : "2P"} ${attacker.character}의 [기본 공격]!\n`;
+    function singlePlayerAttack() {
+      if (!singleState || singleBusy) return;
+      if (singleState.winner) return;
+      if (singleState.turn !== "p1") return;
 
-      let newAttackerTurnCount = (attacker.turnCount || 0) + 1;
+      singleState = processBasicAttack(singleState, "p1", "p2");
+      renderBattle(singleState);
 
-      if (defender.character === "도적" && Math.random() < 0.15) {
-        log += `${enemyRole === "p1" ? "1P" : "2P"} ${defender.character}의 패시브 [그림자 걸음] 발동!\n공격을 회피했다!`;
+      if (!singleState.winner) {
+        singleBusy = true;
+        renderBattle(singleState);
 
-        const updates = {};
-        updates[`state/${myRole}/turnCount`] = newAttackerTurnCount;
-        updates["state/turn"] = enemyRole;
-        updates["state/log"] = log + `\n${enemyRole === "p1" ? "1P" : "2P"}의 턴입니다.`;
-        updates["updatedAt"] = Date.now();
+        setTimeout(() => {
+          singleAiAttack();
+        }, 900);
+      }
+    }
 
-        await update(roomRef, updates);
+    function singleAiAttack() {
+      if (!singleState) return;
+      if (singleState.winner) {
+        singleBusy = false;
+        renderBattle(singleState);
         return;
       }
 
-      let randomBonus = Math.floor(Math.random() * 5);
-      let damage = 10 + attacker.atk - defender.def + randomBonus;
+      singleState = processBasicAttack(singleState, "p2", "p1");
+      singleBusy = false;
+      renderBattle(singleState);
+    }
 
-      if (attacker.character === "검사" && Math.random() < 0.20) {
-        damage += 8;
-        log += `${attacker.character}의 패시브 [검의 호흡] 발동!\n`;
-      }
-
-      if (attacker.character === "마법사" && newAttackerTurnCount % 3 === 0) {
-        damage += 10;
-        log += `${attacker.character}의 패시브 [마력 순환] 발동!\n`;
-      }
-
-      damage = Math.max(1, damage);
-
-      const newEnemyHp = Math.max(0, defender.hp - damage);
-
-      let winner = null;
-      let nextTurn = enemyRole;
-
-      log += `${enemyRole === "p1" ? "1P" : "2P"} ${defender.character}에게 ${damage} 데미지!`;
-
-      if (newEnemyHp <= 0) {
-        winner = myRole;
-        nextTurn = myRole;
-        log += `\n${defender.character}이 쓰러졌습니다!\n${myRole === "p1" ? "1P" : "2P"} 승리!`;
+    async function attack() {
+      if (currentMode === "single") {
+        singlePlayerAttack();
       } else {
-        log += `\n${enemyRole === "p1" ? "1P" : "2P"}의 턴입니다.`;
+        await onlineAttack();
       }
-
-      const updates = {};
-      updates[`state/${enemyRole}/hp`] = newEnemyHp;
-      updates[`state/${myRole}/turnCount`] = newAttackerTurnCount;
-      updates["state/turn"] = nextTurn;
-      updates["state/winner"] = winner;
-      updates["state/log"] = log;
-      updates["updatedAt"] = Date.now();
-
-      await update(roomRef, updates);
     }
 
     async function resetGame() {
+      if (currentMode === "single") {
+        if (!singleState) return;
+
+        const p1Char = singleState.p1.character;
+        const p2Char = singleState.p2.character;
+
+        singleState = {
+          started: true,
+          turn: "p1",
+          winner: null,
+          p1: makePlayerFromCharacter(p1Char),
+          p2: makePlayerFromCharacter(p2Char),
+          log: "싱글 AI 배틀을 다시 시작했습니다.\n플레이어의 턴입니다."
+        };
+
+        singleBusy = false;
+        renderBattle(singleState);
+        return;
+      }
+
       if (!currentRoomCode) return;
 
       const roomRef = ref(db, "rooms/" + currentRoomCode);
@@ -751,21 +947,30 @@
       const p1Char = state.p1.character;
       const p2Char = state.p2.character;
 
-      const newP1 = makePlayerFromCharacter(p1Char);
-      const newP2 = makePlayerFromCharacter(p2Char);
+      const newState = {
+        started: true,
+        turn: "p1",
+        winner: null,
+        p1: makePlayerFromCharacter(p1Char),
+        p2: makePlayerFromCharacter(p2Char),
+        log: "게임을 다시 시작했습니다.\n1P의 턴입니다."
+      };
 
       await update(roomRef, {
-        "state/started": true,
-        "state/turn": "p1",
-        "state/winner": null,
-        "state/p1": newP1,
-        "state/p2": newP2,
-        "state/log": "게임을 다시 시작했습니다.\n1P의 턴입니다.",
+        state: newState,
         updatedAt: Date.now()
       });
     }
 
     async function leaveRoom() {
+      if (currentMode === "single") {
+        currentMode = null;
+        singleState = null;
+        singleBusy = false;
+        showScreen("mode");
+        return;
+      }
+
       if (!currentRoomCode || !myRole) {
         location.reload();
         return;
@@ -785,11 +990,39 @@
       }
     }
 
+    function backToMode() {
+      currentMode = null;
+      currentRoomCode = null;
+      myRole = null;
+      singleState = null;
+      singleBusy = false;
+      showScreen("mode");
+    }
+
+    onlineModeBtn.addEventListener("click", openOnlineMode);
+    singleModeBtn.addEventListener("click", openSingleMode);
+
     createRoomBtn.addEventListener("click", createRoom);
     joinRoomBtn.addEventListener("click", joinRoom);
+    backToModeBtn.addEventListener("click", backToMode);
+
     attackBtn.addEventListener("click", attack);
     resetBtn.addEventListener("click", resetGame);
     leaveBtn.addEventListener("click", leaveRoom);
+    waitingBackBtn.addEventListener("click", leaveRoom);
+
+    selectBackBtn.addEventListener("click", async () => {
+      if (currentMode === "single") {
+        backToMode();
+        return;
+      }
+
+      if (currentRoomCode && myRole === "p1") {
+        await remove(ref(db, "rooms/" + currentRoomCode));
+      }
+
+      location.reload();
+    });
 
     copyCodeBtn.addEventListener("click", async () => {
       if (!currentRoomCode) return;
