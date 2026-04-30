@@ -220,6 +220,14 @@
       font-weight: 900;
     }
 
+    .skill-power {
+      font-size: 12px;
+      font-weight: 800;
+      color: #111827;
+      opacity: 0.95;
+      margin-top: 3px;
+    }
+
     .skill-desc {
       font-size: 12px;
       color: #111827;
@@ -397,6 +405,7 @@
         name: "기본 공격",
         type: "attack",
         power: 10,
+        powerText: "위력 10 / 적 1명",
         desc: "기본 피해를 준다."
       },
 
@@ -405,6 +414,7 @@
         name: "일섬",
         type: "attack",
         power: 20,
+        powerText: "위력 20 / 적 1명",
         desc: "빠르게 베어 큰 피해를 준다."
       },
       guard: {
@@ -412,6 +422,7 @@
         name: "철벽 자세",
         type: "guard",
         guardRate: 0.5,
+        powerText: "방어 50% / 자신",
         desc: "다음에 받는 피해를 50% 줄인다."
       },
       halfmoon: {
@@ -420,6 +431,7 @@
         type: "attackBuff",
         power: 12,
         buff: 7,
+        powerText: "위력 12 / 다음 공격 +7",
         desc: "피해를 주고 다음 공격 피해를 강화한다."
       },
 
@@ -428,6 +440,7 @@
         name: "화염구",
         type: "attack",
         power: 23,
+        powerText: "위력 23 / 적 1명",
         desc: "강한 마법 피해를 준다."
       },
       ice: {
@@ -436,6 +449,7 @@
         type: "attackDebuff",
         power: 15,
         debuff: 6,
+        powerText: "위력 15 / 적 공격 -6",
         desc: "피해를 주고 상대의 다음 공격 피해를 줄인다."
       },
       heal: {
@@ -443,6 +457,7 @@
         name: "치유의 빛",
         type: "heal",
         heal: 25,
+        powerText: "회복 25 / 자신",
         desc: "자신의 HP를 회복한다."
       },
 
@@ -451,7 +466,8 @@
         name: "독침",
         type: "poisonAttack",
         power: 10,
-        desc: "피해를 주고 상대를 3턴 동안 독 상태로 만든다."
+        powerText: "위력 10 / 독 3턴",
+        desc: "피해를 주고 상대를 독 상태로 만든다."
       },
       weak: {
         id: "weak",
@@ -459,43 +475,15 @@
         type: "weakAttack",
         power: 16,
         bonusIfPoison: 12,
+        powerText: "위력 16 / 독 상태면 +12",
         desc: "상대가 독 상태면 추가 피해를 준다."
       },
       smoke: {
         id: "smoke",
         name: "연막",
         type: "evasion",
+        powerText: "회피 40% / 자신",
         desc: "다음 공격을 40% 확률로 회피한다."
-      }
-    };
-
-    const characters = {
-      "검사": {
-        name: "검사",
-        hp: 110,
-        atk: 15,
-        def: 8,
-        passiveName: "검의 호흡",
-        passiveDesc: "공격 시 20% 확률로 추가 피해 8",
-        skillIds: ["slash", "guard", "halfmoon"]
-      },
-      "마법사": {
-        name: "마법사",
-        hp: 80,
-        atk: 22,
-        def: 3,
-        passiveName: "마력 순환",
-        passiveDesc: "3번째 자신의 턴마다 피해 +10",
-        skillIds: ["fireball", "ice", "heal"]
-      },
-      "도적": {
-        name: "도적",
-        hp: 90,
-        atk: 13,
-        def: 5,
-        passiveName: "그림자 걸음",
-        passiveDesc: "공격받을 때 15% 확률로 회피",
-        skillIds: ["poison", "weak", "smoke"]
       }
     };
 
@@ -891,6 +879,7 @@
 
         btn.innerHTML = `
           <div class="skill-name">${skill.name}</div>
+          <div class="skill-power">${skill.powerText}</div>
           <div class="skill-desc">${skill.desc}</div>
         `;
 
@@ -909,7 +898,9 @@
         const div = document.createElement("div");
         div.className = "character-card";
 
-        const skillNames = c.skillIds.map(id => skills[id].name).join(" / ");
+        const skillNames = c.skillIds
+          .map(id => `${skills[id].name} - ${skills[id].powerText}`)
+          .join("<br>");
 
         div.innerHTML = `
           <div class="character-name">${c.name}</div>
@@ -917,7 +908,7 @@
             HP ${c.hp} / 공격 ${c.atk} / 방어 ${c.def}<br>
             <span class="passive">패시브: ${c.passiveName}</span><br>
             ${c.passiveDesc}<br>
-            스킬: ${skillNames}
+            스킬:<br>${skillNames}
           </div>
           <button class="green">선택하기</button>
         `;
