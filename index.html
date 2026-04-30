@@ -1,940 +1,1157 @@
 <!DOCTYPE html>
 <html lang="ko">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>모바일 온라인 배틀</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>모바일 온라인 배틀</title>
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+    <style>
+      * {
+        box-sizing: border-box;
+      }
 
-    body {
-      margin: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: #111827;
-      color: white;
-    }
+      body {
+        margin: 0;
+        font-family:
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
+        background: #111827;
+        color: white;
+      }
 
-    .app {
-      max-width: 480px;
-      margin: 0 auto;
-      min-height: 100vh;
-      padding: 18px;
-    }
+      .app {
+        max-width: 480px;
+        margin: 0 auto;
+        min-height: 100vh;
+        padding: 18px;
+      }
 
-    h1 {
-      font-size: 28px;
-      margin: 12px 0 6px;
-      text-align: center;
-    }
+      h1 {
+        font-size: 28px;
+        margin: 12px 0 6px;
+        text-align: center;
+      }
 
-    h2 {
-      text-align: center;
-      margin: 8px 0;
-    }
+      h2 {
+        text-align: center;
+        margin: 8px 0;
+      }
 
-    .subtitle {
-      text-align: center;
-      color: #9ca3af;
-      margin-bottom: 20px;
-      font-size: 14px;
-    }
+      .subtitle {
+        text-align: center;
+        color: #9ca3af;
+        margin-bottom: 20px;
+        font-size: 14px;
+      }
 
-    .card {
-      background: #1f2937;
-      border: 1px solid #374151;
-      border-radius: 18px;
-      padding: 16px;
-      margin-bottom: 14px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.25);
-    }
+      .card {
+        background: #1f2937;
+        border: 1px solid #374151;
+        border-radius: 18px;
+        padding: 16px;
+        margin-bottom: 14px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+      }
 
-    .hidden {
-      display: none;
-    }
+      .hidden {
+        display: none;
+      }
 
-    button {
-      width: 100%;
-      border: none;
-      border-radius: 14px;
-      padding: 14px;
-      font-size: 17px;
-      font-weight: 700;
-      margin-top: 10px;
-      background: #60a5fa;
-      color: #111827;
-    }
+      button {
+        width: 100%;
+        border: none;
+        border-radius: 14px;
+        padding: 14px;
+        font-size: 17px;
+        font-weight: 700;
+        margin-top: 10px;
+        background: #60a5fa;
+        color: #111827;
+      }
 
-    button:disabled {
-      background: #4b5563;
-      color: #9ca3af;
-    }
+      button:disabled {
+        background: #4b5563;
+        color: #9ca3af;
+      }
 
-    input {
-      width: 100%;
-      border: 1px solid #4b5563;
-      background: #111827;
-      color: white;
-      border-radius: 14px;
-      padding: 14px;
-      font-size: 18px;
-      text-align: center;
-      text-transform: uppercase;
-    }
+      input {
+        width: 100%;
+        border: 1px solid #4b5563;
+        background: #111827;
+        color: white;
+        border-radius: 14px;
+        padding: 14px;
+        font-size: 18px;
+        text-align: center;
+        text-transform: uppercase;
+      }
 
-    .room-code {
-      font-size: 34px;
-      font-weight: 900;
-      text-align: center;
-      letter-spacing: 4px;
-      color: #facc15;
-      margin: 10px 0;
-    }
+      .room-code {
+        font-size: 34px;
+        font-weight: 900;
+        text-align: center;
+        letter-spacing: 4px;
+        color: #facc15;
+        margin: 10px 0;
+      }
 
-    .status {
-      font-size: 14px;
-      color: #d1d5db;
-      text-align: center;
-      line-height: 1.6;
-    }
+      .status {
+        font-size: 14px;
+        color: #d1d5db;
+        text-align: center;
+        line-height: 1.6;
+      }
 
-    .mode-title {
-      font-size: 18px;
-      font-weight: 900;
-      margin-bottom: 8px;
-    }
+      .mode-title {
+        font-size: 18px;
+        font-weight: 900;
+        margin-bottom: 8px;
+      }
 
-    .mode-desc {
-      color: #d1d5db;
-      font-size: 14px;
-      line-height: 1.6;
-    }
+      .mode-desc {
+        color: #d1d5db;
+        font-size: 14px;
+        line-height: 1.6;
+      }
 
-    .character-grid {
-      display: grid;
-      gap: 12px;
-      margin-top: 12px;
-    }
+      .character-grid {
+        display: grid;
+        gap: 12px;
+        margin-top: 12px;
+      }
 
-    .character-card {
-      background: #111827;
-      border: 1px solid #374151;
-      border-radius: 16px;
-      padding: 14px;
-    }
+      .character-card {
+        background: #111827;
+        border: 1px solid #374151;
+        border-radius: 16px;
+        padding: 14px;
+      }
 
-    .character-name {
-      font-size: 20px;
-      font-weight: 900;
-      margin-bottom: 6px;
-    }
+      .character-name {
+        font-size: 20px;
+        font-weight: 900;
+        margin-bottom: 6px;
+      }
 
-    .character-info {
-      color: #d1d5db;
-      font-size: 14px;
-      line-height: 1.6;
-    }
+      .character-info {
+        color: #d1d5db;
+        font-size: 14px;
+        line-height: 1.6;
+      }
 
-    .passive {
-      color: #facc15;
-      font-weight: 700;
-    }
+      .passive {
+        color: #facc15;
+        font-weight: 700;
+      }
 
-    .battle-top {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
+      .battle-top {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
 
-    .player-box {
-      background: #111827;
-      border: 1px solid #374151;
-      border-radius: 16px;
-      padding: 12px;
-    }
+      .player-box {
+        background: #111827;
+        border: 1px solid #374151;
+        border-radius: 16px;
+        padding: 12px;
+      }
 
-    .player-name {
-      font-weight: 800;
-      margin-bottom: 8px;
-      font-size: 16px;
-    }
+      .player-name {
+        font-weight: 800;
+        margin-bottom: 8px;
+        font-size: 16px;
+      }
 
-    .stat-text {
-      font-size: 13px;
-      color: #9ca3af;
-      margin-bottom: 6px;
-      line-height: 1.5;
-    }
+      .stat-text {
+        font-size: 13px;
+        color: #9ca3af;
+        margin-bottom: 6px;
+        line-height: 1.5;
+      }
 
-    .state-text {
-      font-size: 13px;
-      color: #facc15;
-      margin-bottom: 6px;
-      line-height: 1.5;
-      min-height: 18px;
-    }
+      .state-text {
+        font-size: 13px;
+        color: #facc15;
+        margin-bottom: 6px;
+        line-height: 1.5;
+        min-height: 18px;
+      }
 
-    .hp-text {
-      font-size: 14px;
-      color: #d1d5db;
-      margin-bottom: 6px;
-    }
+      .hp-text {
+        font-size: 14px;
+        color: #d1d5db;
+        margin-bottom: 6px;
+      }
 
-    .hpbar {
-      width: 100%;
-      height: 18px;
-      background: #374151;
-      border-radius: 999px;
-      overflow: hidden;
-    }
+      .hpbar {
+        width: 100%;
+        height: 18px;
+        background: #374151;
+        border-radius: 999px;
+        overflow: hidden;
+      }
 
-    .hpfill {
-      height: 100%;
-      width: 100%;
-      background: #22c55e;
-      transition: width 0.25s;
-    }
+      .hpfill {
+        height: 100%;
+        width: 100%;
+        background: #22c55e;
+        transition: width 0.25s;
+      }
 
-    .turn {
-      text-align: center;
-      font-size: 20px;
-      font-weight: 900;
-      margin: 16px 0 8px;
-    }
+      .turn {
+        text-align: center;
+        font-size: 20px;
+        font-weight: 900;
+        margin: 16px 0 8px;
+      }
 
-    .skill-area {
-      display: grid;
-      gap: 8px;
-      margin-top: 8px;
-    }
+      .skill-area {
+        display: grid;
+        gap: 8px;
+        margin-top: 8px;
+      }
 
-    .skill-button {
-      text-align: left;
-      line-height: 1.4;
-    }
+      .skill-button {
+        text-align: left;
+        line-height: 1.4;
+      }
 
-    .skill-name {
-      font-size: 16px;
-      font-weight: 900;
-    }
+      .skill-name {
+        font-size: 16px;
+        font-weight: 900;
+      }
 
-    .skill-power {
-      font-size: 12px;
-      font-weight: 800;
-      color: #111827;
-      opacity: 0.95;
-      margin-top: 3px;
-    }
+      .skill-power {
+        font-size: 12px;
+        font-weight: 800;
+        color: #111827;
+        opacity: 0.95;
+        margin-top: 3px;
+      }
 
-    .skill-desc {
-      font-size: 12px;
-      color: #111827;
-      opacity: 0.85;
-      margin-top: 3px;
-    }
+      .skill-desc {
+        font-size: 12px;
+        color: #111827;
+        opacity: 0.85;
+        margin-top: 3px;
+      }
 
-    .log {
-      white-space: pre-line;
-      background: #030712;
-      border: 1px solid #374151;
-      border-radius: 14px;
-      padding: 14px;
-      min-height: 120px;
-      line-height: 1.6;
-      color: #e5e7eb;
-    }
+      .log {
+        white-space: pre-line;
+        background: #030712;
+        border: 1px solid #374151;
+        border-radius: 14px;
+        padding: 14px;
+        min-height: 120px;
+        line-height: 1.6;
+        color: #e5e7eb;
+      }
 
-    .small {
-      font-size: 13px;
-      color: #9ca3af;
-      text-align: center;
-      margin-top: 10px;
-      line-height: 1.5;
-    }
+      .small {
+        font-size: 13px;
+        color: #9ca3af;
+        text-align: center;
+        margin-top: 10px;
+        line-height: 1.5;
+      }
 
-    .danger {
-      background: #f87171;
-      color: #111827;
-    }
+      .danger {
+        background: #f87171;
+        color: #111827;
+      }
 
-    .secondary {
-      background: #a78bfa;
-      color: #111827;
-    }
+      .secondary {
+        background: #a78bfa;
+        color: #111827;
+      }
 
-    .green {
-      background: #34d399;
-      color: #111827;
-    }
+      .green {
+        background: #34d399;
+        color: #111827;
+      }
 
-    .yellow {
-      background: #facc15;
-      color: #111827;
-    }
+      .yellow {
+        background: #facc15;
+        color: #111827;
+      }
 
-    .line {
-      border: 0;
-      border-top: 1px solid #374151;
-      margin: 18px 0;
-    }
-  </style>
-</head>
+      .line {
+        border: 0;
+        border-top: 1px solid #374151;
+        margin: 18px 0;
+      }
+    </style>
+  </head>
 
-<body>
-  <div class="app">
-    <h1>온라인 배틀</h1>
-    <div class="subtitle">모바일 턴제 대전 테스트</div>
+  <body>
+    <div class="app">
+      <h1>온라인 배틀</h1>
+      <div class="subtitle">모바일 턴제 대전 테스트</div>
 
-    <section id="modeSelect" class="card">
-      <div class="mode-title">모드 선택</div>
-      <div class="mode-desc">
-        온라인 멀티는 친구와 방 코드로 대전합니다.<br>
-        싱글 AI 배틀은 혼자 캐릭터를 골라 AI와 싸웁니다.
-      </div>
+      <section id="modeSelect" class="card">
+        <div class="mode-title">모드 선택</div>
+        <div class="mode-desc">
+          온라인 멀티는 친구와 방 코드로 대전합니다.<br />
+          싱글 AI 배틀은 혼자 캐릭터를 골라 AI와 싸웁니다.
+        </div>
 
-      <button id="onlineModeBtn">온라인 멀티</button>
-      <button id="singleModeBtn" class="yellow">싱글 AI 배틀</button>
-    </section>
+        <button id="onlineModeBtn">온라인 멀티</button>
+        <button id="singleModeBtn" class="yellow">싱글 AI 배틀</button>
+      </section>
 
-    <section id="lobby" class="card hidden">
-      <button id="createRoomBtn">방 만들기</button>
+      <section id="lobby" class="card hidden">
+        <button id="createRoomBtn">방 만들기</button>
 
-      <hr class="line">
+        <hr class="line" />
 
-      <input id="roomInput" maxlength="4" placeholder="방 코드 입력" />
-      <button id="joinRoomBtn">방 참가</button>
+        <input id="roomInput" maxlength="4" placeholder="방 코드 입력" />
+        <button id="joinRoomBtn">방 참가</button>
 
-      <button id="backToModeBtn" class="secondary">모드 선택으로</button>
+        <button id="backToModeBtn" class="secondary">모드 선택으로</button>
 
-      <div class="small">
-        한 명이 방을 만들고, 나온 코드를 친구에게 보내면 됨.
-      </div>
-    </section>
+        <div class="small">
+          한 명이 방을 만들고, 나온 코드를 친구에게 보내면 됨.
+        </div>
+      </section>
 
-    <section id="waiting" class="card hidden">
-      <div class="status">방 코드</div>
-      <div id="roomCodeView" class="room-code">----</div>
-      <div id="waitingText" class="status">기다리는 중...</div>
-      <button id="copyCodeBtn" class="secondary">방 코드 복사</button>
-      <button id="waitingBackBtn" class="danger">나가기</button>
-    </section>
+      <section id="waiting" class="card hidden">
+        <div class="status">방 코드</div>
+        <div id="roomCodeView" class="room-code">----</div>
+        <div id="waitingText" class="status">기다리는 중...</div>
+        <button id="copyCodeBtn" class="secondary">방 코드 복사</button>
+        <button id="waitingBackBtn" class="danger">나가기</button>
+      </section>
 
-    <section id="selectCharacter" class="card hidden">
-      <div class="status" id="selectTopLabel">방 코드</div>
-      <div id="selectRoomCodeView" class="room-code">----</div>
+      <section id="selectCharacter" class="card hidden">
+        <div class="status" id="selectTopLabel">방 코드</div>
+        <div id="selectRoomCodeView" class="room-code">----</div>
 
-      <h2>캐릭터 선택</h2>
-      <div id="myRoleText" class="status">당신은 1P입니다.</div>
+        <h2>캐릭터 선택</h2>
+        <div id="myRoleText" class="status">당신은 1P입니다.</div>
 
-      <div id="characterList" class="character-grid"></div>
+        <div id="characterList" class="character-grid"></div>
 
-      <button id="selectBackBtn" class="secondary">뒤로가기</button>
-    </section>
+        <button id="selectBackBtn" class="secondary">뒤로가기</button>
+      </section>
 
-    <section id="battle" class="card hidden">
-      <div class="battle-top">
-        <div class="player-box">
-          <div id="p1Name" class="player-name">1P</div>
-          <div id="p1StatText" class="stat-text">공격 0 / 방어 0</div>
-          <div id="p1PassiveText" class="stat-text">패시브 없음</div>
-          <div id="p1StateText" class="state-text">상태 없음</div>
-          <div id="p1HpText" class="hp-text">HP 100 / 100</div>
-          <div class="hpbar">
-            <div id="p1HpFill" class="hpfill"></div>
+      <section id="battle" class="card hidden">
+        <div class="battle-top">
+          <div class="player-box">
+            <div id="p1Name" class="player-name">1P</div>
+            <div id="p1StatText" class="stat-text">공격 0 / 방어 0</div>
+            <div id="p1PassiveText" class="stat-text">패시브 없음</div>
+            <div id="p1StateText" class="state-text">상태 없음</div>
+            <div id="p1HpText" class="hp-text">HP 100 / 100</div>
+            <div class="hpbar">
+              <div id="p1HpFill" class="hpfill"></div>
+            </div>
+          </div>
+
+          <div class="player-box">
+            <div id="p2Name" class="player-name">2P</div>
+            <div id="p2StatText" class="stat-text">공격 0 / 방어 0</div>
+            <div id="p2PassiveText" class="stat-text">패시브 없음</div>
+            <div id="p2StateText" class="state-text">상태 없음</div>
+            <div id="p2HpText" class="hp-text">HP 100 / 100</div>
+            <div class="hpbar">
+              <div id="p2HpFill" class="hpfill"></div>
+            </div>
           </div>
         </div>
 
-        <div class="player-box">
-          <div id="p2Name" class="player-name">2P</div>
-          <div id="p2StatText" class="stat-text">공격 0 / 방어 0</div>
-          <div id="p2PassiveText" class="stat-text">패시브 없음</div>
-          <div id="p2StateText" class="state-text">상태 없음</div>
-          <div id="p2HpText" class="hp-text">HP 100 / 100</div>
-          <div class="hpbar">
-            <div id="p2HpFill" class="hpfill"></div>
-          </div>
-        </div>
-      </div>
+        <div id="turnText" class="turn">대기 중...</div>
 
-      <div id="turnText" class="turn">대기 중...</div>
+        <div id="skillButtons" class="skill-area"></div>
 
-      <div id="skillButtons" class="skill-area"></div>
+        <button id="resetBtn" class="secondary">다시 시작</button>
 
-      <button id="resetBtn" class="secondary">다시 시작</button>
+        <div style="height: 14px"></div>
 
-      <div style="height: 14px;"></div>
+        <div id="battleLog" class="log">전투 로그</div>
 
-      <div id="battleLog" class="log">전투 로그</div>
+        <button id="leaveBtn" class="danger">나가기</button>
+      </section>
+    </div>
 
-      <button id="leaveBtn" class="danger">나가기</button>
-    </section>
-  </div>
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
+      import {
+        getDatabase,
+        ref,
+        set,
+        update,
+        get,
+        onValue,
+        remove,
+      } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-database.js";
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
-    import {
-      getDatabase,
-      ref,
-      set,
-      update,
-      get,
-      onValue,
-      remove
-    } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-database.js";
-
-    // 여기만 네 Firebase 코드로 교체
-    const firebaseConfig = {
-      apiKey: "여기에_네_apiKey",
-      authDomain: "여기에_네_authDomain",
-      databaseURL: "여기에_네_databaseURL",
-      projectId: "여기에_네_projectId",
-      storageBucket: "여기에_네_storageBucket",
-      messagingSenderId: "여기에_네_messagingSenderId",
-      appId: "여기에_네_appId",
-      measurementId: "여기에_네_measurementId"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-
-    const skills = {
-      basic: {
-        id: "basic",
-        name: "기본 공격",
-        type: "attack",
-        power: 10,
-        powerText: "위력 10 / 적 1명",
-        desc: "기본 피해를 준다."
-      },
-
-      slash: {
-        id: "slash",
-        name: "일섬",
-        type: "attack",
-        power: 20,
-        powerText: "위력 20 / 적 1명",
-        desc: "빠르게 베어 큰 피해를 준다."
-      },
-      guard: {
-        id: "guard",
-        name: "철벽 자세",
-        type: "guard",
-        guardRate: 0.5,
-        powerText: "방어 50% / 자신",
-        desc: "다음에 받는 피해를 50% 줄인다."
-      },
-      halfmoon: {
-        id: "halfmoon",
-        name: "반월참",
-        type: "attackBuff",
-        power: 12,
-        buff: 7,
-        powerText: "위력 12 / 다음 공격 +7",
-        desc: "피해를 주고 다음 공격 피해를 강화한다."
-      },
-
-      fireball: {
-        id: "fireball",
-        name: "화염구",
-        type: "attack",
-        power: 23,
-        powerText: "위력 23 / 적 1명",
-        desc: "강한 마법 피해를 준다."
-      },
-      ice: {
-        id: "ice",
-        name: "얼음창",
-        type: "attackDebuff",
-        power: 15,
-        debuff: 6,
-        powerText: "위력 15 / 적 공격 -6",
-        desc: "피해를 주고 상대의 다음 공격 피해를 줄인다."
-      },
-      heal: {
-        id: "heal",
-        name: "치유의 빛",
-        type: "heal",
-        heal: 25,
-        powerText: "회복 25 / 자신",
-        desc: "자신의 HP를 회복한다."
-      },
-
-      poison: {
-        id: "poison",
-        name: "독침",
-        type: "poisonAttack",
-        power: 10,
-        powerText: "위력 10 / 독 3턴",
-        desc: "피해를 주고 상대를 독 상태로 만든다."
-      },
-      weak: {
-        id: "weak",
-        name: "급소 찌르기",
-        type: "weakAttack",
-        power: 16,
-        bonusIfPoison: 12,
-        powerText: "위력 16 / 독 상태면 +12",
-        desc: "상대가 독 상태면 추가 피해를 준다."
-      },
-      smoke: {
-        id: "smoke",
-        name: "연막",
-        type: "evasion",
-        powerText: "회피 40% / 자신",
-        desc: "다음 공격을 40% 확률로 회피한다."
-      }
-    };
-
-    const characters = {
-      "검사": {
-        name: "검사",
-        hp: 110,
-        atk: 15,
-        def: 8,
-        passiveName: "검의 호흡",
-        passiveDesc: "공격 시 20% 확률로 추가 피해 8",
-        skillIds: ["slash", "guard", "halfmoon"]
-      },
-
-      "마법사": {
-        name: "마법사",
-        hp: 80,
-        atk: 22,
-        def: 3,
-        passiveName: "마력 순환",
-        passiveDesc: "3번째 자신의 턴마다 피해 +10",
-        skillIds: ["fireball", "ice", "heal"]
-      },
-
-      "도적": {
-        name: "도적",
-        hp: 90,
-        atk: 13,
-        def: 5,
-        passiveName: "그림자 걸음",
-        passiveDesc: "공격받을 때 15% 확률로 회피",
-        skillIds: ["poison", "weak", "smoke"]
-      }
-    };
-
-    let currentMode = null;
-    let currentRoomCode = null;
-    let myRole = null;
-    let singleState = null;
-    let singleBusy = false;
-
-    const modeSelect = document.getElementById("modeSelect");
-    const lobby = document.getElementById("lobby");
-    const waiting = document.getElementById("waiting");
-    const selectCharacter = document.getElementById("selectCharacter");
-    const battle = document.getElementById("battle");
-
-    const onlineModeBtn = document.getElementById("onlineModeBtn");
-    const singleModeBtn = document.getElementById("singleModeBtn");
-
-    const createRoomBtn = document.getElementById("createRoomBtn");
-    const joinRoomBtn = document.getElementById("joinRoomBtn");
-    const roomInput = document.getElementById("roomInput");
-    const backToModeBtn = document.getElementById("backToModeBtn");
-
-    const roomCodeView = document.getElementById("roomCodeView");
-    const selectTopLabel = document.getElementById("selectTopLabel");
-    const selectRoomCodeView = document.getElementById("selectRoomCodeView");
-    const waitingText = document.getElementById("waitingText");
-    const copyCodeBtn = document.getElementById("copyCodeBtn");
-    const waitingBackBtn = document.getElementById("waitingBackBtn");
-
-    const myRoleText = document.getElementById("myRoleText");
-    const characterList = document.getElementById("characterList");
-    const selectBackBtn = document.getElementById("selectBackBtn");
-
-    const p1Name = document.getElementById("p1Name");
-    const p2Name = document.getElementById("p2Name");
-    const p1StatText = document.getElementById("p1StatText");
-    const p2StatText = document.getElementById("p2StatText");
-    const p1PassiveText = document.getElementById("p1PassiveText");
-    const p2PassiveText = document.getElementById("p2PassiveText");
-    const p1StateText = document.getElementById("p1StateText");
-    const p2StateText = document.getElementById("p2StateText");
-
-    const p1HpText = document.getElementById("p1HpText");
-    const p2HpText = document.getElementById("p2HpText");
-    const p1HpFill = document.getElementById("p1HpFill");
-    const p2HpFill = document.getElementById("p2HpFill");
-
-    const turnText = document.getElementById("turnText");
-    const skillButtons = document.getElementById("skillButtons");
-    const resetBtn = document.getElementById("resetBtn");
-    const battleLog = document.getElementById("battleLog");
-    const leaveBtn = document.getElementById("leaveBtn");
-
-    function showScreen(name) {
-      modeSelect.classList.add("hidden");
-      lobby.classList.add("hidden");
-      waiting.classList.add("hidden");
-      selectCharacter.classList.add("hidden");
-      battle.classList.add("hidden");
-
-      if (name === "mode") modeSelect.classList.remove("hidden");
-      if (name === "lobby") lobby.classList.remove("hidden");
-      if (name === "waiting") waiting.classList.remove("hidden");
-      if (name === "select") selectCharacter.classList.remove("hidden");
-      if (name === "battle") battle.classList.remove("hidden");
-    }
-
-    function makeRoomCode() {
-      const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-      let code = "";
-      for (let i = 0; i < 4; i++) {
-        code += chars[Math.floor(Math.random() * chars.length)];
-      }
-      return code;
-    }
-
-    function makePlayerFromCharacter(charName) {
-      const c = characters[charName];
-
-      return {
-        selected: true,
-        character: c.name,
-        hp: c.hp,
-        maxHp: c.hp,
-        atk: c.atk,
-        def: c.def,
-        passiveName: c.passiveName,
-        passiveDesc: c.passiveDesc,
-        skillIds: c.skillIds,
-        turnCount: 0,
-        guardRate: 0,
-        evasion: false,
-        atkBuff: 0,
-        atkDebuff: 0,
-        poison: 0
+      // 여기만 네 Firebase 코드로 교체
+      const firebaseConfig = {
+        apiKey: "여기에_네_apiKey",
+        authDomain: "여기에_네_authDomain",
+        databaseURL: "여기에_네_databaseURL",
+        projectId: "여기에_네_projectId",
+        storageBucket: "여기에_네_storageBucket",
+        messagingSenderId: "여기에_네_messagingSenderId",
+        appId: "여기에_네_appId",
+        measurementId: "여기에_네_measurementId",
       };
-    }
 
-    function emptyPlayer() {
-      return {
-        selected: false,
-        character: "",
-        hp: 0,
-        maxHp: 0,
-        atk: 0,
-        def: 0,
-        passiveName: "",
-        passiveDesc: "",
-        skillIds: [],
-        turnCount: 0,
-        guardRate: 0,
-        evasion: false,
-        atkBuff: 0,
-        atkDebuff: 0,
-        poison: 0
-      };
-    }
+      const app = initializeApp(firebaseConfig);
+      const db = getDatabase(app);
 
-    function initialOnlineState() {
-      return {
-        players: {
-          p1: true,
-          p2: false
+      const skills = {
+        basic: {
+          id: "basic",
+          name: "기본 공격",
+          type: "attack",
+          power: 10,
+          powerText: "위력 10 / 적 1명",
+          desc: "기본 피해를 준다.",
         },
-        state: {
-          started: false,
-          turn: "p1",
-          winner: "",
-          p1: emptyPlayer(),
-          p2: emptyPlayer(),
-          log: "방이 생성되었습니다.\n캐릭터를 선택하세요."
+
+        slash: {
+          id: "slash",
+          name: "일섬",
+          type: "attack",
+          power: 20,
+          powerText: "위력 20 / 적 1명",
+          desc: "빠르게 베어 큰 피해를 준다.",
         },
-        updatedAt: Date.now()
+        guard: {
+          id: "guard",
+          name: "철벽 자세",
+          type: "guard",
+          guardRate: 0.5,
+          powerText: "피해 감소 50% / 자신",
+          desc: "다음에 받는 피해를 50% 줄인다.",
+        },
+        halfmoon: {
+          id: "halfmoon",
+          name: "반월참",
+          type: "attackBuff",
+          power: 12,
+          buff: 7,
+          powerText: "위력 12 / 다음 공격 +7",
+          desc: "피해를 주고 다음 공격 피해를 강화한다.",
+        },
+
+        fireball: {
+          id: "fireball",
+          name: "화염구",
+          type: "attack",
+          power: 23,
+          powerText: "위력 23 / 적 1명",
+          desc: "강한 마법 피해를 준다.",
+        },
+        ice: {
+          id: "ice",
+          name: "얼음창",
+          type: "attackDebuff",
+          power: 15,
+          debuff: 6,
+          powerText: "위력 15 / 다음 공격 피해 -6",
+          desc: "피해를 주고 상대의 다음 공격 피해를 줄인다.",
+        },
+        heal: {
+          id: "heal",
+          name: "치유의 빛",
+          type: "heal",
+          heal: 25,
+          powerText: "회복 25 / 자신",
+          desc: "자신의 HP를 회복한다.",
+        },
+
+        poison: {
+          id: "poison",
+          name: "독침",
+          type: "poisonAttack",
+          power: 10,
+          powerText: "위력 10 / 독 3턴",
+          desc: "피해를 주고 상대를 독 상태로 만든다.",
+        },
+        weak: {
+          id: "weak",
+          name: "급소 찌르기",
+          type: "weakAttack",
+          power: 16,
+          bonusIfPoison: 12,
+          powerText: "위력 16 / 독 상태면 +12",
+          desc: "상대가 독 상태면 추가 피해를 준다.",
+        },
+        smoke: {
+          id: "smoke",
+          name: "연막",
+          type: "evasion",
+          powerText: "회피 40% / 자신",
+          desc: "다음 공격을 40% 확률로 회피한다.",
+        },
+
+        shield_bash: {
+          id: "shield_bash",
+          name: "방패 강타",
+          type: "attackDebuff",
+          power: 12,
+          debuff: 5,
+          powerText: "위력 12 / 다음 공격 피해 -5",
+          desc: "방패로 공격하고 상대의 다음 공격을 약화한다.",
+        },
+        fortress: {
+          id: "fortress",
+          name: "수호 자세",
+          type: "guard",
+          guardRate: 0.6,
+          powerText: "피해 감소 60% / 자신",
+          desc: "다음에 받는 피해를 크게 줄인다.",
+        },
+        heavy_strike: {
+          id: "heavy_strike",
+          name: "묵직한 일격",
+          type: "attack",
+          power: 18,
+          powerText: "위력 18 / 적 1명",
+          desc: "느리지만 강한 일격을 가한다.",
+        },
+
+        berserk_axe: {
+          id: "berserk_axe",
+          name: "광란의 도끼",
+          type: "attack",
+          power: 28,
+          powerText: "위력 28 / 적 1명",
+          desc: "강력한 도끼 공격을 가한다.",
+        },
+        blood_slash: {
+          id: "blood_slash",
+          name: "피의 참격",
+          type: "attackBuff",
+          power: 16,
+          buff: 6,
+          powerText: "위력 16 / 다음 공격 +6",
+          desc: "피를 끓어오르게 해 다음 공격을 강화한다.",
+        },
+        rage: {
+          id: "rage",
+          name: "분노 폭발",
+          type: "attackBuff",
+          power: 8,
+          buff: 10,
+          powerText: "위력 8 / 다음 공격 +10",
+          desc: "약한 피해를 주고 다음 공격을 크게 강화한다.",
+        },
+
+        priest_heal: {
+          id: "priest_heal",
+          name: "치유",
+          type: "heal",
+          heal: 32,
+          powerText: "회복 32 / 자신",
+          desc: "자신의 HP를 크게 회복한다.",
+        },
+        judgment: {
+          id: "judgment",
+          name: "빛의 심판",
+          type: "attack",
+          power: 18,
+          powerText: "위력 18 / 적 1명",
+          desc: "성스러운 빛으로 피해를 준다.",
+        },
+        blessing: {
+          id: "blessing",
+          name: "축복",
+          type: "attackBuff",
+          power: 5,
+          buff: 8,
+          powerText: "위력 5 / 다음 공격 +8",
+          desc: "약한 피해를 주고 다음 공격을 강화한다.",
+        },
+
+        pierce_arrow: {
+          id: "pierce_arrow",
+          name: "관통 화살",
+          type: "attack",
+          power: 19,
+          powerText: "위력 19 / 적 1명",
+          desc: "날카로운 화살로 안정적인 피해를 준다.",
+        },
+        rapid_shot: {
+          id: "rapid_shot",
+          name: "연속 사격",
+          type: "attack",
+          power: 16,
+          powerText: "위력 16 / 적 1명",
+          desc: "빠른 사격으로 피해를 준다.",
+        },
+        focus_aim: {
+          id: "focus_aim",
+          name: "집중 조준",
+          type: "attackBuff",
+          power: 7,
+          buff: 12,
+          powerText: "위력 7 / 다음 공격 +12",
+          desc: "가벼운 피해를 주고 다음 공격을 크게 강화한다.",
+        },
+
+        curse: {
+          id: "curse",
+          name: "저주",
+          type: "attackDebuff",
+          power: 8,
+          debuff: 8,
+          powerText: "위력 8 / 다음 공격 피해 -8",
+          desc: "저주를 걸어 상대의 다음 공격을 약화한다.",
+        },
+        soul_drain: {
+          id: "soul_drain",
+          name: "영혼 흡수",
+          type: "attack",
+          power: 17,
+          powerText: "위력 17 / 적 1명",
+          desc: "영혼을 갉아먹는 피해를 준다.",
+        },
+        dark_orb: {
+          id: "dark_orb",
+          name: "암흑 구체",
+          type: "attack",
+          power: 22,
+          powerText: "위력 22 / 적 1명",
+          desc: "어둠의 구체로 큰 피해를 준다.",
+        },
       };
-    }
+      const characters = {
+        검사: {
+          name: "검사",
+          hp: 110,
+          atk: 15,
+          def: 8,
+          passiveName: "검의 호흡",
+          passiveDesc: "공격 시 20% 확률로 추가 피해 8",
+          skillIds: ["slash", "guard", "halfmoon"],
+        },
 
-    function clone(obj) {
-      return JSON.parse(JSON.stringify(obj));
-    }
+        마법사: {
+          name: "마법사",
+          hp: 80,
+          atk: 22,
+          def: 3,
+          passiveName: "마력 순환",
+          passiveDesc: "자신의 3번째 행동마다 공격 스킬 피해 +10",
+          skillIds: ["fireball", "ice", "heal"],
+        },
 
-    function roleLabel(role) {
-      if (currentMode === "single") {
-        return role === "p1" ? "플레이어" : "AI";
+        도적: {
+          name: "도적",
+          hp: 90,
+          atk: 13,
+          def: 5,
+          passiveName: "그림자 걸음",
+          passiveDesc: "공격받을 때 15% 확률로 공격 회피",
+          skillIds: ["poison", "weak", "smoke"],
+        },
+
+        탱커: {
+          name: "탱커",
+          hp: 150,
+          atk: 9,
+          def: 15,
+          passiveName: "불굴의 육체",
+          passiveDesc: "높은 HP와 방어력으로 오래 버티는 방어형 캐릭터",
+          skillIds: ["shield_bash", "fortress", "heavy_strike"],
+        },
+
+        광전사: {
+          name: "광전사",
+          hp: 105,
+          atk: 22,
+          def: 4,
+          passiveName: "피의 갈망",
+          passiveDesc: "공격 시 20% 확률로 추가 피해 8",
+          skillIds: ["berserk_axe", "blood_slash", "rage"],
+        },
+
+        성직자: {
+          name: "성직자",
+          hp: 95,
+          atk: 10,
+          def: 7,
+          passiveName: "성스러운 가호",
+          passiveDesc: "회복 스킬을 가진 안정적인 지원형 캐릭터",
+          skillIds: ["priest_heal", "judgment", "blessing"],
+        },
+
+        궁수: {
+          name: "궁수",
+          hp: 90,
+          atk: 17,
+          def: 5,
+          passiveName: "매의 눈",
+          passiveDesc: "공격 시 15% 확률로 추가 피해 10",
+          skillIds: ["pierce_arrow", "rapid_shot", "focus_aim"],
+        },
+
+        주술사: {
+          name: "주술사",
+          hp: 85,
+          atk: 16,
+          def: 4,
+          passiveName: "저주의 낙인",
+          passiveDesc: "약화 스킬과 강한 마법 피해를 가진 디버프형 캐릭터",
+          skillIds: ["curse", "soul_drain", "dark_orb"],
+        },
+      };
+
+      let currentMode = null;
+      let currentRoomCode = null;
+      let myRole = null;
+      let singleState = null;
+      let singleBusy = false;
+
+      const modeSelect = document.getElementById("modeSelect");
+      const lobby = document.getElementById("lobby");
+      const waiting = document.getElementById("waiting");
+      const selectCharacter = document.getElementById("selectCharacter");
+      const battle = document.getElementById("battle");
+
+      const onlineModeBtn = document.getElementById("onlineModeBtn");
+      const singleModeBtn = document.getElementById("singleModeBtn");
+
+      const createRoomBtn = document.getElementById("createRoomBtn");
+      const joinRoomBtn = document.getElementById("joinRoomBtn");
+      const roomInput = document.getElementById("roomInput");
+      const backToModeBtn = document.getElementById("backToModeBtn");
+
+      const roomCodeView = document.getElementById("roomCodeView");
+      const selectTopLabel = document.getElementById("selectTopLabel");
+      const selectRoomCodeView = document.getElementById("selectRoomCodeView");
+      const waitingText = document.getElementById("waitingText");
+      const copyCodeBtn = document.getElementById("copyCodeBtn");
+      const waitingBackBtn = document.getElementById("waitingBackBtn");
+
+      const myRoleText = document.getElementById("myRoleText");
+      const characterList = document.getElementById("characterList");
+      const selectBackBtn = document.getElementById("selectBackBtn");
+
+      const p1Name = document.getElementById("p1Name");
+      const p2Name = document.getElementById("p2Name");
+      const p1StatText = document.getElementById("p1StatText");
+      const p2StatText = document.getElementById("p2StatText");
+      const p1PassiveText = document.getElementById("p1PassiveText");
+      const p2PassiveText = document.getElementById("p2PassiveText");
+      const p1StateText = document.getElementById("p1StateText");
+      const p2StateText = document.getElementById("p2StateText");
+
+      const p1HpText = document.getElementById("p1HpText");
+      const p2HpText = document.getElementById("p2HpText");
+      const p1HpFill = document.getElementById("p1HpFill");
+      const p2HpFill = document.getElementById("p2HpFill");
+
+      const turnText = document.getElementById("turnText");
+      const skillButtons = document.getElementById("skillButtons");
+      const resetBtn = document.getElementById("resetBtn");
+      const battleLog = document.getElementById("battleLog");
+      const leaveBtn = document.getElementById("leaveBtn");
+
+      function showScreen(name) {
+        modeSelect.classList.add("hidden");
+        lobby.classList.add("hidden");
+        waiting.classList.add("hidden");
+        selectCharacter.classList.add("hidden");
+        battle.classList.add("hidden");
+
+        if (name === "mode") modeSelect.classList.remove("hidden");
+        if (name === "lobby") lobby.classList.remove("hidden");
+        if (name === "waiting") waiting.classList.remove("hidden");
+        if (name === "select") selectCharacter.classList.remove("hidden");
+        if (name === "battle") battle.classList.remove("hidden");
       }
-      return role === "p1" ? "1P" : "2P";
-    }
 
-    function enemyOf(role) {
-      return role === "p1" ? "p2" : "p1";
-    }
-
-    function getStateText(player) {
-      const list = [];
-
-      if (player.guardRate > 0) list.push("방어");
-      if (player.evasion) list.push("연막");
-      if (player.atkBuff > 0) list.push(`공격강화 +${player.atkBuff}`);
-      if (player.atkDebuff > 0) list.push(`공격감소 -${player.atkDebuff}`);
-      if (player.poison > 0) list.push(`독 ${player.poison}`);
-
-      if (list.length === 0) return "상태 없음";
-      return list.join(" / ");
-    }
-
-    function applyPoisonAtTurnStart(state, role, enemyRole) {
-      const player = state[role];
-      let log = "";
-
-      if (player.poison > 0) {
-        player.poison -= 1;
-        player.hp = Math.max(0, player.hp - 5);
-        log += `${roleLabel(role)} ${player.character}은 독으로 5 피해를 받았다!\n`;
-
-        if (player.hp <= 0) {
-          state.winner = enemyRole;
-          state.turn = enemyRole;
-          log += `${roleLabel(role)} ${player.character}이 독으로 쓰러졌습니다!\n${roleLabel(enemyRole)} 승리!`;
-          state.log = log;
-          return true;
+      function makeRoomCode() {
+        const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+        let code = "";
+        for (let i = 0; i < 4; i++) {
+          code += chars[Math.floor(Math.random() * chars.length)];
         }
+        return code;
       }
 
-      if (log !== "") {
-        state.log = log;
+      function makePlayerFromCharacter(charName) {
+        const c = characters[charName];
+
+        return {
+          selected: true,
+          character: c.name,
+          hp: c.hp,
+          maxHp: c.hp,
+          atk: c.atk,
+          def: c.def,
+          passiveName: c.passiveName,
+          passiveDesc: c.passiveDesc,
+          skillIds: c.skillIds,
+          turnCount: 0,
+          guardRate: 0,
+          evasion: false,
+          atkBuff: 0,
+          atkDebuff: 0,
+          poison: 0,
+        };
       }
 
-      return false;
-    }
+      function emptyPlayer() {
+        return {
+          selected: false,
+          character: "",
+          hp: 0,
+          maxHp: 0,
+          atk: 0,
+          def: 0,
+          passiveName: "",
+          passiveDesc: "",
+          skillIds: [],
+          turnCount: 0,
+          guardRate: 0,
+          evasion: false,
+          atkBuff: 0,
+          atkDebuff: 0,
+          poison: 0,
+        };
+      }
 
-    function applyDamageSkill(state, attackerRole, defenderRole, basePower, extra = {}) {
-      const attacker = state[attackerRole];
-      const defender = state[defenderRole];
+      function initialOnlineState() {
+        return {
+          players: {
+            p1: true,
+            p2: false,
+          },
+          state: {
+            started: false,
+            turn: "p1",
+            winner: "",
+            p1: emptyPlayer(),
+            p2: emptyPlayer(),
+            log: "방이 생성되었습니다.\n캐릭터를 선택하세요.",
+          },
+          updatedAt: Date.now(),
+        };
+      }
 
-      let logs = [];
+      function clone(obj) {
+        return JSON.parse(JSON.stringify(obj));
+      }
 
-      if (defender.evasion) {
-        defender.evasion = false;
+      function roleLabel(role) {
+        if (currentMode === "single") {
+          return role === "p1" ? "플레이어" : "AI";
+        }
+        return role === "p1" ? "1P" : "2P";
+      }
 
-        if (Math.random() < 0.40) {
-          logs.push(`${roleLabel(defenderRole)} ${defender.character}이 연막으로 공격을 회피했다!`);
+      function enemyOf(role) {
+        return role === "p1" ? "p2" : "p1";
+      }
+
+      function getStateText(player) {
+        const list = [];
+
+        if (player.guardRate > 0) list.push("방어");
+        if (player.evasion) list.push("연막");
+        if (player.atkBuff > 0) list.push(`공격강화 +${player.atkBuff}`);
+        if (player.atkDebuff > 0) list.push(`공격감소 -${player.atkDebuff}`);
+        if (player.poison > 0) list.push(`독 ${player.poison}`);
+
+        if (list.length === 0) return "상태 없음";
+        return list.join(" / ");
+      }
+
+      function applyPoisonAtTurnStart(state, role, enemyRole) {
+        const player = state[role];
+        let log = "";
+
+        if (player.poison > 0) {
+          player.poison -= 1;
+          player.hp = Math.max(0, player.hp - 5);
+          log += `${roleLabel(role)} ${player.character}은 독으로 5 피해를 받았다!\n`;
+
+          if (player.hp <= 0) {
+            state.winner = enemyRole;
+            state.turn = enemyRole;
+            log += `${roleLabel(role)} ${player.character}이 독으로 쓰러졌습니다!\n${roleLabel(enemyRole)} 승리!`;
+            state.log = log;
+            return true;
+          }
+        }
+
+        if (log !== "") {
+          state.log = log;
+        }
+
+        return false;
+      }
+
+      function applyDamageSkill(
+        state,
+        attackerRole,
+        defenderRole,
+        basePower,
+        extra = {},
+      ) {
+        const attacker = state[attackerRole];
+        const defender = state[defenderRole];
+
+        let logs = [];
+
+        if (defender.evasion) {
+          defender.evasion = false;
+
+          if (Math.random() < 0.4) {
+            logs.push(
+              `${roleLabel(defenderRole)} ${defender.character}이 연막으로 공격을 회피했다!`,
+            );
+            return { hit: false, damage: 0, logs };
+          }
+        }
+
+        if (defender.character === "도적" && Math.random() < 0.15) {
+          logs.push(
+            `${roleLabel(defenderRole)} ${defender.character}의 패시브 [그림자 걸음] 발동!`,
+          );
+          logs.push("공격을 회피했다!");
           return { hit: false, damage: 0, logs };
         }
+
+        let randomBonus = Math.floor(Math.random() * 5);
+        let damage = basePower + attacker.atk - defender.def + randomBonus;
+
+        if (extra.bonusIfPoison && defender.poison > 0) {
+          damage += extra.bonusIfPoison;
+          logs.push("독 상태의 약점을 찔렀다!");
+        }
+
+        if (attacker.atkBuff > 0) {
+          damage += attacker.atkBuff;
+          logs.push(
+            `${roleLabel(attackerRole)} ${attacker.character}의 공격 강화 효과!`,
+          );
+          attacker.atkBuff = 0;
+        }
+
+        if (attacker.atkDebuff > 0) {
+          damage -= attacker.atkDebuff;
+          logs.push(
+            `${roleLabel(attackerRole)} ${attacker.character}은 공격 감소 상태다!`,
+          );
+          attacker.atkDebuff = 0;
+        }
+
+        if (attacker.character === "검사" && Math.random() < 0.2) {
+          damage += 8;
+          logs.push(`${attacker.character}의 패시브 [검의 호흡] 발동!`);
+        }
+
+        if (attacker.character === "마법사" && attacker.turnCount % 3 === 0) {
+          damage += 10;
+          logs.push(`${attacker.character}의 패시브 [마력 순환] 발동!`);
+        }
+
+        if (defender.guardRate > 0) {
+          damage = Math.floor(damage * (1 - defender.guardRate));
+          defender.guardRate = 0;
+          logs.push(
+            `${roleLabel(defenderRole)} ${defender.character}이 방어로 피해를 줄였다!`,
+          );
+        }
+
+        damage = Math.max(1, damage);
+        defender.hp = Math.max(0, defender.hp - damage);
+
+        return { hit: true, damage, logs };
       }
 
-      if (defender.character === "도적" && Math.random() < 0.15) {
-        logs.push(`${roleLabel(defenderRole)} ${defender.character}의 패시브 [그림자 걸음] 발동!`);
-        logs.push("공격을 회피했다!");
-        return { hit: false, damage: 0, logs };
-      }
+      function processSkill(oldState, attackerRole, skillId) {
+        const state = clone(oldState);
+        const defenderRole = enemyOf(attackerRole);
 
-      let randomBonus = Math.floor(Math.random() * 5);
-      let damage = basePower + attacker.atk - defender.def + randomBonus;
+        const attacker = state[attackerRole];
+        const defender = state[defenderRole];
+        const skill = skills[skillId] || skills.basic;
 
-      if (extra.bonusIfPoison && defender.poison > 0) {
-        damage += extra.bonusIfPoison;
-        logs.push("독 상태의 약점을 찔렀다!");
-      }
+        attacker.turnCount = (attacker.turnCount || 0) + 1;
 
-      if (attacker.atkBuff > 0) {
-        damage += attacker.atkBuff;
-        logs.push(`${roleLabel(attackerRole)} ${attacker.character}의 공격 강화 효과!`);
-        attacker.atkBuff = 0;
-      }
+        let log = "";
 
-      if (attacker.atkDebuff > 0) {
-        damage -= attacker.atkDebuff;
-        logs.push(`${roleLabel(attackerRole)} ${attacker.character}은 공격 감소 상태다!`);
-        attacker.atkDebuff = 0;
-      }
+        const diedByPoison = applyPoisonAtTurnStart(
+          state,
+          attackerRole,
+          defenderRole,
+        );
+        if (diedByPoison) {
+          return state;
+        }
 
-      if (attacker.character === "검사" && Math.random() < 0.20) {
-        damage += 8;
-        logs.push(`${attacker.character}의 패시브 [검의 호흡] 발동!`);
-      }
+        if (state.log && state.log.includes("독으로 5 피해")) {
+          log += state.log;
+        }
 
-      if (attacker.character === "마법사" && attacker.turnCount % 3 === 0) {
-        damage += 10;
-        logs.push(`${attacker.character}의 패시브 [마력 순환] 발동!`);
-      }
+        log += `${roleLabel(attackerRole)} ${attacker.character}의 [${skill.name}]!\n`;
 
-      if (defender.guardRate > 0) {
-        damage = Math.floor(damage * (1 - defender.guardRate));
-        defender.guardRate = 0;
-        logs.push(`${roleLabel(defenderRole)} ${defender.character}이 방어로 피해를 줄였다!`);
-      }
+        if (skill.type === "attack") {
+          const result = applyDamageSkill(
+            state,
+            attackerRole,
+            defenderRole,
+            skill.power,
+          );
+          log += result.logs.join("\n");
+          if (result.logs.length > 0) log += "\n";
 
-      damage = Math.max(1, damage);
-      defender.hp = Math.max(0, defender.hp - damage);
+          if (result.hit) {
+            log += `${roleLabel(defenderRole)} ${defender.character}에게 ${result.damage} 데미지!`;
+          }
+        } else if (skill.type === "guard") {
+          attacker.guardRate = skill.guardRate;
+          log += "다음에 받는 피해가 감소한다!";
+        } else if (skill.type === "attackBuff") {
+          const result = applyDamageSkill(
+            state,
+            attackerRole,
+            defenderRole,
+            skill.power,
+          );
+          log += result.logs.join("\n");
+          if (result.logs.length > 0) log += "\n";
 
-      return { hit: true, damage, logs };
-    }
+          if (result.hit) {
+            log += `${roleLabel(defenderRole)} ${defender.character}에게 ${result.damage} 데미지!\n`;
+            attacker.atkBuff += skill.buff;
+            log += `다음 공격 피해가 ${skill.buff} 증가한다!`;
+          }
+        } else if (skill.type === "heal") {
+          const before = attacker.hp;
+          attacker.hp = Math.min(attacker.maxHp, attacker.hp + skill.heal);
+          const healed = attacker.hp - before;
+          log += `HP를 ${healed} 회복했다!`;
+        } else if (skill.type === "attackDebuff") {
+          const result = applyDamageSkill(
+            state,
+            attackerRole,
+            defenderRole,
+            skill.power,
+          );
+          log += result.logs.join("\n");
+          if (result.logs.length > 0) log += "\n";
 
-    function processSkill(oldState, attackerRole, skillId) {
-      const state = clone(oldState);
-      const defenderRole = enemyOf(attackerRole);
+          if (result.hit) {
+            log += `${roleLabel(defenderRole)} ${defender.character}에게 ${result.damage} 데미지!\n`;
+            defender.atkDebuff += skill.debuff;
+            log += `${roleLabel(defenderRole)} ${defender.character}의 다음 공격 피해가 감소한다!`;
+          }
+        } else if (skill.type === "poisonAttack") {
+          const result = applyDamageSkill(
+            state,
+            attackerRole,
+            defenderRole,
+            skill.power,
+          );
+          log += result.logs.join("\n");
+          if (result.logs.length > 0) log += "\n";
 
-      const attacker = state[attackerRole];
-      const defender = state[defenderRole];
-      const skill = skills[skillId] || skills.basic;
+          if (result.hit) {
+            log += `${roleLabel(defenderRole)} ${defender.character}에게 ${result.damage} 데미지!\n`;
+            defender.poison = 3;
+            log += `${roleLabel(defenderRole)} ${defender.character}이 독 상태가 되었다!`;
+          }
+        } else if (skill.type === "weakAttack") {
+          const result = applyDamageSkill(
+            state,
+            attackerRole,
+            defenderRole,
+            skill.power,
+            {
+              bonusIfPoison: skill.bonusIfPoison,
+            },
+          );
 
-      attacker.turnCount = (attacker.turnCount || 0) + 1;
+          log += result.logs.join("\n");
+          if (result.logs.length > 0) log += "\n";
 
-      let log = "";
+          if (result.hit) {
+            log += `${roleLabel(defenderRole)} ${defender.character}에게 ${result.damage} 데미지!`;
+          }
+        } else if (skill.type === "evasion") {
+          attacker.evasion = true;
+          log += "다음 공격을 회피할 준비를 했다!";
+        }
 
-      const diedByPoison = applyPoisonAtTurnStart(state, attackerRole, defenderRole);
-      if (diedByPoison) {
+        if (defender.hp <= 0) {
+          state.winner = attackerRole;
+          state.turn = attackerRole;
+          log += `\n${roleLabel(defenderRole)} ${defender.character}이 쓰러졌습니다!\n${roleLabel(attackerRole)} 승리!`;
+        } else {
+          state.turn = defenderRole;
+          log += `\n${roleLabel(defenderRole)}의 턴입니다.`;
+        }
+
+        state.log = log;
         return state;
       }
 
-      if (state.log && state.log.includes("독으로 5 피해")) {
-        log += state.log;
+      function getSkillListForPlayer(player) {
+        return ["basic", ...(player.skillIds || [])];
       }
 
-      log += `${roleLabel(attackerRole)} ${attacker.character}의 [${skill.name}]!\n`;
+      function renderSkillButtons(state) {
+        skillButtons.innerHTML = "";
 
-      if (skill.type === "attack") {
-        const result = applyDamageSkill(state, attackerRole, defenderRole, skill.power);
-        log += result.logs.join("\n");
-        if (result.logs.length > 0) log += "\n";
+        let usable = false;
+        let player = null;
 
-        if (result.hit) {
-          log += `${roleLabel(defenderRole)} ${defender.character}에게 ${result.damage} 데미지!`;
+        if (currentMode === "single") {
+          player = state.p1;
+          usable = !state.winner && !singleBusy && state.turn === "p1";
+        } else {
+          player = state[myRole];
+          usable = !state.winner && state.turn === myRole;
         }
-      }
 
-      else if (skill.type === "guard") {
-        attacker.guardRate = skill.guardRate;
-        log += "다음에 받는 피해가 감소한다!";
-      }
+        if (!player || !player.selected) return;
 
-      else if (skill.type === "attackBuff") {
-        const result = applyDamageSkill(state, attackerRole, defenderRole, skill.power);
-        log += result.logs.join("\n");
-        if (result.logs.length > 0) log += "\n";
+        const list = getSkillListForPlayer(player);
 
-        if (result.hit) {
-          log += `${roleLabel(defenderRole)} ${defender.character}에게 ${result.damage} 데미지!\n`;
-          attacker.atkBuff += skill.buff;
-          log += `다음 공격 피해가 ${skill.buff} 증가한다!`;
-        }
-      }
+        list.forEach((skillId) => {
+          const skill = skills[skillId];
+          const btn = document.createElement("button");
+          btn.className = "skill-button";
+          btn.disabled = !usable;
 
-      else if (skill.type === "heal") {
-        const before = attacker.hp;
-        attacker.hp = Math.min(attacker.maxHp, attacker.hp + skill.heal);
-        const healed = attacker.hp - before;
-        log += `HP를 ${healed} 회복했다!`;
-      }
-
-      else if (skill.type === "attackDebuff") {
-        const result = applyDamageSkill(state, attackerRole, defenderRole, skill.power);
-        log += result.logs.join("\n");
-        if (result.logs.length > 0) log += "\n";
-
-        if (result.hit) {
-          log += `${roleLabel(defenderRole)} ${defender.character}에게 ${result.damage} 데미지!\n`;
-          defender.atkDebuff += skill.debuff;
-          log += `${roleLabel(defenderRole)} ${defender.character}의 다음 공격 피해가 감소한다!`;
-        }
-      }
-
-      else if (skill.type === "poisonAttack") {
-        const result = applyDamageSkill(state, attackerRole, defenderRole, skill.power);
-        log += result.logs.join("\n");
-        if (result.logs.length > 0) log += "\n";
-
-        if (result.hit) {
-          log += `${roleLabel(defenderRole)} ${defender.character}에게 ${result.damage} 데미지!\n`;
-          defender.poison = 3;
-          log += `${roleLabel(defenderRole)} ${defender.character}이 독 상태가 되었다!`;
-        }
-      }
-
-      else if (skill.type === "weakAttack") {
-        const result = applyDamageSkill(state, attackerRole, defenderRole, skill.power, {
-          bonusIfPoison: skill.bonusIfPoison
-        });
-
-        log += result.logs.join("\n");
-        if (result.logs.length > 0) log += "\n";
-
-        if (result.hit) {
-          log += `${roleLabel(defenderRole)} ${defender.character}에게 ${result.damage} 데미지!`;
-        }
-      }
-
-      else if (skill.type === "evasion") {
-        attacker.evasion = true;
-        log += "다음 공격을 회피할 준비를 했다!";
-      }
-
-      if (defender.hp <= 0) {
-        state.winner = attackerRole;
-        state.turn = attackerRole;
-        log += `\n${roleLabel(defenderRole)} ${defender.character}이 쓰러졌습니다!\n${roleLabel(attackerRole)} 승리!`;
-      } else {
-        state.turn = defenderRole;
-        log += `\n${roleLabel(defenderRole)}의 턴입니다.`;
-      }
-
-      state.log = log;
-      return state;
-    }
-
-    function getSkillListForPlayer(player) {
-      return ["basic", ...(player.skillIds || [])];
-    }
-
-    function renderSkillButtons(state) {
-      skillButtons.innerHTML = "";
-
-      let usable = false;
-      let player = null;
-
-      if (currentMode === "single") {
-        player = state.p1;
-        usable = !state.winner && !singleBusy && state.turn === "p1";
-      } else {
-        player = state[myRole];
-        usable = !state.winner && state.turn === myRole;
-      }
-
-      if (!player || !player.selected) return;
-
-      const list = getSkillListForPlayer(player);
-
-      list.forEach((skillId) => {
-        const skill = skills[skillId];
-        const btn = document.createElement("button");
-        btn.className = "skill-button";
-        btn.disabled = !usable;
-
-        btn.innerHTML = `
+          btn.innerHTML = `
           <div class="skill-name">${skill.name}</div>
           <div class="skill-power">${skill.powerText}</div>
           <div class="skill-desc">${skill.desc}</div>
         `;
 
-        btn.addEventListener("click", () => {
-          useSelectedSkill(skillId);
+          btn.addEventListener("click", () => {
+            useSelectedSkill(skillId);
+          });
+
+          skillButtons.appendChild(btn);
         });
+      }
 
-        skillButtons.appendChild(btn);
-      });
-    }
+      function renderCharacterList() {
+        characterList.innerHTML = "";
 
-    function renderCharacterList() {
-      characterList.innerHTML = "";
+        Object.values(characters).forEach((c) => {
+          const div = document.createElement("div");
+          div.className = "character-card";
 
-      Object.values(characters).forEach((c) => {
-        const div = document.createElement("div");
-        div.className = "character-card";
+          const skillNames = c.skillIds
+            .map((id) => `${skills[id].name} - ${skills[id].powerText}`)
+            .join("<br>");
 
-        const skillNames = c.skillIds
-          .map(id => `${skills[id].name} - ${skills[id].powerText}`)
-          .join("<br>");
-
-        div.innerHTML = `
+          div.innerHTML = `
           <div class="character-name">${c.name}</div>
           <div class="character-info">
             HP ${c.hp} / 공격 ${c.atk} / 방어 ${c.def}<br>
@@ -945,459 +1162,468 @@
           <button class="green">선택하기</button>
         `;
 
-        div.querySelector("button").addEventListener("click", () => {
-          selectMyCharacter(c.name);
+          div.querySelector("button").addEventListener("click", () => {
+            selectMyCharacter(c.name);
+          });
+
+          characterList.appendChild(div);
         });
-
-        characterList.appendChild(div);
-      });
-    }
-
-    function openOnlineMode() {
-      currentMode = "online";
-      currentRoomCode = null;
-      myRole = null;
-      singleState = null;
-      roomInput.value = "";
-      showScreen("lobby");
-    }
-
-    function openSingleMode() {
-      currentMode = "single";
-      currentRoomCode = null;
-      myRole = "p1";
-      singleState = null;
-      singleBusy = false;
-
-      selectTopLabel.textContent = "싱글 모드";
-      selectRoomCodeView.textContent = "AI";
-      myRoleText.textContent = "내 캐릭터를 선택하세요.";
-
-      renderCharacterList();
-      showScreen("select");
-    }
-
-    async function createRoom() {
-      currentMode = "online";
-
-      let code = makeRoomCode();
-      let roomRef = ref(db, "rooms/" + code);
-
-      let snapshot = await get(roomRef);
-
-      while (snapshot.exists()) {
-        code = makeRoomCode();
-        roomRef = ref(db, "rooms/" + code);
-        snapshot = await get(roomRef);
       }
 
-      await set(roomRef, initialOnlineState());
-
-      currentRoomCode = code;
-      myRole = "p1";
-
-      selectTopLabel.textContent = "방 코드";
-      roomCodeView.textContent = code;
-      selectRoomCodeView.textContent = code;
-      myRoleText.textContent = "당신은 1P입니다.";
-
-      renderCharacterList();
-      showScreen("select");
-      listenRoom(code);
-    }
-
-    async function joinRoom() {
-      currentMode = "online";
-
-      const code = roomInput.value.trim().toUpperCase();
-
-      if (code.length !== 4) {
-        alert("방 코드는 4글자입니다.");
-        return;
+      function openOnlineMode() {
+        currentMode = "online";
+        currentRoomCode = null;
+        myRole = null;
+        singleState = null;
+        roomInput.value = "";
+        showScreen("lobby");
       }
 
-      const roomRef = ref(db, "rooms/" + code);
-      const snapshot = await get(roomRef);
+      function openSingleMode() {
+        currentMode = "single";
+        currentRoomCode = null;
+        myRole = "p1";
+        singleState = null;
+        singleBusy = false;
 
-      if (!snapshot.exists()) {
-        alert("존재하지 않는 방입니다.");
-        return;
+        selectTopLabel.textContent = "싱글 모드";
+        selectRoomCodeView.textContent = "AI";
+        myRoleText.textContent = "내 캐릭터를 선택하세요.";
+
+        renderCharacterList();
+        showScreen("select");
       }
 
-      const room = snapshot.val();
+      async function createRoom() {
+        currentMode = "online";
 
-      if (room.players && room.players.p2) {
-        alert("이미 가득 찬 방입니다.");
-        return;
+        let code = makeRoomCode();
+        let roomRef = ref(db, "rooms/" + code);
+
+        let snapshot = await get(roomRef);
+
+        while (snapshot.exists()) {
+          code = makeRoomCode();
+          roomRef = ref(db, "rooms/" + code);
+          snapshot = await get(roomRef);
+        }
+
+        await set(roomRef, initialOnlineState());
+
+        currentRoomCode = code;
+        myRole = "p1";
+
+        selectTopLabel.textContent = "방 코드";
+        roomCodeView.textContent = code;
+        selectRoomCodeView.textContent = code;
+        myRoleText.textContent = "당신은 1P입니다.";
+
+        renderCharacterList();
+        showScreen("select");
+        listenRoom(code);
       }
 
-      await update(roomRef, {
-        "players/p2": true,
-        "state/log": "2P가 참가했습니다.\n각자 캐릭터를 선택하세요.",
-        updatedAt: Date.now()
-      });
+      async function joinRoom() {
+        currentMode = "online";
 
-      currentRoomCode = code;
-      myRole = "p2";
+        const code = roomInput.value.trim().toUpperCase();
 
-      selectTopLabel.textContent = "방 코드";
-      selectRoomCodeView.textContent = code;
-      myRoleText.textContent = "당신은 2P입니다.";
+        if (code.length !== 4) {
+          alert("방 코드는 4글자입니다.");
+          return;
+        }
 
-      renderCharacterList();
-      showScreen("select");
-      listenRoom(code);
-    }
-
-    async function selectMyCharacter(charName) {
-      if (currentMode === "single") {
-        startSingleBattle(charName);
-        return;
-      }
-
-      if (!currentRoomCode || !myRole) return;
-
-      const playerData = makePlayerFromCharacter(charName);
-      const updates = {};
-
-      updates[`state/${myRole}`] = playerData;
-      updates["updatedAt"] = Date.now();
-
-      await update(ref(db, "rooms/" + currentRoomCode), updates);
-
-      showScreen("waiting");
-      roomCodeView.textContent = currentRoomCode;
-      waitingText.textContent = "상대의 캐릭터 선택을 기다리는 중...";
-    }
-
-    function startSingleBattle(myCharName) {
-      const charNames = Object.keys(characters);
-      const aiCharName = charNames[Math.floor(Math.random() * charNames.length)];
-
-      singleState = {
-        started: true,
-        turn: "p1",
-        winner: "",
-        p1: makePlayerFromCharacter(myCharName),
-        p2: makePlayerFromCharacter(aiCharName),
-        log: `싱글 AI 배틀 시작!\n플레이어 ${myCharName} vs AI ${aiCharName}\n플레이어의 턴입니다.`
-      };
-
-      singleBusy = false;
-      showScreen("battle");
-      renderBattle(singleState);
-    }
-
-    function listenRoom(code) {
-      const roomRef = ref(db, "rooms/" + code);
-
-      onValue(roomRef, async (snapshot) => {
-        if (currentMode !== "online") return;
+        const roomRef = ref(db, "rooms/" + code);
+        const snapshot = await get(roomRef);
 
         if (!snapshot.exists()) {
-          alert("방이 삭제되었습니다.");
-          location.reload();
+          alert("존재하지 않는 방입니다.");
           return;
         }
 
         const room = snapshot.val();
-        await tryStartGame(room);
-        renderOnlineRoom(room);
-      });
-    }
 
-    async function tryStartGame(room) {
-      if (!currentRoomCode || myRole !== "p1") return;
+        if (room.players && room.players.p2) {
+          alert("이미 가득 찬 방입니다.");
+          return;
+        }
 
-      const state = room.state;
-      if (!state) return;
-
-      if (
-        !state.started &&
-        state.p1 &&
-        state.p2 &&
-        state.p1.selected &&
-        state.p2.selected
-      ) {
-        await update(ref(db, "rooms/" + currentRoomCode), {
-          "state/started": true,
-          "state/turn": "p1",
-          "state/log": `전투 시작!\n1P ${state.p1.character} vs 2P ${state.p2.character}\n1P의 턴입니다.`,
-          updatedAt: Date.now()
+        await update(roomRef, {
+          "players/p2": true,
+          "state/log": "2P가 참가했습니다.\n각자 캐릭터를 선택하세요.",
+          updatedAt: Date.now(),
         });
-      }
-    }
 
-    function renderOnlineRoom(room) {
-      const state = room.state;
-      if (!state) return;
+        currentRoomCode = code;
+        myRole = "p2";
 
-      const me = state[myRole];
+        selectTopLabel.textContent = "방 코드";
+        selectRoomCodeView.textContent = code;
+        myRoleText.textContent = "당신은 2P입니다.";
 
-      if (!me || !me.selected) {
+        renderCharacterList();
         showScreen("select");
-        return;
+        listenRoom(code);
       }
 
-      if (!state.started) {
+      async function selectMyCharacter(charName) {
+        if (currentMode === "single") {
+          startSingleBattle(charName);
+          return;
+        }
+
+        if (!currentRoomCode || !myRole) return;
+
+        const playerData = makePlayerFromCharacter(charName);
+        const updates = {};
+
+        updates[`state/${myRole}`] = playerData;
+        updates["updatedAt"] = Date.now();
+
+        await update(ref(db, "rooms/" + currentRoomCode), updates);
+
         showScreen("waiting");
         roomCodeView.textContent = currentRoomCode;
         waitingText.textContent = "상대의 캐릭터 선택을 기다리는 중...";
-        return;
       }
 
-      showScreen("battle");
-      renderBattle(state);
-    }
-
-    function renderBattle(state) {
-      const p1 = state.p1;
-      const p2 = state.p2;
-
-      p1Name.textContent = `${currentMode === "single" ? "플레이어" : "1P"} ${p1.character}`;
-      p2Name.textContent = `${currentMode === "single" ? "AI" : "2P"} ${p2.character}`;
-
-      p1StatText.textContent = `공격 ${p1.atk} / 방어 ${p1.def}`;
-      p2StatText.textContent = `공격 ${p2.atk} / 방어 ${p2.def}`;
-
-      p1PassiveText.textContent = `패시브: ${p1.passiveName}`;
-      p2PassiveText.textContent = `패시브: ${p2.passiveName}`;
-
-      p1StateText.textContent = getStateText(p1);
-      p2StateText.textContent = getStateText(p2);
-
-      const p1Percent = Math.max(0, p1.hp / p1.maxHp * 100);
-      const p2Percent = Math.max(0, p2.hp / p2.maxHp * 100);
-
-      p1HpText.textContent = `HP ${p1.hp} / ${p1.maxHp}`;
-      p2HpText.textContent = `HP ${p2.hp} / ${p2.maxHp}`;
-
-      p1HpFill.style.width = p1Percent + "%";
-      p2HpFill.style.width = p2Percent + "%";
-
-      battleLog.textContent = state.log || "";
-
-      if (state.winner) {
-        if (currentMode === "single") {
-          turnText.textContent = state.winner === "p1" ? "승리!" : "패배!";
-        } else {
-          turnText.textContent = state.winner === myRole ? "승리!" : "패배!";
-        }
-      } else if (currentMode === "single") {
-        if (singleBusy) {
-          turnText.textContent = "AI 행동 중...";
-        } else if (state.turn === "p1") {
-          turnText.textContent = "내 턴";
-        } else {
-          turnText.textContent = "AI 턴";
-        }
-      } else {
-        turnText.textContent = state.turn === myRole ? "내 턴" : "상대 턴";
-      }
-
-      renderSkillButtons(state);
-    }
-
-    async function onlineUseSkill(skillId) {
-      if (!currentRoomCode || !myRole) return;
-
-      const roomRef = ref(db, "rooms/" + currentRoomCode);
-      const snapshot = await get(roomRef);
-
-      if (!snapshot.exists()) return;
-
-      const room = snapshot.val();
-      const state = room.state;
-
-      if (!state.started || state.winner) return;
-
-      if (state.turn !== myRole) {
-        alert("아직 내 턴이 아닙니다.");
-        return;
-      }
-
-      const newState = processSkill(state, myRole, skillId);
-
-      await update(roomRef, {
-        state: newState,
-        updatedAt: Date.now()
-      });
-    }
-
-    function singlePlayerUseSkill(skillId) {
-      if (!singleState || singleBusy) return;
-      if (singleState.winner) return;
-      if (singleState.turn !== "p1") return;
-
-      singleState = processSkill(singleState, "p1", skillId);
-      renderBattle(singleState);
-
-      if (!singleState.winner) {
-        singleBusy = true;
-        renderBattle(singleState);
-
-        setTimeout(() => {
-          singleAiUseSkill();
-        }, 900);
-      }
-    }
-
-    function chooseAiSkill() {
-      const ai = singleState.p2;
-      const list = getSkillListForPlayer(ai);
-
-      if (ai.character === "마법사" && ai.hp <= ai.maxHp * 0.45 && Math.random() < 0.55) {
-        return "heal";
-      }
-
-      return list[Math.floor(Math.random() * list.length)];
-    }
-
-    function singleAiUseSkill() {
-      if (!singleState) return;
-
-      if (singleState.winner) {
-        singleBusy = false;
-        renderBattle(singleState);
-        return;
-      }
-
-      const skillId = chooseAiSkill();
-      singleState = processSkill(singleState, "p2", skillId);
-      singleBusy = false;
-      renderBattle(singleState);
-    }
-
-    async function useSelectedSkill(skillId) {
-      if (currentMode === "single") {
-        singlePlayerUseSkill(skillId);
-      } else {
-        await onlineUseSkill(skillId);
-      }
-    }
-
-    async function resetGame() {
-      if (currentMode === "single") {
-        if (!singleState) return;
-
-        const p1Char = singleState.p1.character;
-        const p2Char = singleState.p2.character;
+      function startSingleBattle(myCharName) {
+        const charNames = Object.keys(characters);
+        const aiCharName =
+          charNames[Math.floor(Math.random() * charNames.length)];
 
         singleState = {
           started: true,
           turn: "p1",
           winner: "",
-          p1: makePlayerFromCharacter(p1Char),
-          p2: makePlayerFromCharacter(p2Char),
-          log: "싱글 AI 배틀을 다시 시작했습니다.\n플레이어의 턴입니다."
+          p1: makePlayerFromCharacter(myCharName),
+          p2: makePlayerFromCharacter(aiCharName),
+          log: `싱글 AI 배틀 시작!\n플레이어 ${myCharName} vs AI ${aiCharName}\n플레이어의 턴입니다.`,
         };
 
         singleBusy = false;
+        showScreen("battle");
         renderBattle(singleState);
-        return;
       }
 
-      if (!currentRoomCode) return;
+      function listenRoom(code) {
+        const roomRef = ref(db, "rooms/" + code);
 
-      const roomRef = ref(db, "rooms/" + currentRoomCode);
-      const snapshot = await get(roomRef);
+        onValue(roomRef, async (snapshot) => {
+          if (currentMode !== "online") return;
 
-      if (!snapshot.exists()) return;
+          if (!snapshot.exists()) {
+            alert("방이 삭제되었습니다.");
+            location.reload();
+            return;
+          }
 
-      const room = snapshot.val();
-      const state = room.state;
+          const room = snapshot.val();
+          await tryStartGame(room);
+          renderOnlineRoom(room);
+        });
+      }
 
-      if (!state.p1.selected || !state.p2.selected) return;
+      async function tryStartGame(room) {
+        if (!currentRoomCode || myRole !== "p1") return;
 
-      const p1Char = state.p1.character;
-      const p2Char = state.p2.character;
+        const state = room.state;
+        if (!state) return;
 
-      const newState = {
-        started: true,
-        turn: "p1",
-        winner: "",
-        p1: makePlayerFromCharacter(p1Char),
-        p2: makePlayerFromCharacter(p2Char),
-        log: "게임을 다시 시작했습니다.\n1P의 턴입니다."
-      };
+        if (
+          !state.started &&
+          state.p1 &&
+          state.p2 &&
+          state.p1.selected &&
+          state.p2.selected
+        ) {
+          await update(ref(db, "rooms/" + currentRoomCode), {
+            "state/started": true,
+            "state/turn": "p1",
+            "state/log": `전투 시작!\n1P ${state.p1.character} vs 2P ${state.p2.character}\n1P의 턴입니다.`,
+            updatedAt: Date.now(),
+          });
+        }
+      }
 
-      await update(roomRef, {
-        state: newState,
-        updatedAt: Date.now()
-      });
-    }
+      function renderOnlineRoom(room) {
+        const state = room.state;
+        if (!state) return;
 
-    async function leaveRoom() {
-      if (currentMode === "single") {
+        const me = state[myRole];
+
+        if (!me || !me.selected) {
+          showScreen("select");
+          return;
+        }
+
+        if (!state.started) {
+          showScreen("waiting");
+          roomCodeView.textContent = currentRoomCode;
+          waitingText.textContent = "상대의 캐릭터 선택을 기다리는 중...";
+          return;
+        }
+
+        showScreen("battle");
+        renderBattle(state);
+      }
+
+      function renderBattle(state) {
+        const p1 = state.p1;
+        const p2 = state.p2;
+
+        p1Name.textContent = `${currentMode === "single" ? "플레이어" : "1P"} ${p1.character}`;
+        p2Name.textContent = `${currentMode === "single" ? "AI" : "2P"} ${p2.character}`;
+
+        p1StatText.textContent = `공격 ${p1.atk} / 방어 ${p1.def}`;
+        p2StatText.textContent = `공격 ${p2.atk} / 방어 ${p2.def}`;
+
+        p1PassiveText.textContent = `패시브: ${p1.passiveName} - ${p1.passiveDesc}`;
+        p2PassiveText.textContent = `패시브: ${p2.passiveName} - ${p2.passiveDesc}`;
+
+        p1StateText.textContent = getStateText(p1);
+        p2StateText.textContent = getStateText(p2);
+
+        const p1Percent = Math.max(0, (p1.hp / p1.maxHp) * 100);
+        const p2Percent = Math.max(0, (p2.hp / p2.maxHp) * 100);
+
+        p1HpText.textContent = `HP ${p1.hp} / ${p1.maxHp}`;
+        p2HpText.textContent = `HP ${p2.hp} / ${p2.maxHp}`;
+
+        p1HpFill.style.width = p1Percent + "%";
+        p2HpFill.style.width = p2Percent + "%";
+
+        battleLog.textContent = state.log || "";
+
+        if (state.winner) {
+          if (currentMode === "single") {
+            turnText.textContent = state.winner === "p1" ? "승리!" : "패배!";
+          } else {
+            turnText.textContent = state.winner === myRole ? "승리!" : "패배!";
+          }
+        } else if (currentMode === "single") {
+          if (singleBusy) {
+            turnText.textContent = "AI 행동 중...";
+          } else if (state.turn === "p1") {
+            turnText.textContent = "내 턴";
+          } else {
+            turnText.textContent = "AI 턴";
+          }
+        } else {
+          turnText.textContent = state.turn === myRole ? "내 턴" : "상대 턴";
+        }
+
+        renderSkillButtons(state);
+      }
+
+      async function onlineUseSkill(skillId) {
+        if (!currentRoomCode || !myRole) return;
+
+        const roomRef = ref(db, "rooms/" + currentRoomCode);
+        const snapshot = await get(roomRef);
+
+        if (!snapshot.exists()) return;
+
+        const room = snapshot.val();
+        const state = room.state;
+
+        if (!state.started || state.winner) return;
+
+        if (state.turn !== myRole) {
+          alert("아직 내 턴이 아닙니다.");
+          return;
+        }
+
+        const newState = processSkill(state, myRole, skillId);
+
+        await update(roomRef, {
+          state: newState,
+          updatedAt: Date.now(),
+        });
+      }
+
+      function singlePlayerUseSkill(skillId) {
+        if (!singleState || singleBusy) return;
+        if (singleState.winner) return;
+        if (singleState.turn !== "p1") return;
+
+        singleState = processSkill(singleState, "p1", skillId);
+        renderBattle(singleState);
+
+        if (!singleState.winner) {
+          singleBusy = true;
+          renderBattle(singleState);
+
+          setTimeout(() => {
+            singleAiUseSkill();
+          }, 900);
+        }
+      }
+
+      function chooseAiSkill() {
+        const ai = singleState.p2;
+        const list = getSkillListForPlayer(ai);
+
+        const healSkill = list.find((id) => skills[id].type === "heal");
+
+        if (healSkill && ai.hp <= ai.maxHp * 0.45 && Math.random() < 0.65) {
+          return healSkill;
+        }
+
+        const guardSkill = list.find((id) => skills[id].type === "guard");
+
+        if (guardSkill && ai.hp <= ai.maxHp * 0.35 && Math.random() < 0.45) {
+          return guardSkill;
+        }
+
+        return list[Math.floor(Math.random() * list.length)];
+      }
+
+      function singleAiUseSkill() {
+        if (!singleState) return;
+
+        if (singleState.winner) {
+          singleBusy = false;
+          renderBattle(singleState);
+          return;
+        }
+
+        const skillId = chooseAiSkill();
+        singleState = processSkill(singleState, "p2", skillId);
+        singleBusy = false;
+        renderBattle(singleState);
+      }
+
+      async function useSelectedSkill(skillId) {
+        if (currentMode === "single") {
+          singlePlayerUseSkill(skillId);
+        } else {
+          await onlineUseSkill(skillId);
+        }
+      }
+
+      async function resetGame() {
+        if (currentMode === "single") {
+          if (!singleState) return;
+
+          const p1Char = singleState.p1.character;
+          const p2Char = singleState.p2.character;
+
+          singleState = {
+            started: true,
+            turn: "p1",
+            winner: "",
+            p1: makePlayerFromCharacter(p1Char),
+            p2: makePlayerFromCharacter(p2Char),
+            log: "싱글 AI 배틀을 다시 시작했습니다.\n플레이어의 턴입니다.",
+          };
+
+          singleBusy = false;
+          renderBattle(singleState);
+          return;
+        }
+
+        if (!currentRoomCode) return;
+
+        const roomRef = ref(db, "rooms/" + currentRoomCode);
+        const snapshot = await get(roomRef);
+
+        if (!snapshot.exists()) return;
+
+        const room = snapshot.val();
+        const state = room.state;
+
+        if (!state.p1.selected || !state.p2.selected) return;
+
+        const p1Char = state.p1.character;
+        const p2Char = state.p2.character;
+
+        const newState = {
+          started: true,
+          turn: "p1",
+          winner: "",
+          p1: makePlayerFromCharacter(p1Char),
+          p2: makePlayerFromCharacter(p2Char),
+          log: "게임을 다시 시작했습니다.\n1P의 턴입니다.",
+        };
+
+        await update(roomRef, {
+          state: newState,
+          updatedAt: Date.now(),
+        });
+      }
+
+      async function leaveRoom() {
+        if (currentMode === "single") {
+          currentMode = null;
+          singleState = null;
+          singleBusy = false;
+          showScreen("mode");
+          return;
+        }
+
+        if (!currentRoomCode || !myRole) {
+          location.reload();
+          return;
+        }
+
+        if (myRole === "p1") {
+          await remove(ref(db, "rooms/" + currentRoomCode));
+        } else {
+          await update(ref(db, "rooms/" + currentRoomCode), {
+            "players/p2": false,
+            "state/started": false,
+            "state/p2": emptyPlayer(),
+            "state/log": "2P가 나갔습니다.",
+            updatedAt: Date.now(),
+          });
+          location.reload();
+        }
+      }
+
+      function backToMode() {
         currentMode = null;
+        currentRoomCode = null;
+        myRole = null;
         singleState = null;
         singleBusy = false;
         showScreen("mode");
-        return;
       }
 
-      if (!currentRoomCode || !myRole) {
+      onlineModeBtn.addEventListener("click", openOnlineMode);
+      singleModeBtn.addEventListener("click", openSingleMode);
+
+      createRoomBtn.addEventListener("click", createRoom);
+      joinRoomBtn.addEventListener("click", joinRoom);
+      backToModeBtn.addEventListener("click", backToMode);
+
+      resetBtn.addEventListener("click", resetGame);
+      leaveBtn.addEventListener("click", leaveRoom);
+      waitingBackBtn.addEventListener("click", leaveRoom);
+
+      selectBackBtn.addEventListener("click", async () => {
+        if (currentMode === "single") {
+          backToMode();
+          return;
+        }
+
+        if (currentRoomCode && myRole === "p1") {
+          await remove(ref(db, "rooms/" + currentRoomCode));
+        }
+
         location.reload();
-        return;
-      }
+      });
 
-      if (myRole === "p1") {
-        await remove(ref(db, "rooms/" + currentRoomCode));
-      } else {
-        await update(ref(db, "rooms/" + currentRoomCode), {
-          "players/p2": false,
-          "state/started": false,
-          "state/p2": emptyPlayer(),
-          "state/log": "2P가 나갔습니다.",
-          updatedAt: Date.now()
-        });
-        location.reload();
-      }
-    }
+      copyCodeBtn.addEventListener("click", async () => {
+        if (!currentRoomCode) return;
 
-    function backToMode() {
-      currentMode = null;
-      currentRoomCode = null;
-      myRole = null;
-      singleState = null;
-      singleBusy = false;
-      showScreen("mode");
-    }
-
-    onlineModeBtn.addEventListener("click", openOnlineMode);
-    singleModeBtn.addEventListener("click", openSingleMode);
-
-    createRoomBtn.addEventListener("click", createRoom);
-    joinRoomBtn.addEventListener("click", joinRoom);
-    backToModeBtn.addEventListener("click", backToMode);
-
-    resetBtn.addEventListener("click", resetGame);
-    leaveBtn.addEventListener("click", leaveRoom);
-    waitingBackBtn.addEventListener("click", leaveRoom);
-
-    selectBackBtn.addEventListener("click", async () => {
-      if (currentMode === "single") {
-        backToMode();
-        return;
-      }
-
-      if (currentRoomCode && myRole === "p1") {
-        await remove(ref(db, "rooms/" + currentRoomCode));
-      }
-
-      location.reload();
-    });
-
-    copyCodeBtn.addEventListener("click", async () => {
-      if (!currentRoomCode) return;
-
-      try {
-        await navigator.clipboard.writeText(currentRoomCode);
-        alert("방 코드 복사 완료!");
-      } catch {
-        alert("복사 실패. 방 코드를 직접 보내줘: " + currentRoomCode);
-      }
-    });
-  </script>
-</body>
+        try {
+          await navigator.clipboard.writeText(currentRoomCode);
+          alert("방 코드 복사 완료!");
+        } catch {
+          alert("복사 실패. 방 코드를 직접 보내줘: " + currentRoomCode);
+        }
+      });
+    </script>
+  </body>
 </html>
