@@ -487,6 +487,38 @@
       }
     };
 
+        const characters = {
+      "검사": {
+        name: "검사",
+        hp: 110,
+        atk: 15,
+        def: 8,
+        passiveName: "검의 호흡",
+        passiveDesc: "공격 시 20% 확률로 추가 피해 8",
+        skillIds: ["slash", "guard", "halfmoon"]
+      },
+
+      "마법사": {
+        name: "마법사",
+        hp: 80,
+        atk: 22,
+        def: 3,
+        passiveName: "마력 순환",
+        passiveDesc: "3번째 자신의 턴마다 피해 +10",
+        skillIds: ["fireball", "ice", "heal"]
+      },
+
+      "도적": {
+        name: "도적",
+        hp: 90,
+        atk: 13,
+        def: 5,
+        passiveName: "그림자 걸음",
+        passiveDesc: "공격받을 때 15% 확률로 회피",
+        skillIds: ["poison", "weak", "smoke"]
+      }
+    };
+
     let currentMode = null;
     let currentRoomCode = null;
     let myRole = null;
