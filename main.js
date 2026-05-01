@@ -969,12 +969,27 @@ const modeSelect = document.getElementById("modeSelect");
           const btn = document.createElement("button");
           const mainLabel = `메인${info.slot + 1}`;
           const subLabel = `서브${subIndex - 1}`;
+          const canRotate = alive(sub);
+          const subSkillNames = canRotate
+            ? getSkillListForPlayer(sub)
+                .map((id) => skills[id]?.name)
+                .filter(Boolean)
+                .join(" · ")
+            : "사용 불가";
 
           btn.className = "rotate-button secondary";
-          btn.disabled = !alive(sub);
-          btn.textContent = alive(sub)
-            ? `로테이션: ${mainLabel} ${actor.character} ↔ ${subLabel} ${sub?.character || "빈 자리"}`
-            : `로테이션 불가: ${subLabel} ${sub?.character || "빈 자리"} [전투불능]`;
+          btn.disabled = !canRotate;
+          btn.innerHTML = canRotate
+            ? `
+              <div class="rotate-title">로테이션 가능</div>
+              <div class="rotate-main">${mainLabel} ${actor.character} ↔ ${subLabel} ${sub?.character || "빈 자리"}</div>
+              <div class="rotate-subskill">서브스킬: ${subSkillNames}</div>
+            `
+            : `
+              <div class="rotate-title unavailable">로테이션 불가</div>
+              <div class="rotate-main">${subLabel} ${sub?.character || "빈 자리"} [전투불능]</div>
+              <div class="rotate-subskill">서브스킬: ${subSkillNames}</div>
+            `;
 
           btn.addEventListener("click", () => handlePartyRotate(subIndex));
           partyActionButtons.appendChild(btn);
