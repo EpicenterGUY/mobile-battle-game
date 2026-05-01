@@ -17,6 +17,16 @@ void BATTLE_MODULE;
 void ONLINE_MODULE;
 void UI_MODULE;
 
+
+let currentMode = null;
+let currentRoomCode = null;
+let mySide = null;
+let partySelection = [];
+let singlePartyState = null;
+let latestOnlineBattle = null;
+let pendingPartySkillId = null;
+let partyBusy = false;
+
 const modeSelect = document.getElementById("modeSelect");
       const lobby = document.getElementById("lobby");
       const waiting = document.getElementById("waiting");
@@ -25,7 +35,6 @@ const modeSelect = document.getElementById("modeSelect");
 
       const onlineModeBtn = document.getElementById("onlineModeBtn");
       const singleModeBtn = document.getElementById("singleModeBtn");
-      const startBtn = document.getElementById("startBtn");
       const createRoomBtn = document.getElementById("createRoomBtn");
       const joinRoomBtn = document.getElementById("joinRoomBtn");
       const roomInput = document.getElementById("roomInput");
@@ -1266,7 +1275,6 @@ const modeSelect = document.getElementById("modeSelect");
 
       onlineModeBtn.addEventListener("click", openOnlineMode);
       singleModeBtn.addEventListener("click", openSingleMode);
-      if (startBtn) startBtn.addEventListener("click", openSingleMode);
       createRoomBtn.addEventListener("click", createRoom);
       joinRoomBtn.addEventListener("click", joinRoom);
       backToModeBtn.addEventListener("click", backToMode);
