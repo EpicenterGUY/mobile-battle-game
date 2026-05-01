@@ -1,4 +1,13 @@
-import { db, ref, set, update, get, onValue, remove } from "./firebase.js";
+import {
+  db,
+  ref,
+  set,
+  update,
+  get,
+  onValue,
+  remove,
+  ensureFirebaseReady,
+} from "./firebase.js";
 import { skills, characters } from "./data.js";
 import { BATTLE_MODULE } from "./battle.js";
 import { ONLINE_MODULE } from "./online.js";
@@ -510,7 +519,9 @@ const modeSelect = document.getElementById("modeSelect");
 
 
 
-      function ensureOnlineAvailable() {
+      async function ensureOnlineAvailable() {
+        await ensureFirebaseReady();
+
         if (!db || !ref || !get || !set || !update || !onValue || !remove) {
           alert("온라인 모드를 불러오지 못했습니다. 네트워크 상태를 확인한 뒤 다시 시도해 주세요.");
           return false;
@@ -519,8 +530,8 @@ const modeSelect = document.getElementById("modeSelect");
         return true;
       }
 
-      function openOnlineMode() {
-        if (!ensureOnlineAvailable()) return;
+      async function openOnlineMode() {
+        if (!(await ensureOnlineAvailable())) return;
 
         currentMode = "online";
         currentRoomCode = null;
@@ -568,7 +579,7 @@ const modeSelect = document.getElementById("modeSelect");
       }
 
       async function createRoom() {
-        if (!ensureOnlineAvailable()) return;
+        if (!(await ensureOnlineAvailable())) return;
 
         currentMode = "online";
 
@@ -601,7 +612,7 @@ const modeSelect = document.getElementById("modeSelect");
       }
 
       async function joinRoom() {
-        if (!ensureOnlineAvailable()) return;
+        if (!(await ensureOnlineAvailable())) return;
 
         currentMode = "online";
 
