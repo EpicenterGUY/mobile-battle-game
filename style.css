@@ -115,6 +115,33 @@
         margin-top: 12px;
       }
 
+
+      .recommend-area {
+        margin-top: 12px;
+      }
+
+      .recommend-title {
+        font-size: 13px;
+        color: #d1d5db;
+        font-weight: 900;
+        margin-bottom: 8px;
+      }
+
+      .recommend-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+
+      .recommend-btn {
+        margin-top: 0;
+        padding: 10px;
+        font-size: 13px;
+        line-height: 1.35;
+        font-weight: 800;
+        background: #22d3ee;
+      }
+
       .character-card,
       .unit-row {
         background: #111827;
