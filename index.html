@@ -975,10 +975,69 @@
       return list[Math.floor(Math.random() * list.length)];
     }
 
+    function tryAiRotate() {
+      if (!singlePartyState || singlePartyState.winner) return false;
+
+      const state = singlePartyState;
+      const info = getTurnInfo(state);
+      if (info.side !== "ai") return false;
+
+      const team = state.aiTeam;
+      const actor = team[info.slot];
+      if (!alive(actor)) return false;
+
+      const aliveSubs = [2, 3].filter(i => alive(team[i]));
+      if (aliveSubs.length === 0) return false;
+
+      const hpRate = actor.hp / actor.maxHp;
+      if (hpRate > 0.35) return false;
+      if (Math.random() > 0.65) return false;
+
+      let log = applyPartyPoisonStart(state, "ai", info.slot);
+
+      if (!alive(actor)) {
+        log += `AI ${actor.character}이 독으로 쓰러져 로테이션할 수 없습니다.`;
+        state.log = log;
+        autoPromoteAll(state);
+
+        if (checkPartyWinner(state)) {
+          state.log += `
+${state.winner === "player" ? "플레이어" : "AI"} 승리!`;
+        } else {
+          advancePartyTurn(state);
+        }
+
+        renderPartyBattle();
+        triggerAiIfNeeded();
+        return true;
+      }
+
+      aliveSubs.sort((a, b) => {
+        const aRate = team[a].hp / team[a].maxHp;
+        const bRate = team[b].hp / team[b].maxHp;
+        return bRate - aRate;
+      });
+
+      const subIndex = aliveSubs[0];
+      const sub = team[subIndex];
+
+      [team[info.slot], team[subIndex]] = [team[subIndex], team[info.slot]];
+      log += `AI 로테이션! ${actor.character} ↔ ${sub.character}`;
+
+      state.log = log;
+      advancePartyTurn(state);
+      renderPartyBattle();
+      triggerAiIfNeeded();
+      return true;
+    }
+
     function aiPartyAction() {
       if (!singlePartyState || singlePartyState.winner) return;
       const info = getTurnInfo(singlePartyState);
       if (info.side !== "ai") return;
+
+      if (tryAiRotate()) return;
+
       const actor = singlePartyState.aiTeam[info.slot];
       const skillId = choosePartyAiSkill(actor);
       const skill = skills[skillId];
