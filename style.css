@@ -154,6 +154,28 @@
         line-height: 1.4;
       }
 
+      .rotate-title {
+        font-size: 13px;
+        font-weight: 900;
+        color: #064e3b;
+      }
+
+      .rotate-title.unavailable {
+        color: #7f1d1d;
+      }
+
+      .rotate-main {
+        font-size: 13px;
+        font-weight: 800;
+        margin-top: 2px;
+      }
+
+      .rotate-subskill {
+        font-size: 12px;
+        margin-top: 4px;
+        opacity: 0.9;
+      }
+
       .skill-name {
         font-size: 16px;
         font-weight: 900;
