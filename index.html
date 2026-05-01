@@ -7,218 +7,49 @@
 
   <style>
     * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: #111827;
-      color: white;
-    }
-
-    .app {
-      max-width: 520px;
-      margin: 0 auto;
-      min-height: 100vh;
-      padding: 18px;
-    }
-
+    body { margin: 0; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #111827; color: white; }
+    .app { max-width: 520px; margin: 0 auto; min-height: 100vh; padding: 18px; }
     h1 { font-size: 28px; margin: 12px 0 6px; text-align: center; }
     h2 { text-align: center; margin: 8px 0; }
-
-    .subtitle {
-      text-align: center;
-      color: #9ca3af;
-      margin-bottom: 20px;
-      font-size: 14px;
-    }
-
-    .card {
-      background: #1f2937;
-      border: 1px solid #374151;
-      border-radius: 18px;
-      padding: 16px;
-      margin-bottom: 14px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.25);
-    }
-
+    .subtitle { text-align: center; color: #9ca3af; margin-bottom: 20px; font-size: 14px; }
+    .card { background: #1f2937; border: 1px solid #374151; border-radius: 18px; padding: 16px; margin-bottom: 14px; box-shadow: 0 8px 20px rgba(0,0,0,0.25); }
     .hidden { display: none; }
-
-    button {
-      width: 100%;
-      border: none;
-      border-radius: 14px;
-      padding: 14px;
-      font-size: 16px;
-      font-weight: 800;
-      margin-top: 10px;
-      background: #60a5fa;
-      color: #111827;
-    }
-
-    button:disabled {
-      background: #4b5563;
-      color: #9ca3af;
-    }
-
-    input {
-      width: 100%;
-      border: 1px solid #4b5563;
-      background: #111827;
-      color: white;
-      border-radius: 14px;
-      padding: 14px;
-      font-size: 18px;
-      text-align: center;
-      text-transform: uppercase;
-    }
-
-    .room-code {
-      font-size: 34px;
-      font-weight: 900;
-      text-align: center;
-      letter-spacing: 4px;
-      color: #facc15;
-      margin: 10px 0;
-    }
-
-    .status {
-      font-size: 14px;
-      color: #d1d5db;
-      text-align: center;
-      line-height: 1.6;
-    }
-
+    button { width: 100%; border: none; border-radius: 14px; padding: 14px; font-size: 16px; font-weight: 800; margin-top: 10px; background: #60a5fa; color: #111827; }
+    button:disabled { background: #4b5563; color: #9ca3af; }
+    input { width: 100%; border: 1px solid #4b5563; background: #111827; color: white; border-radius: 14px; padding: 14px; font-size: 18px; text-align: center; text-transform: uppercase; }
+    .room-code { font-size: 34px; font-weight: 900; text-align: center; letter-spacing: 4px; color: #facc15; margin: 10px 0; }
+    .status { font-size: 14px; color: #d1d5db; text-align: center; line-height: 1.6; }
     .mode-title { font-size: 18px; font-weight: 900; margin-bottom: 8px; }
     .mode-desc { color: #d1d5db; font-size: 14px; line-height: 1.6; }
-
-    .character-grid {
-      display: grid;
-      gap: 12px;
-      margin-top: 12px;
-    }
-
-    .character-card, .unit-row {
-      background: #111827;
-      border: 1px solid #374151;
-      border-radius: 16px;
-      padding: 14px;
-    }
-
+    .character-grid { display: grid; gap: 12px; margin-top: 12px; }
+    .character-card, .unit-row { background: #111827; border: 1px solid #374151; border-radius: 16px; padding: 14px; }
     .character-name { font-size: 20px; font-weight: 900; margin-bottom: 6px; }
     .character-info { color: #d1d5db; font-size: 14px; line-height: 1.6; }
     .passive { color: #facc15; font-weight: 800; }
-
-    .battle-top {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
-    .player-box {
-      background: #111827;
-      border: 1px solid #374151;
-      border-radius: 16px;
-      padding: 12px;
-    }
-
-    .player-name { font-weight: 900; margin-bottom: 8px; font-size: 16px; }
-    .stat-text { font-size: 13px; color: #9ca3af; margin-bottom: 6px; line-height: 1.5; }
-    .state-text { font-size: 13px; color: #facc15; margin-bottom: 6px; line-height: 1.5; min-height: 18px; }
-    .hp-text { font-size: 14px; color: #d1d5db; margin-bottom: 6px; }
-
-    .hpbar {
-      width: 100%;
-      height: 18px;
-      background: #374151;
-      border-radius: 999px;
-      overflow: hidden;
-    }
-
-    .hpfill {
-      height: 100%;
-      width: 100%;
-      background: #22c55e;
-      transition: width 0.25s;
-    }
-
-    .turn {
-      text-align: center;
-      font-size: 20px;
-      font-weight: 900;
-      margin: 16px 0 8px;
-    }
-
-    .skill-area, .party-actions {
-      display: grid;
-      gap: 8px;
-      margin-top: 8px;
-    }
-
+    .skill-area, .party-actions { display: grid; gap: 8px; margin-top: 8px; }
     .skill-button, .target-button, .rotate-button { text-align: left; line-height: 1.4; }
     .skill-name { font-size: 16px; font-weight: 900; }
     .skill-power { font-size: 12px; font-weight: 800; color: #111827; opacity: 0.95; margin-top: 3px; }
     .skill-desc { font-size: 12px; color: #111827; opacity: 0.85; margin-top: 3px; }
-
-    .log {
-      white-space: pre-line;
-      background: #030712;
-      border: 1px solid #374151;
-      border-radius: 14px;
-      padding: 14px;
-      min-height: 120px;
-      line-height: 1.6;
-      color: #e5e7eb;
-    }
-
+    .log { white-space: pre-line; background: #030712; border: 1px solid #374151; border-radius: 14px; padding: 14px; min-height: 120px; line-height: 1.6; color: #e5e7eb; }
     .small { font-size: 13px; color: #9ca3af; text-align: center; margin-top: 10px; line-height: 1.5; }
     .danger { background: #f87171; color: #111827; }
     .secondary { background: #a78bfa; color: #111827; }
     .green { background: #34d399; color: #111827; }
     .yellow { background: #facc15; color: #111827; }
     .line { border: 0; border-top: 1px solid #374151; margin: 18px 0; }
-
-    .party-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
-    .party-title {
-      font-size: 16px;
-      font-weight: 900;
-      margin-bottom: 8px;
-      text-align: center;
-    }
-
-    .party-label {
-      font-size: 13px;
-      color: #facc15;
-      font-weight: 900;
-      margin: 8px 0 6px;
-    }
-
-    .unit-row {
-      padding: 10px;
-      margin-bottom: 8px;
-    }
-
-    .unit-row.active {
-      border-color: #facc15;
-      box-shadow: 0 0 0 1px #facc15 inset;
-    }
-
-    .unit-row.dead {
-      opacity: 0.45;
-      border-color: #4b5563;
-      background: #0f172a;
-    }
-
-    .unit-row.dead .unit-name {
-      color: #f87171;
-    }
-
+    .party-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .party-title { font-size: 16px; font-weight: 900; margin-bottom: 8px; text-align: center; }
+    .party-label { font-size: 13px; color: #facc15; font-weight: 900; margin: 8px 0 6px; }
+    .unit-row { padding: 10px; margin-bottom: 8px; }
+    .unit-row.active { border-color: #facc15; box-shadow: 0 0 0 1px #facc15 inset; }
+    .unit-row.dead { opacity: 0.45; border-color: #4b5563; background: #0f172a; }
+    .unit-row.dead .unit-name { color: #f87171; }
     .unit-name { font-size: 14px; font-weight: 900; margin-bottom: 4px; }
     .unit-detail { font-size: 12px; color: #d1d5db; line-height: 1.4; }
+    .hpbar { width: 100%; height: 18px; background: #374151; border-radius: 999px; overflow: hidden; }
+    .hpfill { height: 100%; width: 100%; background: #22c55e; transition: width 0.25s; }
+    .turn { text-align: center; font-size: 20px; font-weight: 900; margin: 16px 0 8px; }
   </style>
 </head>
 
@@ -230,10 +61,10 @@
     <section id="modeSelect" class="card">
       <div class="mode-title">모드 선택</div>
       <div class="mode-desc">
-        온라인 멀티는 기존 1대1 방식입니다.<br>
-        싱글 AI 배틀은 4인 파티 / 메인 2명 / 서브 2명 베타입니다.
+        온라인 멀티도 4인 파티 베타로 확장되었습니다.<br>
+        싱글 AI와 온라인 모두 메인 2명 / 서브 2명 구조입니다.
       </div>
-      <button id="onlineModeBtn">온라인 멀티</button>
+      <button id="onlineModeBtn">온라인 멀티 4인 파티</button>
       <button id="singleModeBtn" class="yellow">싱글 AI 4인 파티</button>
     </section>
 
@@ -243,7 +74,7 @@
       <input id="roomInput" maxlength="4" placeholder="방 코드 입력" />
       <button id="joinRoomBtn">방 참가</button>
       <button id="backToModeBtn" class="secondary">모드 선택으로</button>
-      <div class="small">온라인은 현재 1대1 전투 버전입니다.</div>
+      <div class="small">방을 만들거나 참가한 뒤 파티 4명을 선택합니다.</div>
     </section>
 
     <section id="waiting" class="card hidden">
@@ -255,56 +86,29 @@
     </section>
 
     <section id="selectCharacter" class="card hidden">
-      <div class="status" id="selectTopLabel">방 코드</div>
-      <div id="selectRoomCodeView" class="room-code">----</div>
-      <h2 id="selectTitle">캐릭터 선택</h2>
-      <div id="myRoleText" class="status">당신은 1P입니다.</div>
+      <div class="status" id="selectTopLabel">파티 선택</div>
+      <div id="selectRoomCodeView" class="room-code">0/4</div>
+      <h2 id="selectTitle">파티 4명 선택</h2>
+      <div id="myRoleText" class="status">선택 순서대로 1,2번은 메인 / 3,4번은 서브입니다.</div>
       <div id="characterList" class="character-grid"></div>
       <button id="selectBackBtn" class="secondary">뒤로가기</button>
-    </section>
-
-    <section id="battle" class="card hidden">
-      <div class="battle-top">
-        <div class="player-box">
-          <div id="p1Name" class="player-name">1P</div>
-          <div id="p1StatText" class="stat-text">공격 0 / 방어 0</div>
-          <div id="p1PassiveText" class="stat-text">패시브 없음</div>
-          <div id="p1StateText" class="state-text">상태 없음</div>
-          <div id="p1HpText" class="hp-text">HP 100 / 100</div>
-          <div class="hpbar"><div id="p1HpFill" class="hpfill"></div></div>
-        </div>
-        <div class="player-box">
-          <div id="p2Name" class="player-name">2P</div>
-          <div id="p2StatText" class="stat-text">공격 0 / 방어 0</div>
-          <div id="p2PassiveText" class="stat-text">패시브 없음</div>
-          <div id="p2StateText" class="state-text">상태 없음</div>
-          <div id="p2HpText" class="hp-text">HP 100 / 100</div>
-          <div class="hpbar"><div id="p2HpFill" class="hpfill"></div></div>
-        </div>
-      </div>
-      <div id="turnText" class="turn">대기 중...</div>
-      <div id="skillButtons" class="skill-area"></div>
-      <button id="resetBtn" class="secondary">다시 시작</button>
-      <div style="height: 14px;"></div>
-      <div id="battleLog" class="log">전투 로그</div>
-      <button id="leaveBtn" class="danger">나가기</button>
     </section>
 
     <section id="partyBattle" class="card hidden">
       <div class="party-grid">
         <div>
-          <div class="party-title">플레이어</div>
+          <div id="leftPartyTitle" class="party-title">플레이어</div>
           <div class="party-label">메인</div>
-          <div id="playerMainList"></div>
+          <div id="leftMainList"></div>
           <div class="party-label">서브</div>
-          <div id="playerSubList"></div>
+          <div id="leftSubList"></div>
         </div>
         <div>
-          <div class="party-title">AI</div>
+          <div id="rightPartyTitle" class="party-title">AI</div>
           <div class="party-label">메인</div>
-          <div id="aiMainList"></div>
+          <div id="rightMainList"></div>
           <div class="party-label">서브</div>
-          <div id="aiSubList"></div>
+          <div id="rightSubList"></div>
         </div>
       </div>
 
@@ -337,11 +141,11 @@
     const db = getDatabase(app);
 
     const skills = {
-      basic: { id: "basic", name: "기본 공격", type: "attack", power: 10, powerText: "위력 10 / 적 1명", desc: "기본 피해를 준다." },
-      slash: { id: "slash", name: "일섬", type: "attack", power: 20, powerText: "위력 20 / 적 1명", desc: "빠르게 베어 큰 피해를 준다." },
+      basic: { id: "basic", name: "기본 공격", type: "attack", power: 10, powerText: "위력 10 / 적 메인 1명", desc: "기본 피해를 준다." },
+      slash: { id: "slash", name: "일섬", type: "attack", power: 20, powerText: "위력 20 / 적 메인 1명", desc: "빠르게 베어 큰 피해를 준다." },
       guard: { id: "guard", name: "철벽 자세", type: "guard", guardRate: 0.5, powerText: "피해 감소 50% / 자신", desc: "다음에 받는 피해를 50% 줄인다." },
       halfmoon: { id: "halfmoon", name: "반월참", type: "attackBuff", power: 12, buff: 7, powerText: "위력 12 / 다음 공격 +7", desc: "피해를 주고 다음 공격 피해를 강화한다." },
-      fireball: { id: "fireball", name: "화염구", type: "attack", power: 23, powerText: "위력 23 / 적 1명", desc: "강한 마법 피해를 준다." },
+      fireball: { id: "fireball", name: "화염구", type: "attack", power: 23, powerText: "위력 23 / 적 메인 1명", desc: "강한 마법 피해를 준다." },
       ice: { id: "ice", name: "얼음창", type: "attackDebuff", power: 15, debuff: 6, powerText: "위력 15 / 다음 공격 피해 -6", desc: "피해를 주고 상대의 다음 공격 피해를 줄인다." },
       heal: { id: "heal", name: "치유의 빛", type: "heal", heal: 25, powerText: "회복 25 / 자신", desc: "자신의 HP를 회복한다." },
       poison: { id: "poison", name: "독침", type: "poisonAttack", power: 10, powerText: "위력 10 / 독 3턴", desc: "피해를 주고 상대를 독 상태로 만든다." },
@@ -349,19 +153,19 @@
       smoke: { id: "smoke", name: "연막", type: "evasion", powerText: "회피 40% / 자신", desc: "다음 공격을 40% 확률로 회피한다." },
       shield_bash: { id: "shield_bash", name: "방패 강타", type: "attackDebuff", power: 12, debuff: 5, powerText: "위력 12 / 다음 공격 피해 -5", desc: "방패로 공격하고 상대의 다음 공격을 약화한다." },
       fortress: { id: "fortress", name: "수호 자세", type: "guard", guardRate: 0.6, powerText: "피해 감소 60% / 자신", desc: "다음에 받는 피해를 크게 줄인다." },
-      heavy_strike: { id: "heavy_strike", name: "묵직한 일격", type: "attack", power: 18, powerText: "위력 18 / 적 1명", desc: "느리지만 강한 일격을 가한다." },
-      berserk_axe: { id: "berserk_axe", name: "광란의 도끼", type: "attack", power: 28, powerText: "위력 28 / 적 1명", desc: "강력한 도끼 공격을 가한다." },
+      heavy_strike: { id: "heavy_strike", name: "묵직한 일격", type: "attack", power: 18, powerText: "위력 18 / 적 메인 1명", desc: "느리지만 강한 일격을 가한다." },
+      berserk_axe: { id: "berserk_axe", name: "광란의 도끼", type: "attack", power: 28, powerText: "위력 28 / 적 메인 1명", desc: "강력한 도끼 공격을 가한다." },
       blood_slash: { id: "blood_slash", name: "피의 참격", type: "attackBuff", power: 16, buff: 6, powerText: "위력 16 / 다음 공격 +6", desc: "피를 끓어오르게 해 다음 공격을 강화한다." },
       rage: { id: "rage", name: "분노 폭발", type: "attackBuff", power: 8, buff: 10, powerText: "위력 8 / 다음 공격 +10", desc: "약한 피해를 주고 다음 공격을 크게 강화한다." },
       priest_heal: { id: "priest_heal", name: "치유", type: "heal", heal: 32, powerText: "회복 32 / 자신", desc: "자신의 HP를 크게 회복한다." },
-      judgment: { id: "judgment", name: "빛의 심판", type: "attack", power: 18, powerText: "위력 18 / 적 1명", desc: "성스러운 빛으로 피해를 준다." },
+      judgment: { id: "judgment", name: "빛의 심판", type: "attack", power: 18, powerText: "위력 18 / 적 메인 1명", desc: "성스러운 빛으로 피해를 준다." },
       blessing: { id: "blessing", name: "축복", type: "attackBuff", power: 5, buff: 8, powerText: "위력 5 / 다음 공격 +8", desc: "약한 피해를 주고 다음 공격을 강화한다." },
-      pierce_arrow: { id: "pierce_arrow", name: "관통 화살", type: "attack", power: 19, powerText: "위력 19 / 적 1명", desc: "날카로운 화살로 안정적인 피해를 준다." },
-      rapid_shot: { id: "rapid_shot", name: "연속 사격", type: "attack", power: 16, powerText: "위력 16 / 적 1명", desc: "빠른 사격으로 피해를 준다." },
+      pierce_arrow: { id: "pierce_arrow", name: "관통 화살", type: "attack", power: 19, powerText: "위력 19 / 적 메인 1명", desc: "날카로운 화살로 안정적인 피해를 준다." },
+      rapid_shot: { id: "rapid_shot", name: "연속 사격", type: "attack", power: 16, powerText: "위력 16 / 적 메인 1명", desc: "빠른 사격으로 피해를 준다." },
       focus_aim: { id: "focus_aim", name: "집중 조준", type: "attackBuff", power: 7, buff: 12, powerText: "위력 7 / 다음 공격 +12", desc: "가벼운 피해를 주고 다음 공격을 크게 강화한다." },
       curse: { id: "curse", name: "저주", type: "attackDebuff", power: 8, debuff: 8, powerText: "위력 8 / 다음 공격 피해 -8", desc: "저주를 걸어 상대의 다음 공격을 약화한다." },
-      soul_drain: { id: "soul_drain", name: "영혼 흡수", type: "attack", power: 17, powerText: "위력 17 / 적 1명", desc: "영혼을 갉아먹는 피해를 준다." },
-      dark_orb: { id: "dark_orb", name: "암흑 구체", type: "attack", power: 22, powerText: "위력 22 / 적 1명", desc: "어둠의 구체로 큰 피해를 준다." }
+      soul_drain: { id: "soul_drain", name: "영혼 흡수", type: "attack", power: 17, powerText: "위력 17 / 적 메인 1명", desc: "영혼을 갉아먹는 피해를 준다." },
+      dark_orb: { id: "dark_orb", name: "암흑 구체", type: "attack", power: 22, powerText: "위력 22 / 적 메인 1명", desc: "어둠의 구체로 큰 피해를 준다." }
     };
 
     const characters = {
@@ -377,9 +181,10 @@
 
     let currentMode = null;
     let currentRoomCode = null;
-    let myRole = null;
-    let singlePartySelection = [];
+    let mySide = null;
+    let partySelection = [];
     let singlePartyState = null;
+    let latestOnlineBattle = null;
     let partyBusy = false;
     let pendingPartySkillId = null;
 
@@ -387,9 +192,7 @@
     const lobby = document.getElementById("lobby");
     const waiting = document.getElementById("waiting");
     const selectCharacter = document.getElementById("selectCharacter");
-    const battle = document.getElementById("battle");
     const partyBattle = document.getElementById("partyBattle");
-
     const onlineModeBtn = document.getElementById("onlineModeBtn");
     const singleModeBtn = document.getElementById("singleModeBtn");
     const createRoomBtn = document.getElementById("createRoomBtn");
@@ -406,29 +209,12 @@
     const myRoleText = document.getElementById("myRoleText");
     const characterList = document.getElementById("characterList");
     const selectBackBtn = document.getElementById("selectBackBtn");
-
-    const p1Name = document.getElementById("p1Name");
-    const p2Name = document.getElementById("p2Name");
-    const p1StatText = document.getElementById("p1StatText");
-    const p2StatText = document.getElementById("p2StatText");
-    const p1PassiveText = document.getElementById("p1PassiveText");
-    const p2PassiveText = document.getElementById("p2PassiveText");
-    const p1StateText = document.getElementById("p1StateText");
-    const p2StateText = document.getElementById("p2StateText");
-    const p1HpText = document.getElementById("p1HpText");
-    const p2HpText = document.getElementById("p2HpText");
-    const p1HpFill = document.getElementById("p1HpFill");
-    const p2HpFill = document.getElementById("p2HpFill");
-    const turnText = document.getElementById("turnText");
-    const skillButtons = document.getElementById("skillButtons");
-    const resetBtn = document.getElementById("resetBtn");
-    const battleLog = document.getElementById("battleLog");
-    const leaveBtn = document.getElementById("leaveBtn");
-
-    const playerMainList = document.getElementById("playerMainList");
-    const playerSubList = document.getElementById("playerSubList");
-    const aiMainList = document.getElementById("aiMainList");
-    const aiSubList = document.getElementById("aiSubList");
+    const leftPartyTitle = document.getElementById("leftPartyTitle");
+    const rightPartyTitle = document.getElementById("rightPartyTitle");
+    const leftMainList = document.getElementById("leftMainList");
+    const leftSubList = document.getElementById("leftSubList");
+    const rightMainList = document.getElementById("rightMainList");
+    const rightSubList = document.getElementById("rightSubList");
     const partyTurnText = document.getElementById("partyTurnText");
     const partyActionButtons = document.getElementById("partyActionButtons");
     const partyLog = document.getElementById("partyLog");
@@ -440,13 +226,11 @@
       lobby.classList.add("hidden");
       waiting.classList.add("hidden");
       selectCharacter.classList.add("hidden");
-      battle.classList.add("hidden");
       partyBattle.classList.add("hidden");
       if (name === "mode") modeSelect.classList.remove("hidden");
       if (name === "lobby") lobby.classList.remove("hidden");
       if (name === "waiting") waiting.classList.remove("hidden");
       if (name === "select") selectCharacter.classList.remove("hidden");
-      if (name === "battle") battle.classList.remove("hidden");
       if (name === "partyBattle") partyBattle.classList.remove("hidden");
     }
 
@@ -459,30 +243,23 @@
 
     function makePlayerFromCharacter(charName) {
       const c = characters[charName];
-      return {
-        selected: true,
-        character: c.name,
-        hp: c.hp,
-        maxHp: c.hp,
-        atk: c.atk,
-        def: c.def,
-        passiveName: c.passiveName,
-        passiveDesc: c.passiveDesc,
-        skillIds: c.skillIds,
-        turnCount: 0,
-        guardRate: 0,
-        evasion: false,
-        atkBuff: 0,
-        atkDebuff: 0,
-        poison: 0
-      };
-    }
-
-    function emptyPlayer() {
-      return { selected: false, character: "", hp: 0, maxHp: 0, atk: 0, def: 0, passiveName: "", passiveDesc: "", skillIds: [], turnCount: 0, guardRate: 0, evasion: false, atkBuff: 0, atkDebuff: 0, poison: 0 };
+      return { selected: true, character: c.name, hp: c.hp, maxHp: c.hp, atk: c.atk, def: c.def, passiveName: c.passiveName, passiveDesc: c.passiveDesc, skillIds: c.skillIds, turnCount: 0, guardRate: 0, evasion: false, atkBuff: 0, atkDebuff: 0, poison: 0 };
     }
 
     function clone(obj) { return JSON.parse(JSON.stringify(obj)); }
+    function alive(unit) { return unit && unit.hp > 0; }
+    function getSkillListForPlayer(player) { return ["basic", ...(player.skillIds || [])]; }
+    function isTargetSkill(skill) { return ["attack", "attackBuff", "attackDebuff", "poisonAttack", "weakAttack"].includes(skill.type); }
+    function getTeam(state, side) { return state.teams[side]; }
+    function getEnemySide(state, side) { return state.sides.find(s => s !== side); }
+
+    function sideLabel(side) {
+      if (side === "player") return "플레이어";
+      if (side === "ai") return "AI";
+      if (side === "p1") return "1P";
+      if (side === "p2") return "2P";
+      return side;
+    }
 
     function getStateText(player) {
       const list = [];
@@ -494,17 +271,19 @@
       return list.length ? list.join(" / ") : "상태 없음";
     }
 
-    function roleLabel(role) {
-      if (currentMode === "single") return role === "p1" ? "플레이어" : "AI";
-      return role === "p1" ? "1P" : "2P";
+    function createBattleState(leftSide, rightSide, leftParty, rightParty, log) {
+      return { sides: [leftSide, rightSide], turnIndex: 0, round: 1, winner: "", teams: { [leftSide]: leftParty, [rightSide]: rightParty }, log };
     }
 
-    function partyLabel(side) { return side === "player" ? "플레이어" : "AI"; }
-    function enemyOf(role) { return role === "p1" ? "p2" : "p1"; }
-    function getSkillListForPlayer(player) { return ["basic", ...(player.skillIds || [])]; }
-    function isTargetSkill(skill) { return ["attack", "attackBuff", "attackDebuff", "poisonAttack", "weakAttack"].includes(skill.type); }
+    function getTurnInfo(state) {
+      const [a, b] = state.sides;
+      const order = [{ side: a, slot: 0 }, { side: b, slot: 0 }, { side: a, slot: 1 }, { side: b, slot: 1 }];
+      return order[state.turnIndex];
+    }
 
     function applyDamageCore(attacker, defender, basePower, extra = {}, logs = [], attackerLabel = "", defenderLabel = "") {
+      if (!alive(defender)) return { hit: false, damage: 0 };
+
       if (defender.evasion) {
         defender.evasion = false;
         if (Math.random() < 0.4) {
@@ -525,19 +304,16 @@
         damage += extra.bonusIfPoison;
         logs.push("독 상태의 약점을 찔렀다!");
       }
-
       if (attacker.atkBuff > 0) {
         damage += attacker.atkBuff;
         logs.push(`${attackerLabel} ${attacker.character}의 공격 강화 효과!`);
         attacker.atkBuff = 0;
       }
-
       if (attacker.atkDebuff > 0) {
         damage -= attacker.atkDebuff;
         logs.push(`${attackerLabel} ${attacker.character}은 공격 감소 상태다!`);
         attacker.atkDebuff = 0;
       }
-
       if (attacker.character === "검사" && Math.random() < 0.2) {
         damage += 8;
         logs.push(`${attacker.character}의 패시브 [검의 호흡] 발동!`);
@@ -558,12 +334,10 @@
         damage += 8;
         logs.push(`${attacker.character}의 패시브 [저주의 낙인] 발동!`);
       }
-
       if (defender.character === "탱커" && defender.hp <= defender.maxHp * 0.4) {
         damage = Math.floor(damage * 0.8);
         logs.push(`${defender.character}의 패시브 [불굴의 육체] 발동!`);
       }
-
       if (defender.guardRate > 0) {
         damage = Math.floor(damage * (1 - defender.guardRate));
         defender.guardRate = 0;
@@ -575,251 +349,17 @@
       return { hit: true, damage };
     }
 
-    function initialOnlineState() {
-      return { players: { p1: true, p2: false }, state: { started: false, turn: "p1", winner: "", p1: emptyPlayer(), p2: emptyPlayer(), log: "방이 생성되었습니다.\n캐릭터를 선택하세요." }, updatedAt: Date.now() };
-    }
-
-    function processSkill(oldState, attackerRole, skillId) {
-      const state = clone(oldState);
-      const defenderRole = enemyOf(attackerRole);
-      const attacker = state[attackerRole];
-      const defender = state[defenderRole];
-      const skill = skills[skillId] || skills.basic;
-      attacker.turnCount = (attacker.turnCount || 0) + 1;
+    function applyPoisonStart(state, side, slot) {
+      const actor = getTeam(state, side)[slot];
       let log = "";
-
-      if (attacker.poison > 0) {
-        attacker.poison -= 1;
-        attacker.hp = Math.max(0, attacker.hp - 5);
-        log += `${roleLabel(attackerRole)} ${attacker.character}은 독으로 5 피해를 받았다!\n`;
-        if (attacker.hp <= 0) {
-          state.winner = defenderRole;
-          state.turn = defenderRole;
-          state.log = log + `${roleLabel(attackerRole)} ${attacker.character}이 독으로 쓰러졌습니다!\n${roleLabel(defenderRole)} 승리!`;
-          return state;
-        }
+      if (actor && actor.poison > 0) {
+        actor.poison -= 1;
+        actor.hp = Math.max(0, actor.hp - 5);
+        log += `${sideLabel(side)} ${actor.character}은 독으로 5 피해를 받았다!
+`;
       }
-
-      log += `${roleLabel(attackerRole)} ${attacker.character}의 [${skill.name}]!\n`;
-
-      if (skill.type === "guard") {
-        attacker.guardRate = skill.guardRate;
-        log += "다음에 받는 피해가 감소한다!";
-      } else if (skill.type === "heal") {
-        let healAmount = skill.heal;
-        if (attacker.character === "성직자") {
-          healAmount = Math.floor(healAmount * 1.2);
-          log += `${attacker.character}의 패시브 [성스러운 가호] 발동!\n`;
-        }
-        const before = attacker.hp;
-        attacker.hp = Math.min(attacker.maxHp, attacker.hp + healAmount);
-        log += `HP를 ${attacker.hp - before} 회복했다!`;
-      } else if (skill.type === "evasion") {
-        attacker.evasion = true;
-        log += "다음 공격을 회피할 준비를 했다!";
-      } else {
-        const logs = [];
-        const result = applyDamageCore(attacker, defender, skill.power, { bonusIfPoison: skill.bonusIfPoison }, logs, roleLabel(attackerRole), roleLabel(defenderRole));
-        if (logs.length) log += logs.join("\n") + "\n";
-        if (result.hit) {
-          log += `${roleLabel(defenderRole)} ${defender.character}에게 ${result.damage} 데미지!`;
-          if (skill.type === "attackBuff") {
-            attacker.atkBuff += skill.buff;
-            log += `\n다음 공격 피해가 ${skill.buff} 증가한다!`;
-          }
-          if (skill.type === "attackDebuff") {
-            defender.atkDebuff += skill.debuff;
-            log += `\n${roleLabel(defenderRole)} ${defender.character}의 다음 공격 피해가 감소한다!`;
-          }
-          if (skill.type === "poisonAttack") {
-            defender.poison = 3;
-            log += `\n${roleLabel(defenderRole)} ${defender.character}이 독 상태가 되었다!`;
-          }
-        }
-      }
-
-      if (defender.hp <= 0) {
-        state.winner = attackerRole;
-        state.turn = attackerRole;
-        log += `\n${roleLabel(defenderRole)} ${defender.character}이 쓰러졌습니다!\n${roleLabel(attackerRole)} 승리!`;
-      } else {
-        state.turn = defenderRole;
-        log += `\n${roleLabel(defenderRole)}의 턴입니다.`;
-      }
-      state.log = log;
-      return state;
+      return log;
     }
-
-    function renderSkillButtons(state) {
-      skillButtons.innerHTML = "";
-      let usable = false;
-      let player = null;
-      player = state[myRole];
-      usable = !state.winner && state.turn === myRole;
-      if (!player || !player.selected) return;
-      getSkillListForPlayer(player).forEach((skillId) => {
-        const skill = skills[skillId];
-        const btn = document.createElement("button");
-        btn.className = "skill-button";
-        btn.disabled = !usable;
-        btn.innerHTML = `<div class="skill-name">${skill.name}</div><div class="skill-power">${skill.powerText}</div><div class="skill-desc">${skill.desc}</div>`;
-        btn.addEventListener("click", () => useSelectedSkill(skillId));
-        skillButtons.appendChild(btn);
-      });
-    }
-
-    function renderCharacterList() {
-      characterList.innerHTML = "";
-      Object.values(characters).forEach((c) => {
-        const div = document.createElement("div");
-        div.className = "character-card";
-        const skillNames = c.skillIds.map(id => `${skills[id].name} - ${skills[id].powerText}`).join("<br>");
-        const selected = singlePartySelection.includes(c.name);
-        const buttonText = currentMode === "single" ? (selected ? "선택됨" : `파티에 추가 (${singlePartySelection.length}/4)`) : "선택하기";
-        div.innerHTML = `<div class="character-name">${c.name}</div><div class="character-info">HP ${c.hp} / 공격 ${c.atk} / 방어 ${c.def}<br><span class="passive">패시브: ${c.passiveName}</span><br>${c.passiveDesc}<br>스킬:<br>${skillNames}</div><button class="green" ${selected ? "disabled" : ""}>${buttonText}</button>`;
-        div.querySelector("button").addEventListener("click", () => selectMyCharacter(c.name));
-        characterList.appendChild(div);
-      });
-    }
-
-    function openOnlineMode() {
-      currentMode = "online";
-      currentRoomCode = null;
-      myRole = null;
-      singlePartySelection = [];
-      roomInput.value = "";
-      selectTitle.textContent = "캐릭터 선택";
-      showScreen("lobby");
-    }
-
-    function openSingleMode() {
-      currentMode = "single";
-      singlePartySelection = [];
-      singlePartyState = null;
-      pendingPartySkillId = null;
-      partyBusy = false;
-      selectTopLabel.textContent = "싱글 파티";
-      selectRoomCodeView.textContent = "0/4";
-      selectTitle.textContent = "파티 4명 선택";
-      myRoleText.textContent = "선택 순서대로 1,2번은 메인 / 3,4번은 서브가 됩니다.";
-      renderCharacterList();
-      showScreen("select");
-    }
-
-    async function createRoom() {
-      currentMode = "online";
-      let code = makeRoomCode();
-      let roomRef = ref(db, "rooms/" + code);
-      let snapshot = await get(roomRef);
-      while (snapshot.exists()) {
-        code = makeRoomCode();
-        roomRef = ref(db, "rooms/" + code);
-        snapshot = await get(roomRef);
-      }
-      await set(roomRef, initialOnlineState());
-      currentRoomCode = code;
-      myRole = "p1";
-      selectTopLabel.textContent = "방 코드";
-      roomCodeView.textContent = code;
-      selectRoomCodeView.textContent = code;
-      selectTitle.textContent = "캐릭터 선택";
-      myRoleText.textContent = "당신은 1P입니다.";
-      renderCharacterList();
-      showScreen("select");
-      listenRoom(code);
-    }
-
-    async function joinRoom() {
-      currentMode = "online";
-      const code = roomInput.value.trim().toUpperCase();
-      if (code.length !== 4) return alert("방 코드는 4글자입니다.");
-      const roomRef = ref(db, "rooms/" + code);
-      const snapshot = await get(roomRef);
-      if (!snapshot.exists()) return alert("존재하지 않는 방입니다.");
-      const room = snapshot.val();
-      if (room.players && room.players.p2) return alert("이미 가득 찬 방입니다.");
-      await update(roomRef, { "players/p2": true, "state/log": "2P가 참가했습니다.\n각자 캐릭터를 선택하세요.", updatedAt: Date.now() });
-      currentRoomCode = code;
-      myRole = "p2";
-      selectTopLabel.textContent = "방 코드";
-      selectRoomCodeView.textContent = code;
-      selectTitle.textContent = "캐릭터 선택";
-      myRoleText.textContent = "당신은 2P입니다.";
-      renderCharacterList();
-      showScreen("select");
-      listenRoom(code);
-    }
-
-    async function selectMyCharacter(charName) {
-      if (currentMode === "single") {
-        if (singlePartySelection.includes(charName)) return;
-        singlePartySelection.push(charName);
-        selectRoomCodeView.textContent = `${singlePartySelection.length}/4`;
-        myRoleText.textContent = `선택됨: ${singlePartySelection.join(" / ")}`;
-        if (singlePartySelection.length >= 4) {
-          startSinglePartyBattle(singlePartySelection);
-        } else {
-          renderCharacterList();
-        }
-        return;
-      }
-
-      if (!currentRoomCode || !myRole) return;
-      const playerData = makePlayerFromCharacter(charName);
-      const updates = {};
-      updates[`state/${myRole}`] = playerData;
-      updates["updatedAt"] = Date.now();
-      await update(ref(db, "rooms/" + currentRoomCode), updates);
-      showScreen("waiting");
-      roomCodeView.textContent = currentRoomCode;
-      waitingText.textContent = "상대의 캐릭터 선택을 기다리는 중...";
-    }
-
-    function pickRandomParty() {
-      const names = Object.keys(characters);
-      const copy = [...names];
-      const result = [];
-      while (result.length < 4 && copy.length) {
-        const i = Math.floor(Math.random() * copy.length);
-        result.push(copy.splice(i, 1)[0]);
-      }
-      return result;
-    }
-
-    function startSinglePartyBattle(playerNames) {
-      const aiNames = pickRandomParty();
-      singlePartyState = {
-        turnIndex: 0,
-        round: 1,
-        winner: "",
-        playerTeam: playerNames.map(makePlayerFromCharacter),
-        aiTeam: aiNames.map(makePlayerFromCharacter),
-        log: `싱글 4인 파티 배틀 시작!\n플레이어: ${playerNames.join(" / ")}\nAI: ${aiNames.join(" / ")}\n1라운드 시작!`
-      };
-      pendingPartySkillId = null;
-      partyBusy = false;
-      autoPromoteAll(singlePartyState);
-      renderPartyBattle();
-      showScreen("partyBattle");
-    }
-
-    function getTurnInfo(state) {
-      const order = [
-        { side: "player", slot: 0 },
-        { side: "ai", slot: 0 },
-        { side: "player", slot: 1 },
-        { side: "ai", slot: 1 }
-      ];
-      return order[state.turnIndex];
-    }
-
-    function getTeam(state, side) {
-      return side === "player" ? state.playerTeam : state.aiTeam;
-    }
-
-    function getEnemySide(side) { return side === "player" ? "ai" : "player"; }
-
-    function alive(unit) { return unit && unit.hp > 0; }
 
     function autoPromote(team, logs = []) {
       for (let slot = 0; slot < 2; slot++) {
@@ -836,23 +376,22 @@
     }
 
     function autoPromoteAll(state, logs = []) {
-      autoPromote(state.playerTeam, logs);
-      autoPromote(state.aiTeam, logs);
+      state.sides.forEach(side => autoPromote(state.teams[side], logs));
     }
 
-    function checkPartyWinner(state) {
-      const playerAlive = state.playerTeam.some(alive);
-      const aiAlive = state.aiTeam.some(alive);
-      if (!playerAlive) state.winner = "ai";
-      if (!aiAlive) state.winner = "player";
+    function checkWinner(state) {
+      const aliveSides = state.sides.filter(side => state.teams[side].some(alive));
+      if (aliveSides.length === 1) state.winner = aliveSides[0];
       return state.winner;
     }
 
-    function advancePartyTurn(state) {
+    function advanceTurn(state) {
       const logs = [];
       autoPromoteAll(state, logs);
-      if (checkPartyWinner(state)) {
-        if (logs.length) state.log += "\n" + logs.join("\n");
+      if (checkWinner(state)) {
+        if (logs.length) state.log += "
+" + logs.join("
+");
         return;
       }
 
@@ -866,285 +405,368 @@
         if (alive(actor)) break;
       } while (attempts < 8);
 
-      if (logs.length) state.log += "\n" + logs.join("\n");
+      if (logs.length) state.log += "
+" + logs.join("
+");
     }
 
-    function applyPartyPoisonStart(state, side, slot) {
-      const team = getTeam(state, side);
-      const actor = team[slot];
-      let log = "";
-      if (actor && actor.poison > 0) {
-        actor.poison -= 1;
-        actor.hp = Math.max(0, actor.hp - 5);
-        log += `${partyLabel(side)} ${actor.character}은 독으로 5 피해를 받았다!\n`;
-      }
-      return log;
-    }
-
-    function partyUseSkill(skillId, targetSide = null, targetSlot = null) {
-      if (!singlePartyState || singlePartyState.winner) return;
-      const state = singlePartyState;
+    function processPartySkill(oldState, skillId, targetSide = null, targetSlot = null) {
+      const state = clone(oldState);
       const info = getTurnInfo(state);
-      const attacker = getTeam(state, info.side)[info.slot];
+      const actor = getTeam(state, info.side)[info.slot];
       const skill = skills[skillId] || skills.basic;
-      let log = applyPartyPoisonStart(state, info.side, info.slot);
+      let log = applyPoisonStart(state, info.side, info.slot);
 
-      if (!alive(attacker)) {
-        log += `${partyLabel(info.side)} ${attacker.character}이 쓰러져 행동할 수 없습니다.`;
+      if (!alive(actor)) {
+        log += `${sideLabel(info.side)} ${actor?.character || "빈 자리"}이 쓰러져 행동할 수 없습니다.`;
         state.log = log;
-        advancePartyTurn(state);
-        pendingPartySkillId = null;
-        renderPartyBattle();
-        triggerAiIfNeeded();
-        return;
+        advanceTurn(state);
+        return state;
       }
 
-      attacker.turnCount = (attacker.turnCount || 0) + 1;
-      log += `${partyLabel(info.side)} ${attacker.character}의 [${skill.name}]!\n`;
+      actor.turnCount = (actor.turnCount || 0) + 1;
+      log += `${sideLabel(info.side)} 메인${info.slot + 1} ${actor.character}의 [${skill.name}]!
+`;
 
       if (skill.type === "guard") {
-        attacker.guardRate = skill.guardRate;
+        actor.guardRate = skill.guardRate;
         log += "다음에 받는 피해가 감소한다!";
       } else if (skill.type === "heal") {
         let healAmount = skill.heal;
-        if (attacker.character === "성직자") {
+        if (actor.character === "성직자") {
           healAmount = Math.floor(healAmount * 1.2);
-          log += `${attacker.character}의 패시브 [성스러운 가호] 발동!\n`;
+          log += `${actor.character}의 패시브 [성스러운 가호] 발동!
+`;
         }
-        const before = attacker.hp;
-        attacker.hp = Math.min(attacker.maxHp, attacker.hp + healAmount);
-        log += `HP를 ${attacker.hp - before} 회복했다!`;
+        const before = actor.hp;
+        actor.hp = Math.min(actor.maxHp, actor.hp + healAmount);
+        log += `HP를 ${actor.hp - before} 회복했다!`;
       } else if (skill.type === "evasion") {
-        attacker.evasion = true;
+        actor.evasion = true;
         log += "다음 공격을 회피할 준비를 했다!";
       } else {
-        const targetTeam = getTeam(state, targetSide);
-        const defender = targetTeam[targetSlot];
+        const defender = getTeam(state, targetSide)[targetSlot];
         const logs = [];
-        const result = applyDamageCore(attacker, defender, skill.power, { bonusIfPoison: skill.bonusIfPoison }, logs, partyLabel(info.side), partyLabel(targetSide));
-        if (logs.length) log += logs.join("\n") + "\n";
+        const result = applyDamageCore(actor, defender, skill.power, { bonusIfPoison: skill.bonusIfPoison }, logs, sideLabel(info.side), sideLabel(targetSide));
+        if (logs.length) log += logs.join("
+") + "
+";
         if (result.hit) {
-          log += `${partyLabel(targetSide)} ${defender.character}에게 ${result.damage} 데미지!`;
+          log += `${sideLabel(targetSide)} 메인${targetSlot + 1} ${defender.character}에게 ${result.damage} 데미지!`;
           if (skill.type === "attackBuff") {
-            attacker.atkBuff += skill.buff;
-            log += `\n다음 공격 피해가 ${skill.buff} 증가한다!`;
+            actor.atkBuff += skill.buff;
+            log += `
+다음 공격 피해가 ${skill.buff} 증가한다!`;
           }
           if (skill.type === "attackDebuff") {
             defender.atkDebuff += skill.debuff;
-            log += `\n${partyLabel(targetSide)} ${defender.character}의 다음 공격 피해가 감소한다!`;
+            log += `
+${sideLabel(targetSide)} ${defender.character}의 다음 공격 피해가 감소한다!`;
           }
           if (skill.type === "poisonAttack") {
             defender.poison = 3;
-            log += `\n${partyLabel(targetSide)} ${defender.character}이 독 상태가 되었다!`;
+            log += `
+${sideLabel(targetSide)} ${defender.character}이 독 상태가 되었다!`;
           }
         }
       }
 
       state.log = log;
       autoPromoteAll(state);
-      if (checkPartyWinner(state)) {
-        state.log += `\n${state.winner === "player" ? "플레이어" : "AI"} 승리!`;
+      if (checkWinner(state)) {
+        state.log += `
+${sideLabel(state.winner)} 승리!`;
       } else {
-        advancePartyTurn(state);
+        advanceTurn(state);
       }
-      pendingPartySkillId = null;
-      renderPartyBattle();
-      triggerAiIfNeeded();
+      return state;
     }
 
-    function partyRotate(subIndex) {
-      if (!singlePartyState || singlePartyState.winner) return;
-      const state = singlePartyState;
+    function processPartyRotate(oldState, subIndex) {
+      const state = clone(oldState);
       const info = getTurnInfo(state);
-      if (info.side !== "player") return;
-      const team = state.playerTeam;
+      const team = getTeam(state, info.side);
       const actor = team[info.slot];
       const sub = team[subIndex];
-      let log = applyPartyPoisonStart(state, "player", info.slot);
+      let log = applyPoisonStart(state, info.side, info.slot);
+
       if (!alive(actor)) {
-        log += `${actor.character}이 쓰러져 로테이션할 수 없습니다.`;
+        log += `${actor?.character || "빈 자리"}이 쓰러져 로테이션할 수 없습니다.`;
       } else if (!alive(sub)) {
-        log += `${sub.character}은 쓰러져 로테이션할 수 없습니다.`;
+        log += `${sub?.character || "빈 자리"}은 쓰러져 로테이션할 수 없습니다.`;
       } else {
         [team[info.slot], team[subIndex]] = [team[subIndex], team[info.slot]];
-        log += `로테이션! ${actor.character} ↔ ${sub.character}`;
+        log += `로테이션! ${sideLabel(info.side)} 메인${info.slot + 1} ${actor.character} ↔ 서브${subIndex - 1} ${sub.character}`;
       }
+
       state.log = log;
-      advancePartyTurn(state);
+      advanceTurn(state);
+      return state;
+    }
+
+    function renderCharacterList() {
+      characterList.innerHTML = "";
+      Object.values(characters).forEach((c) => {
+        const div = document.createElement("div");
+        div.className = "character-card";
+        const skillNames = c.skillIds.map(id => `${skills[id].name} - ${skills[id].powerText}`).join("<br>");
+        const selected = partySelection.includes(c.name);
+        const buttonText = selected ? "선택됨" : `파티에 추가 (${partySelection.length}/4)`;
+        div.innerHTML = `<div class="character-name">${c.name}</div><div class="character-info">HP ${c.hp} / 공격 ${c.atk} / 방어 ${c.def}<br><span class="passive">패시브: ${c.passiveName}</span><br>${c.passiveDesc}<br>스킬:<br>${skillNames}</div><button class="green" ${selected ? "disabled" : ""}>${buttonText}</button>`;
+        div.querySelector("button").addEventListener("click", () => selectPartyCharacter(c.name));
+        characterList.appendChild(div);
+      });
+    }
+
+    function openOnlineMode() {
+      currentMode = "online";
+      currentRoomCode = null;
+      mySide = null;
+      partySelection = [];
+      latestOnlineBattle = null;
+      roomInput.value = "";
+      showScreen("lobby");
+    }
+
+    function openSingleMode() {
+      currentMode = "single";
+      currentRoomCode = null;
+      mySide = "player";
+      partySelection = [];
+      singlePartyState = null;
       pendingPartySkillId = null;
-      renderPartyBattle();
-      triggerAiIfNeeded();
+      partyBusy = false;
+      selectTopLabel.textContent = "싱글 파티";
+      selectRoomCodeView.textContent = "0/4";
+      selectTitle.textContent = "파티 4명 선택";
+      myRoleText.textContent = "선택 순서대로 1,2번은 메인 / 3,4번은 서브가 됩니다.";
+      renderCharacterList();
+      showScreen("select");
     }
 
-    function choosePartyAiSkill(actor) {
-      const list = getSkillListForPlayer(actor);
-      const heal = list.find(id => skills[id].type === "heal");
-      if (heal && actor.hp <= actor.maxHp * 0.45 && Math.random() < 0.65) return heal;
-      const guard = list.find(id => skills[id].type === "guard");
-      if (guard && actor.hp <= actor.maxHp * 0.35 && Math.random() < 0.45) return guard;
-      return list[Math.floor(Math.random() * list.length)];
+    function initialOnlineRoomState() {
+      return { players: { p1: true, p2: false }, state: { started: false, p1Party: [], p2Party: [], battle: null, log: "방이 생성되었습니다.
+1P는 파티 4명을 선택하세요." }, updatedAt: Date.now() };
     }
 
-    function tryAiRotate() {
-      if (!singlePartyState || singlePartyState.winner) return false;
+    async function createRoom() {
+      currentMode = "online";
+      let code = makeRoomCode();
+      let roomRef = ref(db, "rooms/" + code);
+      let snapshot = await get(roomRef);
+      while (snapshot.exists()) {
+        code = makeRoomCode();
+        roomRef = ref(db, "rooms/" + code);
+        snapshot = await get(roomRef);
+      }
+      await set(roomRef, initialOnlineRoomState());
+      currentRoomCode = code;
+      mySide = "p1";
+      partySelection = [];
+      roomCodeView.textContent = code;
+      selectTopLabel.textContent = "방 코드";
+      selectRoomCodeView.textContent = code;
+      selectTitle.textContent = "1P 파티 4명 선택";
+      myRoleText.textContent = "선택 순서대로 1,2번은 메인 / 3,4번은 서브입니다.";
+      renderCharacterList();
+      showScreen("select");
+      listenRoom(code);
+    }
 
-      const state = singlePartyState;
-      const info = getTurnInfo(state);
-      if (info.side !== "ai") return false;
+    async function joinRoom() {
+      currentMode = "online";
+      const code = roomInput.value.trim().toUpperCase();
+      if (code.length !== 4) return alert("방 코드는 4글자입니다.");
+      const roomRef = ref(db, "rooms/" + code);
+      const snapshot = await get(roomRef);
+      if (!snapshot.exists()) return alert("존재하지 않는 방입니다.");
+      const room = snapshot.val();
+      if (room.players && room.players.p2) return alert("이미 가득 찬 방입니다.");
+      await update(roomRef, { "players/p2": true, "state/log": "2P가 참가했습니다.
+각자 파티 4명을 선택하세요.", updatedAt: Date.now() });
+      currentRoomCode = code;
+      mySide = "p2";
+      partySelection = [];
+      selectTopLabel.textContent = "방 코드";
+      selectRoomCodeView.textContent = code;
+      selectTitle.textContent = "2P 파티 4명 선택";
+      myRoleText.textContent = "선택 순서대로 1,2번은 메인 / 3,4번은 서브입니다.";
+      renderCharacterList();
+      showScreen("select");
+      listenRoom(code);
+    }
 
-      const team = state.aiTeam;
-      const actor = team[info.slot];
-      if (!alive(actor)) return false;
+    async function selectPartyCharacter(charName) {
+      if (partySelection.includes(charName)) return;
+      partySelection.push(charName);
 
-      const aliveSubs = [2, 3].filter(i => alive(team[i]));
-      if (aliveSubs.length === 0) return false;
+      if (currentMode === "single") {
+        selectRoomCodeView.textContent = `${partySelection.length}/4`;
+        myRoleText.textContent = `선택됨: ${partySelection.join(" / ")}`;
+        if (partySelection.length >= 4) startSinglePartyBattle(partySelection);
+        else renderCharacterList();
+        return;
+      }
 
-      const hpRate = actor.hp / actor.maxHp;
-      if (hpRate > 0.35) return false;
-      if (Math.random() > 0.65) return false;
-
-      let log = applyPartyPoisonStart(state, "ai", info.slot);
-
-      if (!alive(actor)) {
-        log += `AI ${actor.character}이 독으로 쓰러져 로테이션할 수 없습니다.`;
-        state.log = log;
-        autoPromoteAll(state);
-
-        if (checkPartyWinner(state)) {
-          state.log += `
-${state.winner === "player" ? "플레이어" : "AI"} 승리!`;
-        } else {
-          advancePartyTurn(state);
+      if (currentMode === "online") {
+        myRoleText.textContent = `선택됨: ${partySelection.join(" / ")}`;
+        if (partySelection.length < 4) {
+          renderCharacterList();
+          return;
         }
 
-        renderPartyBattle();
-        triggerAiIfNeeded();
-        return true;
+        const party = partySelection.map(makePlayerFromCharacter);
+        const updates = {};
+        updates[`state/${mySide}Party`] = party;
+        updates["state/log"] = `${sideLabel(mySide)} 파티 선택 완료!`;
+        updates["updatedAt"] = Date.now();
+        await update(ref(db, "rooms/" + currentRoomCode), updates);
+        roomCodeView.textContent = currentRoomCode;
+        waitingText.textContent = "상대의 파티 선택을 기다리는 중...";
+        showScreen("waiting");
       }
+    }
 
-      aliveSubs.sort((a, b) => {
-        const aRate = team[a].hp / team[a].maxHp;
-        const bRate = team[b].hp / team[b].maxHp;
-        return bRate - aRate;
-      });
+    function pickRandomParty() {
+      const names = Object.keys(characters);
+      const copy = [...names];
+      const result = [];
+      while (result.length < 4 && copy.length) {
+        const i = Math.floor(Math.random() * copy.length);
+        result.push(copy.splice(i, 1)[0]);
+      }
+      return result;
+    }
 
-      const subIndex = aliveSubs[0];
-      const sub = team[subIndex];
-
-      [team[info.slot], team[subIndex]] = [team[subIndex], team[info.slot]];
-      log += `AI 로테이션! ${actor.character} ↔ ${sub.character}`;
-
-      state.log = log;
-      advancePartyTurn(state);
+    function startSinglePartyBattle(playerNames) {
+      const aiNames = pickRandomParty();
+      singlePartyState = createBattleState("player", "ai", playerNames.map(makePlayerFromCharacter), aiNames.map(makePlayerFromCharacter), `싱글 4인 파티 배틀 시작!
+플레이어: ${playerNames.join(" / ")}
+AI: ${aiNames.join(" / ")}
+1라운드 시작!`);
+      pendingPartySkillId = null;
+      partyBusy = false;
       renderPartyBattle();
       triggerAiIfNeeded();
-      return true;
     }
 
-    function aiPartyAction() {
-      if (!singlePartyState || singlePartyState.winner) return;
-      const info = getTurnInfo(singlePartyState);
-      if (info.side !== "ai") return;
+    async function listenRoom(code) {
+      const roomRef = ref(db, "rooms/" + code);
+      onValue(roomRef, async (snapshot) => {
+        if (currentMode !== "online") return;
+        if (!snapshot.exists()) {
+          alert("방이 삭제되었습니다.");
+          location.reload();
+          return;
+        }
+        const room = snapshot.val();
+        await tryStartOnlineBattle(room);
+        renderOnlineRoom(room);
+      });
+    }
 
-      if (tryAiRotate()) return;
-
-      const actor = singlePartyState.aiTeam[info.slot];
-      const skillId = choosePartyAiSkill(actor);
-      const skill = skills[skillId];
-      if (isTargetSkill(skill)) {
-        const targets = [0, 1].filter(i => alive(singlePartyState.playerTeam[i]));
-        const targetSlot = targets[Math.floor(Math.random() * targets.length)];
-        partyUseSkill(skillId, "player", targetSlot);
-      } else {
-        partyUseSkill(skillId);
+    async function tryStartOnlineBattle(room) {
+      if (!currentRoomCode || mySide !== "p1") return;
+      const state = room.state;
+      if (!state || state.started) return;
+      if ((state.p1Party || []).length === 4 && (state.p2Party || []).length === 4) {
+        const battle = createBattleState("p1", "p2", state.p1Party, state.p2Party, `온라인 4인 파티 배틀 시작!
+1P와 2P의 전투가 시작되었습니다.
+1라운드 - 1P 메인1부터 행동합니다.`);
+        await update(ref(db, "rooms/" + currentRoomCode), { "state/started": true, "state/battle": battle, "state/log": "전투 시작!", updatedAt: Date.now() });
       }
     }
 
-    function triggerAiIfNeeded() {
-      if (!singlePartyState || singlePartyState.winner) return;
-      const info = getTurnInfo(singlePartyState);
-      if (info.side === "ai" && !partyBusy) {
-        partyBusy = true;
-        renderPartyBattle();
-        setTimeout(() => {
-          partyBusy = false;
-          aiPartyAction();
-        }, 900);
+    function renderOnlineRoom(room) {
+      const state = room.state;
+      if (!state) return;
+      if (!state[`${mySide}Party`] || state[`${mySide}Party`].length < 4) {
+        if (!selectCharacter.classList.contains("hidden")) return;
+        return;
       }
+      if (!state.started || !state.battle) {
+        roomCodeView.textContent = currentRoomCode;
+        waitingText.textContent = "상대의 파티 선택을 기다리는 중...";
+        showScreen("waiting");
+        return;
+      }
+      latestOnlineBattle = state.battle;
+      renderPartyBattle();
+    }
+
+    function getCurrentBattleState() {
+      return currentMode === "single" ? singlePartyState : latestOnlineBattle;
     }
 
     function renderUnit(unit, active = false) {
       if (!unit) return `<div class="unit-row dead"><div class="unit-name">빈 자리</div></div>`;
-
       const isDead = !alive(unit);
       const hpPercent = unit.maxHp > 0 ? Math.max(0, unit.hp / unit.maxHp * 100) : 0;
       const classes = ["unit-row"];
-
       if (active && !isDead) classes.push("active");
       if (isDead) classes.push("dead");
-
       const deadLabel = isDead ? " [전투불능]" : "";
       const stateText = isDead ? "행동 불가 / 로테이션 불가" : getStateText(unit);
-
-      return `
-        <div class="${classes.join(" ")}">
-          <div class="unit-name">${unit.character || "빈 자리"}${deadLabel}</div>
-          <div class="unit-detail">
-            HP ${unit.hp} / ${unit.maxHp}<br>
-            공격 ${unit.atk} / 방어 ${unit.def}<br>
-            ${stateText}
-          </div>
-          <div class="hpbar"><div class="hpfill" style="width:${hpPercent}%"></div></div>
-        </div>
-      `;
+      return `<div class="${classes.join(" ")}"><div class="unit-name">${unit.character || "빈 자리"}${deadLabel}</div><div class="unit-detail">HP ${unit.hp} / ${unit.maxHp}<br>공격 ${unit.atk} / 방어 ${unit.def}<br>${stateText}</div><div class="hpbar"><div class="hpfill" style="width:${hpPercent}%"></div></div></div>`;
     }
 
     function renderPartyBattle() {
       showScreen("partyBattle");
-      const state = singlePartyState;
+      const state = getCurrentBattleState();
       if (!state) return;
+      const [leftSide, rightSide] = state.sides;
       const info = getTurnInfo(state);
-      playerMainList.innerHTML = [0, 1].map(i => renderUnit(state.playerTeam[i], info.side === "player" && info.slot === i)).join("");
-      playerSubList.innerHTML = [2, 3].map(i => renderUnit(state.playerTeam[i], false)).join("");
-      aiMainList.innerHTML = [0, 1].map(i => renderUnit(state.aiTeam[i], info.side === "ai" && info.slot === i)).join("");
-      aiSubList.innerHTML = [2, 3].map(i => renderUnit(state.aiTeam[i], false)).join("");
+      leftPartyTitle.textContent = sideLabel(leftSide);
+      rightPartyTitle.textContent = sideLabel(rightSide);
+
+      leftMainList.innerHTML = [0, 1].map(i => renderUnit(state.teams[leftSide][i], info.side === leftSide && info.slot === i)).join("");
+      leftSubList.innerHTML = [2, 3].map(i => renderUnit(state.teams[leftSide][i], false)).join("");
+      rightMainList.innerHTML = [0, 1].map(i => renderUnit(state.teams[rightSide][i], info.side === rightSide && info.slot === i)).join("");
+      rightSubList.innerHTML = [2, 3].map(i => renderUnit(state.teams[rightSide][i], false)).join("");
       partyLog.textContent = state.log || "";
 
       if (state.winner) {
-        partyTurnText.textContent = state.winner === "player" ? "승리!" : "패배!";
+        if (currentMode === "single") partyTurnText.textContent = state.winner === "player" ? "승리!" : "패배!";
+        else partyTurnText.textContent = state.winner === mySide ? "승리!" : "패배!";
         partyActionButtons.innerHTML = "";
         return;
       }
 
       const actor = getTeam(state, info.side)[info.slot];
-      partyTurnText.textContent = `${state.round}라운드 - ${partyLabel(info.side)} 메인${info.slot + 1} ${actor.character} 행동`;
+      partyTurnText.textContent = `${state.round}라운드 - ${sideLabel(info.side)} 메인${info.slot + 1} ${actor.character} 행동`;
       partyActionButtons.innerHTML = "";
 
-      if (info.side === "ai") {
+      const myTurn = currentMode === "single" ? info.side === "player" : info.side === mySide;
+
+      if (!myTurn) {
         const wait = document.createElement("div");
         wait.className = "status";
-        wait.textContent = partyBusy ? "AI 행동 중..." : "AI 턴입니다.";
+        if (currentMode === "single" && info.side === "ai") wait.textContent = partyBusy ? "AI 행동 중..." : "AI 턴입니다.";
+        else wait.textContent = `${sideLabel(info.side)} 턴입니다. 상대 행동을 기다리는 중...`;
         partyActionButtons.appendChild(wait);
         return;
       }
 
       if (pendingPartySkillId) {
         const skill = skills[pendingPartySkillId];
+        const enemySide = getEnemySide(state, info.side);
         const title = document.createElement("div");
         title.className = "status";
         title.textContent = `[${skill.name}] 대상 선택`;
         partyActionButtons.appendChild(title);
+
         [0, 1].forEach(slot => {
-          const target = state.aiTeam[slot];
+          const target = state.teams[enemySide][slot];
           const btn = document.createElement("button");
           btn.className = "target-button";
           btn.disabled = !alive(target);
           const targetDead = !alive(target);
           const targetLabel = targetDead ? `${target?.character || "빈 자리"} [전투불능]` : `${target?.character || "빈 자리"}`;
-          btn.innerHTML = `<div class="skill-name">AI 메인${slot + 1} ${targetLabel}</div><div class="skill-desc">HP ${target?.hp || 0} / ${target?.maxHp || 0}</div>`;
-          btn.addEventListener("click", () => partyUseSkill(pendingPartySkillId, "ai", slot));
+          btn.innerHTML = `<div class="skill-name">${sideLabel(enemySide)} 메인${slot + 1} ${targetLabel}</div><div class="skill-desc">HP ${target?.hp || 0} / ${target?.maxHp || 0}</div>`;
+          btn.addEventListener("click", () => handlePartySkill(pendingPartySkillId, enemySide, slot));
           partyActionButtons.appendChild(btn);
         });
+
         const cancel = document.createElement("button");
         cancel.className = "secondary";
         cancel.textContent = "취소";
@@ -1163,125 +785,144 @@ ${state.winner === "player" ? "플레이어" : "AI"} 승리!`;
             pendingPartySkillId = skillId;
             renderPartyBattle();
           } else {
-            partyUseSkill(skillId);
+            handlePartySkill(skillId);
           }
         });
         partyActionButtons.appendChild(btn);
       });
 
       [2, 3].forEach(subIndex => {
-        const sub = state.playerTeam[subIndex];
+        const sub = state.teams[info.side][subIndex];
         const btn = document.createElement("button");
         btn.className = "rotate-button secondary";
         btn.disabled = !alive(sub);
         const mainLabel = `메인${info.slot + 1}`;
         const subLabel = `서브${subIndex - 1}`;
-        btn.textContent = alive(sub)
-          ? `로테이션: ${mainLabel} ${actor.character} ↔ ${subLabel} ${sub?.character || "빈 자리"}`
-          : `로테이션 불가: ${subLabel} ${sub?.character || "빈 자리"} [전투불능]`;
-        btn.addEventListener("click", () => partyRotate(subIndex));
+        btn.textContent = alive(sub) ? `로테이션: ${mainLabel} ${actor.character} ↔ ${subLabel} ${sub?.character || "빈 자리"}` : `로테이션 불가: ${subLabel} ${sub?.character || "빈 자리"} [전투불능]`;
+        btn.addEventListener("click", () => handlePartyRotate(subIndex));
         partyActionButtons.appendChild(btn);
       });
     }
 
-    function listenRoom(code) {
-      const roomRef = ref(db, "rooms/" + code);
-      onValue(roomRef, async (snapshot) => {
-        if (currentMode !== "online") return;
-        if (!snapshot.exists()) {
-          alert("방이 삭제되었습니다.");
-          location.reload();
-          return;
-        }
-        const room = snapshot.val();
-        await tryStartGame(room);
-        renderOnlineRoom(room);
-      });
-    }
+    async function handlePartySkill(skillId, targetSide = null, targetSlot = null) {
+      pendingPartySkillId = null;
 
-    async function tryStartGame(room) {
-      if (!currentRoomCode || myRole !== "p1") return;
-      const state = room.state;
-      if (!state) return;
-      if (!state.started && state.p1 && state.p2 && state.p1.selected && state.p2.selected) {
-        await update(ref(db, "rooms/" + currentRoomCode), {
-          "state/started": true,
-          "state/turn": "p1",
-          "state/log": `전투 시작!\n1P ${state.p1.character} vs 2P ${state.p2.character}\n1P의 턴입니다.`,
-          updatedAt: Date.now()
-        });
-      }
-    }
-
-    function renderOnlineRoom(room) {
-      const state = room.state;
-      if (!state) return;
-      const me = state[myRole];
-      if (!me || !me.selected) return showScreen("select");
-      if (!state.started) {
-        showScreen("waiting");
-        roomCodeView.textContent = currentRoomCode;
-        waitingText.textContent = "상대의 캐릭터 선택을 기다리는 중...";
+      if (currentMode === "single") {
+        singlePartyState = processPartySkill(singlePartyState, skillId, targetSide, targetSlot);
+        renderPartyBattle();
+        triggerAiIfNeeded();
         return;
       }
-      showScreen("battle");
-      renderBattle(state);
-    }
 
-    function renderBattle(state) {
-      const p1 = state.p1;
-      const p2 = state.p2;
-      p1Name.textContent = `1P ${p1.character}`;
-      p2Name.textContent = `2P ${p2.character}`;
-      p1StatText.textContent = `공격 ${p1.atk} / 방어 ${p1.def}`;
-      p2StatText.textContent = `공격 ${p2.atk} / 방어 ${p2.def}`;
-      p1PassiveText.textContent = `패시브: ${p1.passiveName} - ${p1.passiveDesc}`;
-      p2PassiveText.textContent = `패시브: ${p2.passiveName} - ${p2.passiveDesc}`;
-      p1StateText.textContent = getStateText(p1);
-      p2StateText.textContent = getStateText(p2);
-      p1HpText.textContent = `HP ${p1.hp} / ${p1.maxHp}`;
-      p2HpText.textContent = `HP ${p2.hp} / ${p2.maxHp}`;
-      p1HpFill.style.width = Math.max(0, p1.hp / p1.maxHp * 100) + "%";
-      p2HpFill.style.width = Math.max(0, p2.hp / p2.maxHp * 100) + "%";
-      battleLog.textContent = state.log || "";
-      if (state.winner) {
-        turnText.textContent = state.winner === myRole ? "승리!" : "패배!";
-      } else {
-        turnText.textContent = state.turn === myRole ? "내 턴" : "상대 턴";
+      if (currentMode === "online") {
+        const roomRef = ref(db, "rooms/" + currentRoomCode);
+        const snapshot = await get(roomRef);
+        if (!snapshot.exists()) return;
+        const room = snapshot.val();
+        const battle = room.state.battle;
+        if (!battle || battle.winner) return;
+        const info = getTurnInfo(battle);
+        if (info.side !== mySide) return alert("아직 내 턴이 아닙니다.");
+        const newBattle = processPartySkill(battle, skillId, targetSide, targetSlot);
+        await update(roomRef, { "state/battle": newBattle, updatedAt: Date.now() });
       }
-      renderSkillButtons(state);
     }
 
-    async function onlineUseSkill(skillId) {
-      if (!currentRoomCode || !myRole) return;
-      const roomRef = ref(db, "rooms/" + currentRoomCode);
-      const snapshot = await get(roomRef);
-      if (!snapshot.exists()) return;
-      const room = snapshot.val();
-      const state = room.state;
-      if (!state.started || state.winner) return;
-      if (state.turn !== myRole) return alert("아직 내 턴이 아닙니다.");
-      const newState = processSkill(state, myRole, skillId);
-      await update(roomRef, { state: newState, updatedAt: Date.now() });
+    async function handlePartyRotate(subIndex) {
+      pendingPartySkillId = null;
+
+      if (currentMode === "single") {
+        singlePartyState = processPartyRotate(singlePartyState, subIndex);
+        renderPartyBattle();
+        triggerAiIfNeeded();
+        return;
+      }
+
+      if (currentMode === "online") {
+        const roomRef = ref(db, "rooms/" + currentRoomCode);
+        const snapshot = await get(roomRef);
+        if (!snapshot.exists()) return;
+        const room = snapshot.val();
+        const battle = room.state.battle;
+        if (!battle || battle.winner) return;
+        const info = getTurnInfo(battle);
+        if (info.side !== mySide) return alert("아직 내 턴이 아닙니다.");
+        const newBattle = processPartyRotate(battle, subIndex);
+        await update(roomRef, { "state/battle": newBattle, updatedAt: Date.now() });
+      }
     }
 
-    async function useSelectedSkill(skillId) { await onlineUseSkill(skillId); }
+    function chooseAiSkill(actor) {
+      const list = getSkillListForPlayer(actor);
+      const heal = list.find(id => skills[id].type === "heal");
+      if (heal && actor.hp <= actor.maxHp * 0.45 && Math.random() < 0.65) return heal;
+      const guard = list.find(id => skills[id].type === "guard");
+      if (guard && actor.hp <= actor.maxHp * 0.35 && Math.random() < 0.45) return guard;
+      return list[Math.floor(Math.random() * list.length)];
+    }
 
-    async function resetGame() {
+    function tryAiRotate() {
+      if (!singlePartyState || singlePartyState.winner) return false;
+      const state = singlePartyState;
+      const info = getTurnInfo(state);
+      if (info.side !== "ai") return false;
+      const team = state.teams.ai;
+      const actor = team[info.slot];
+      if (!alive(actor)) return false;
+      const aliveSubs = [2, 3].filter(i => alive(team[i]));
+      if (aliveSubs.length === 0) return false;
+      const hpRate = actor.hp / actor.maxHp;
+      if (hpRate > 0.35) return false;
+      if (Math.random() > 0.65) return false;
+      aliveSubs.sort((a, b) => (team[b].hp / team[b].maxHp) - (team[a].hp / team[a].maxHp));
+      singlePartyState = processPartyRotate(state, aliveSubs[0]);
+      return true;
+    }
+
+    function aiAction() {
+      if (!singlePartyState || singlePartyState.winner) return;
+      const info = getTurnInfo(singlePartyState);
+      if (info.side !== "ai") return;
+      if (tryAiRotate()) {
+        renderPartyBattle();
+        triggerAiIfNeeded();
+        return;
+      }
+      const actor = singlePartyState.teams.ai[info.slot];
+      const skillId = chooseAiSkill(actor);
+      const skill = skills[skillId];
+      if (isTargetSkill(skill)) {
+        const targets = [0, 1].filter(i => alive(singlePartyState.teams.player[i]));
+        const targetSlot = targets[Math.floor(Math.random() * targets.length)];
+        singlePartyState = processPartySkill(singlePartyState, skillId, "player", targetSlot);
+      } else {
+        singlePartyState = processPartySkill(singlePartyState, skillId);
+      }
+      renderPartyBattle();
+      triggerAiIfNeeded();
+    }
+
+    function triggerAiIfNeeded() {
+      if (!singlePartyState || singlePartyState.winner) return;
+      const info = getTurnInfo(singlePartyState);
+      if (info.side === "ai" && !partyBusy) {
+        partyBusy = true;
+        renderPartyBattle();
+        setTimeout(() => {
+          partyBusy = false;
+          aiAction();
+        }, 900);
+      }
+    }
+
+    async function resetBattle() {
       if (currentMode === "single") {
         openSingleMode();
         return;
       }
-      if (!currentRoomCode) return;
-      const roomRef = ref(db, "rooms/" + currentRoomCode);
-      const snapshot = await get(roomRef);
-      if (!snapshot.exists()) return;
-      const state = snapshot.val().state;
-      if (!state.p1.selected || !state.p2.selected) return;
-      await update(roomRef, {
-        state: { started: true, turn: "p1", winner: "", p1: makePlayerFromCharacter(state.p1.character), p2: makePlayerFromCharacter(state.p2.character), log: "게임을 다시 시작했습니다.\n1P의 턴입니다." },
-        updatedAt: Date.now()
-      });
+      if (currentMode === "online") {
+        await leaveRoom();
+      }
     }
 
     async function leaveRoom() {
@@ -1289,11 +930,11 @@ ${state.winner === "player" ? "플레이어" : "AI"} 승리!`;
         backToMode();
         return;
       }
-      if (!currentRoomCode || !myRole) return location.reload();
-      if (myRole === "p1") {
+      if (!currentRoomCode || !mySide) return location.reload();
+      if (mySide === "p1") {
         await remove(ref(db, "rooms/" + currentRoomCode));
       } else {
-        await update(ref(db, "rooms/" + currentRoomCode), { "players/p2": false, "state/started": false, "state/p2": emptyPlayer(), "state/log": "2P가 나갔습니다.", updatedAt: Date.now() });
+        await update(ref(db, "rooms/" + currentRoomCode), { "players/p2": false, updatedAt: Date.now() });
         location.reload();
       }
     }
@@ -1301,9 +942,10 @@ ${state.winner === "player" ? "플레이어" : "AI"} 승리!`;
     function backToMode() {
       currentMode = null;
       currentRoomCode = null;
-      myRole = null;
-      singlePartySelection = [];
+      mySide = null;
+      partySelection = [];
       singlePartyState = null;
+      latestOnlineBattle = null;
       partyBusy = false;
       pendingPartySkillId = null;
       showScreen("mode");
@@ -1314,18 +956,13 @@ ${state.winner === "player" ? "플레이어" : "AI"} 승리!`;
     createRoomBtn.addEventListener("click", createRoom);
     joinRoomBtn.addEventListener("click", joinRoom);
     backToModeBtn.addEventListener("click", backToMode);
-    resetBtn.addEventListener("click", resetGame);
-    leaveBtn.addEventListener("click", leaveRoom);
     waitingBackBtn.addEventListener("click", leaveRoom);
-    partyResetBtn.addEventListener("click", openSingleMode);
-    partyLeaveBtn.addEventListener("click", backToMode);
-
     selectBackBtn.addEventListener("click", async () => {
-      if (currentMode === "single") return backToMode();
-      if (currentRoomCode && myRole === "p1") await remove(ref(db, "rooms/" + currentRoomCode));
-      location.reload();
+      if (currentMode === "online" && currentRoomCode && mySide === "p1") await remove(ref(db, "rooms/" + currentRoomCode));
+      backToMode();
     });
-
+    partyResetBtn.addEventListener("click", resetBattle);
+    partyLeaveBtn.addEventListener("click", leaveRoom);
     copyCodeBtn.addEventListener("click", async () => {
       if (!currentRoomCode) return;
       try {
