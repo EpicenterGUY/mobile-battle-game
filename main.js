@@ -507,7 +507,20 @@ const modeSelect = document.getElementById("modeSelect");
         });
       }
 
+
+
+      function ensureOnlineAvailable() {
+        if (!db || !ref || !get || !set || !update || !onValue || !remove) {
+          alert("온라인 모드를 불러오지 못했습니다. 네트워크 상태를 확인한 뒤 다시 시도해 주세요.");
+          return false;
+        }
+
+        return true;
+      }
+
       function openOnlineMode() {
+        if (!ensureOnlineAvailable()) return;
+
         currentMode = "online";
         currentRoomCode = null;
         mySide = null;
@@ -554,6 +567,8 @@ const modeSelect = document.getElementById("modeSelect");
       }
 
       async function createRoom() {
+        if (!ensureOnlineAvailable()) return;
+
         currentMode = "online";
 
         let code = makeRoomCode();
@@ -585,6 +600,8 @@ const modeSelect = document.getElementById("modeSelect");
       }
 
       async function joinRoom() {
+        if (!ensureOnlineAvailable()) return;
+
         currentMode = "online";
 
         const code = roomInput.value.trim().toUpperCase();
