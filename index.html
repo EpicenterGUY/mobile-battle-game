@@ -355,8 +355,7 @@
       if (actor && actor.poison > 0) {
         actor.poison -= 1;
         actor.hp = Math.max(0, actor.hp - 5);
-        log += `${sideLabel(side)} ${actor.character}은 독으로 5 피해를 받았다!
-`;
+        log += `${sideLabel(side)} ${actor.character}은 독으로 5 피해를 받았다!\n`;
       }
       return log;
     }
@@ -389,9 +388,7 @@
       const logs = [];
       autoPromoteAll(state, logs);
       if (checkWinner(state)) {
-        if (logs.length) state.log += "
-" + logs.join("
-");
+       if (logs.length) state.log += "\\n" + logs.join("\\n");");
         return;
       }
 
@@ -399,22 +396,10 @@
       do {
         state.turnIndex = (state.turnIndex + 1) % 4;
         if (state.turnIndex === 0) state.round += 1;
-        attempts += 1;
-        const info = getTurnInfo(state);
-        const actor = getTeam(state, info.side)[info.slot];
-        if (alive(actor)) break;
-      } while (attempts < 8);
-
-      if (logs.length) state.log += "
-" + logs.join("
-");
-    }
-
-    function processPartySkill(oldState, skillId, targetSide = null, targetSlot = null) {
+        attempts +(oldState, skillId, targetSide = null, targetSlot = null) {
       const state = clone(oldState);
       const info = getTurnInfo(state);
-      const actor = getTeam(state, info.side)[info.slot];
-      const skill = skills[skillId] || skills.basic;
+      const actor = getTeam(state, inif (logs.length) state.log += "\\n" + logs.join("\\n");llId] || skills.basic;
       let log = applyPoisonStart(state, info.side, info.slot);
 
       if (!alive(actor)) {
@@ -454,9 +439,7 @@
         if (result.hit) {
           log += `${sideLabel(targetSide)} 메인${targetSlot + 1} ${defender.character}에게 ${result.damage} 데미지!`;
           if (skill.type === "attackBuff") {
-            actor.atkBuff += skill.buff;
-            log += `
-다음 공격 피해가 ${skill.buff} 증가한다!`;
+            actor.atkBuff += skillif (logs.length) log += logs.join("\\n") + "\\n";.buff} 증가한다!`;
           }
           if (skill.type === "attackDebuff") {
             defender.atkDebuff += skill.debuff;
@@ -550,20 +533,12 @@ ${sideLabel(state.winner)} 승리!`;
     }
 
     async function createRoom() {
-      currentMode = "online";
-      let code = makeRoomCode();
-      let roomRef = ref(db, "rooms/" + code);
-      let snapshot = await get(roomRef);
-      while (snapshot.exists()) {
-        code = makeRoomCode();
-        roomRef = ref(db, "rooms/" + code);
-        snapshot = await get(roomRef);
+      c     snapshot = await get(roomRef);
       }
       await set(roomRef, initialOnlineRoomState());
       currentRoomCode = code;
       mySide = "p1";
-      partySelection = [];
-      roomCodeView.textContent = code;
+  log: "방이 생성되었습니다.\\n1P는 파티 4명을 선택하세요."odeView.textContent = code;
       selectTopLabel.textContent = "방 코드";
       selectRoomCodeView.textContent = code;
       selectTitle.textContent = "1P 파티 4명 선택";
@@ -597,11 +572,7 @@ ${sideLabel(state.winner)} 승리!`;
     }
 
     async function selectPartyCharacter(charName) {
-      if (partySelection.includes(charName)) return;
-      partySelection.push(charName);
-
-      if (currentMode === "single") {
-        selectRoomCodeView.textContent = `${partySelection.length}/4`;
+      if (partySelection.in"state/log": "2P가 참가했습니다.\\n각자 파티 4명을 선택하세요."igth}/4`;
         myRoleText.textContent = `선택됨: ${partySelection.join(" / ")}`;
         if (partySelection.length >= 4) startSinglePartyBattle(partySelection);
         else renderCharacterList();
