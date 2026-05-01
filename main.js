@@ -151,6 +151,17 @@ const modeSelect = document.getElementById("modeSelect");
         return (player?.ultimateGauge || 0) >= ULTIMATE_READY_GAUGE;
       }
 
+      function clampUltimateGauge(gauge) {
+        return Math.min(ULTIMATE_READY_GAUGE, gauge || 0);
+      }
+
+      function increaseUltimateGauge(player) {
+        player.ultimateGauge = Math.min(
+          ULTIMATE_READY_GAUGE,
+          (player.ultimateGauge || 0) + 1,
+        );
+      }
+
       function isTargetSkill(skill) {
         return [
           "attack",
@@ -185,7 +196,9 @@ const modeSelect = document.getElementById("modeSelect");
         if (player.atkBuff > 0) list.push(`공격강화 +${player.atkBuff}`);
         if (player.atkDebuff > 0) list.push(`공격감소 -${player.atkDebuff}`);
         if (player.poison > 0) list.push(`독 ${player.poison}`);
-        list.push(`궁극기 게이지 ${player.ultimateGauge || 0}/${ULTIMATE_READY_GAUGE}`);
+        list.push(
+          `궁극기 게이지 ${clampUltimateGauge(player.ultimateGauge)}/${ULTIMATE_READY_GAUGE}`,
+        );
 
         return list.length ? list.join(" / ") : "상태 없음";
       }
@@ -329,7 +342,7 @@ const modeSelect = document.getElementById("modeSelect");
 
         damage = Math.max(1, damage);
         defender.hp = Math.max(0, defender.hp - damage);
-        defender.ultimateGauge = (defender.ultimateGauge || 0) + 1;
+        increaseUltimateGauge(defender);
 
         return { hit: true, damage };
       }
@@ -447,7 +460,7 @@ const modeSelect = document.getElementById("modeSelect");
         }
 
         actor.turnCount = (actor.turnCount || 0) + 1;
-        actor.ultimateGauge = (actor.ultimateGauge || 0) + 1;
+        increaseUltimateGauge(actor);
         log += `${sideLabel(info.side)} 메인${info.slot + 1} ${actor.character}의 [${skill.name}]!\n`;
 
         if (skill.type === "guard") {
@@ -535,7 +548,7 @@ const modeSelect = document.getElementById("modeSelect");
           log += `${sub?.character || "빈 자리"}은 쓰러져 로테이션할 수 없습니다.`;
         } else {
           [team[info.slot], team[subIndex]] = [team[subIndex], team[info.slot]];
-          team[subIndex].ultimateGauge = (team[subIndex].ultimateGauge || 0) + 1;
+          increaseUltimateGauge(team[subIndex]);
           log += `로테이션! ${sideLabel(info.side)} 메인${info.slot + 1} ${actor.character} ↔ 서브${subIndex - 1} ${sub.character}`;
         }
 
@@ -1103,7 +1116,7 @@ const modeSelect = document.getElementById("modeSelect");
         });
 
         const ultBtn = document.createElement("button");
-        const ultimateGauge = actor?.ultimateGauge || 0;
+        const ultimateGauge = clampUltimateGauge(actor?.ultimateGauge || 0);
         const ultimateReady = canUseUltimate(actor);
         ultBtn.className = "skill-button";
         ultBtn.disabled = !ultimateReady;
