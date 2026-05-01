@@ -1117,7 +1117,7 @@ ${state.winner === "player" ? "플레이어" : "AI"} 승리!`;
       }
 
       const actor = getTeam(state, info.side)[info.slot];
-      partyTurnText.textContent = `${state.round}라운드 - ${partyLabel(info.side)} ${actor.character} 행동`;
+      partyTurnText.textContent = `${state.round}라운드 - ${partyLabel(info.side)} 메인${info.slot + 1} ${actor.character} 행동`;
       partyActionButtons.innerHTML = "";
 
       if (info.side === "ai") {
@@ -1141,7 +1141,7 @@ ${state.winner === "player" ? "플레이어" : "AI"} 승리!`;
           btn.disabled = !alive(target);
           const targetDead = !alive(target);
           const targetLabel = targetDead ? `${target?.character || "빈 자리"} [전투불능]` : `${target?.character || "빈 자리"}`;
-          btn.innerHTML = `<div class="skill-name">AI ${targetLabel}</div><div class="skill-desc">HP ${target?.hp || 0} / ${target?.maxHp || 0}</div>`;
+          btn.innerHTML = `<div class="skill-name">AI 메인${slot + 1} ${targetLabel}</div><div class="skill-desc">HP ${target?.hp || 0} / ${target?.maxHp || 0}</div>`;
           btn.addEventListener("click", () => partyUseSkill(pendingPartySkillId, "ai", slot));
           partyActionButtons.appendChild(btn);
         });
@@ -1174,9 +1174,11 @@ ${state.winner === "player" ? "플레이어" : "AI"} 승리!`;
         const btn = document.createElement("button");
         btn.className = "rotate-button secondary";
         btn.disabled = !alive(sub);
+        const mainLabel = `메인${info.slot + 1}`;
+        const subLabel = `서브${subIndex - 1}`;
         btn.textContent = alive(sub)
-          ? `로테이션: ${actor.character} ↔ ${sub?.character || "빈 자리"}`
-          : `로테이션 불가: ${sub?.character || "빈 자리"} [전투불능]`;
+          ? `로테이션: ${mainLabel} ${actor.character} ↔ ${subLabel} ${sub?.character || "빈 자리"}`
+          : `로테이션 불가: ${subLabel} ${sub?.character || "빈 자리"} [전투불능]`;
         btn.addEventListener("click", () => partyRotate(subIndex));
         partyActionButtons.appendChild(btn);
       });
