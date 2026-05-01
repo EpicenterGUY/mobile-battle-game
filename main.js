@@ -16,6 +16,7 @@ const modeSelect = document.getElementById("modeSelect");
 
       const onlineModeBtn = document.getElementById("onlineModeBtn");
       const singleModeBtn = document.getElementById("singleModeBtn");
+      const startBtn = document.getElementById("startBtn");
       const createRoomBtn = document.getElementById("createRoomBtn");
       const joinRoomBtn = document.getElementById("joinRoomBtn");
       const roomInput = document.getElementById("roomInput");
@@ -1254,6 +1255,7 @@ const modeSelect = document.getElementById("modeSelect");
 
       onlineModeBtn.addEventListener("click", openOnlineMode);
       singleModeBtn.addEventListener("click", openSingleMode);
+      if (startBtn) startBtn.addEventListener("click", openSingleMode);
       createRoomBtn.addEventListener("click", createRoom);
       joinRoomBtn.addEventListener("click", joinRoom);
       backToModeBtn.addEventListener("click", backToMode);
