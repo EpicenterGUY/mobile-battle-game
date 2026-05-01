@@ -26,6 +26,8 @@ let singlePartyState = null;
 let latestOnlineBattle = null;
 let pendingPartySkillId = null;
 let partyBusy = false;
+const ULTIMATE_READY_GAUGE = 4;
+const ULTIMATE_SKILL_ID = "__ultimate__";
 
 const recommendedParties = [
   {
@@ -129,6 +131,7 @@ const modeSelect = document.getElementById("modeSelect");
           atkBuff: 0,
           atkDebuff: 0,
           poison: 0,
+          ultimateGauge: 0,
         };
       }
 
@@ -142,6 +145,10 @@ const modeSelect = document.getElementById("modeSelect");
 
       function getSkillListForPlayer(player) {
         return ["basic", ...(player.skillIds || [])];
+      }
+
+      function canUseUltimate(player) {
+        return (player?.ultimateGauge || 0) >= ULTIMATE_READY_GAUGE;
       }
 
       function isTargetSkill(skill) {
@@ -178,6 +185,7 @@ const modeSelect = document.getElementById("modeSelect");
         if (player.atkBuff > 0) list.push(`공격강화 +${player.atkBuff}`);
         if (player.atkDebuff > 0) list.push(`공격감소 -${player.atkDebuff}`);
         if (player.poison > 0) list.push(`독 ${player.poison}`);
+        list.push(`궁극기 게이지 ${player.ultimateGauge || 0}/${ULTIMATE_READY_GAUGE}`);
 
         return list.length ? list.join(" / ") : "상태 없음";
       }
@@ -321,6 +329,7 @@ const modeSelect = document.getElementById("modeSelect");
 
         damage = Math.max(1, damage);
         defender.hp = Math.max(0, defender.hp - damage);
+        defender.ultimateGauge = (defender.ultimateGauge || 0) + 1;
 
         return { hit: true, damage };
       }
@@ -414,7 +423,15 @@ const modeSelect = document.getElementById("modeSelect");
         const state = clone(oldState);
         const info = getTurnInfo(state);
         const actor = getTeam(state, info.side)[info.slot];
-        const skill = skills[skillId] || skills.basic;
+        const usingUltimate = skillId === ULTIMATE_SKILL_ID;
+        const skill = usingUltimate
+          ? {
+              id: ULTIMATE_SKILL_ID,
+              name: "궁극기: 한계 돌파",
+              type: "attack",
+              power: 35,
+            }
+          : skills[skillId] || skills.basic;
         let log = applyPoisonStart(state, info.side, info.slot);
 
         if (!alive(actor)) {
@@ -424,7 +441,13 @@ const modeSelect = document.getElementById("modeSelect");
           return state;
         }
 
+        if (usingUltimate && !canUseUltimate(actor)) {
+          state.log = `${sideLabel(info.side)} ${actor.character}의 궁극기 게이지가 부족합니다.`;
+          return state;
+        }
+
         actor.turnCount = (actor.turnCount || 0) + 1;
+        actor.ultimateGauge = (actor.ultimateGauge || 0) + 1;
         log += `${sideLabel(info.side)} 메인${info.slot + 1} ${actor.character}의 [${skill.name}]!\n`;
 
         if (skill.type === "guard") {
@@ -481,6 +504,11 @@ const modeSelect = document.getElementById("modeSelect");
           }
         }
 
+        if (usingUltimate) {
+          actor.ultimateGauge = 0;
+          log += "\n궁극기 게이지가 0으로 초기화되었다!";
+        }
+
         state.log = log;
         autoPromoteAll(state);
 
@@ -507,6 +535,7 @@ const modeSelect = document.getElementById("modeSelect");
           log += `${sub?.character || "빈 자리"}은 쓰러져 로테이션할 수 없습니다.`;
         } else {
           [team[info.slot], team[subIndex]] = [team[subIndex], team[info.slot]];
+          team[subIndex].ultimateGauge = (team[subIndex].ultimateGauge || 0) + 1;
           log += `로테이션! ${sideLabel(info.side)} 메인${info.slot + 1} ${actor.character} ↔ 서브${subIndex - 1} ${sub.character}`;
         }
 
@@ -1007,7 +1036,10 @@ const modeSelect = document.getElementById("modeSelect");
         }
 
         if (pendingPartySkillId) {
-          const skill = skills[pendingPartySkillId];
+          const skill =
+            pendingPartySkillId === ULTIMATE_SKILL_ID
+              ? { name: "궁극기: 한계 돌파" }
+              : skills[pendingPartySkillId];
           const enemySide = getEnemySide(state, info.side);
 
           const title = document.createElement("div");
@@ -1069,6 +1101,21 @@ const modeSelect = document.getElementById("modeSelect");
 
           partyActionButtons.appendChild(btn);
         });
+
+        if (canUseUltimate(actor)) {
+          const ultBtn = document.createElement("button");
+          ultBtn.className = "skill-button";
+          ultBtn.innerHTML = `
+          <div class="skill-name">궁극기: 한계 돌파</div>
+          <div class="skill-power">위력 35 / 적 메인 1명</div>
+          <div class="skill-desc">게이지 4를 소모해 강력한 일격을 가한다.</div>
+        `;
+          ultBtn.addEventListener("click", () => {
+            pendingPartySkillId = ULTIMATE_SKILL_ID;
+            renderPartyBattle();
+          });
+          partyActionButtons.appendChild(ultBtn);
+        }
 
         [2, 3].forEach((subIndex) => {
           const sub = state.teams[info.side][subIndex];
@@ -1191,6 +1238,10 @@ const modeSelect = document.getElementById("modeSelect");
       }
 
       function chooseAiSkill(actor) {
+        if (canUseUltimate(actor)) {
+          return ULTIMATE_SKILL_ID;
+        }
+
         const list = getSkillListForPlayer(actor);
         const heal = list.find((id) => skills[id].type === "heal");
 
@@ -1252,7 +1303,10 @@ const modeSelect = document.getElementById("modeSelect");
 
         const actor = singlePartyState.teams.ai[info.slot];
         const skillId = chooseAiSkill(actor);
-        const skill = skills[skillId];
+        const skill =
+          skillId === ULTIMATE_SKILL_ID
+            ? { type: "attack" }
+            : skills[skillId];
 
         if (isTargetSkill(skill)) {
           const targets = [0, 1].filter((i) =>
