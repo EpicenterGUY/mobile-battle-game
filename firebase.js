@@ -5,8 +5,13 @@ let update = null;
 let get = null;
 let onValue = null;
 let remove = null;
+let firebaseReadyPromise = null;
 
 async function initFirebase() {
+  if (db && ref && set && update && get && onValue && remove) {
+    return true;
+  }
+
   try {
     const [{ initializeApp }, dbModule] = await Promise.all([
       import("https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js"),
@@ -33,11 +38,19 @@ async function initFirebase() {
     get = dbModule.get;
     onValue = dbModule.onValue;
     remove = dbModule.remove;
+    return true;
   } catch (error) {
     console.warn("Firebase 로드 실패: 온라인 모드 비활성화", error);
+    return false;
   }
 }
 
-await initFirebase();
+function ensureFirebaseReady() {
+  if (!firebaseReadyPromise) {
+    firebaseReadyPromise = initFirebase();
+  }
 
-export { db, ref, set, update, get, onValue, remove };
+  return firebaseReadyPromise;
+}
+
+export { db, ref, set, update, get, onValue, remove, ensureFirebaseReady };
