@@ -27,6 +27,29 @@ let latestOnlineBattle = null;
 let pendingPartySkillId = null;
 let partyBusy = false;
 
+const recommendedParties = [
+  {
+    label: "초보 추천 조합",
+    members: ["검사", "탱커", "성직자", "궁수"],
+  },
+  {
+    label: "극딜 조합",
+    members: ["광전사", "마법사", "궁수", "주술사"],
+  },
+  {
+    label: "버티기 조합",
+    members: ["탱커", "성직자", "검사", "도적"],
+  },
+  {
+    label: "독살 조합",
+    members: ["도적", "주술사", "성직자", "탱커"],
+  },
+  {
+    label: "예능 조합",
+    members: ["광전사", "도적", "주술사", "마법사"],
+  },
+];
+
 const modeSelect = document.getElementById("modeSelect");
       const lobby = document.getElementById("lobby");
       const waiting = document.getElementById("waiting");
@@ -49,6 +72,7 @@ const modeSelect = document.getElementById("modeSelect");
       const waitingBackBtn = document.getElementById("waitingBackBtn");
       const myRoleText = document.getElementById("myRoleText");
       const characterList = document.getElementById("characterList");
+      const recommendButtons = document.getElementById("recommendButtons");
       const selectBackBtn = document.getElementById("selectBackBtn");
 
       const leftPartyTitle = document.getElementById("leftPartyTitle");
@@ -527,6 +551,50 @@ const modeSelect = document.getElementById("modeSelect");
       }
 
 
+
+
+      function renderRecommendedButtons() {
+        recommendButtons.innerHTML = "";
+
+        recommendedParties.forEach((preset) => {
+          const button = document.createElement("button");
+          button.className = "recommend-btn";
+          button.type = "button";
+          button.textContent = `${preset.label}: ${preset.members.join(" / ")}`;
+          button.addEventListener("click", () => {
+            applyRecommendedParty(preset.members);
+          });
+          recommendButtons.appendChild(button);
+        });
+      }
+
+      async function applyRecommendedParty(members) {
+        partySelection = [...members];
+
+        if (currentMode === "single") {
+          selectRoomCodeView.textContent = `${partySelection.length}/4`;
+          myRoleText.textContent = `선택됨: ${partySelection.join(" / ")}`;
+          startSinglePartyBattle(partySelection);
+          return;
+        }
+
+        if (currentMode === "online") {
+          myRoleText.textContent = `선택됨: ${partySelection.join(" / ")}`;
+
+          const party = partySelection.map(makePlayerFromCharacter);
+          const updates = {};
+
+          updates[`state/${mySide}Party`] = party;
+          updates["state/log"] = `${sideLabel(mySide)} 파티 선택 완료!`;
+          updates["updatedAt"] = Date.now();
+
+          await update(ref(db, "rooms/" + currentRoomCode), updates);
+
+          roomCodeView.textContent = currentRoomCode;
+          waitingText.textContent = "상대의 파티 선택을 기다리는 중...";
+          showScreen("waiting");
+        }
+      }
 
       async function ensureOnlineAvailable() {
         await ensureFirebaseReady();
@@ -1302,3 +1370,5 @@ const modeSelect = document.getElementById("modeSelect");
         }
       });
     
+
+      renderRecommendedButtons();
