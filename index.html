@@ -1341,18 +1341,22 @@
         }
 
         const room = snapshot.val();
+        const startedNow = await tryStartOnlineBattle(room);
 
-        await tryStartOnlineBattle(room);
+        if (startedNow) {
+          return;
+        }
+
         renderOnlineRoom(room);
       });
     }
 
     async function tryStartOnlineBattle(room) {
-      if (!currentRoomCode || mySide !== "p1") return;
+      if (!currentRoomCode || mySide !== "p1") return false;
 
       const state = room.state;
 
-      if (!state || state.started) return;
+      if (!state || state.started) return false;
 
       if ((state.p1Party || []).length === 4 && (state.p2Party || []).length === 4) {
         const battle = createBattleState(
@@ -1360,7 +1364,9 @@
           "p2",
           state.p1Party,
           state.p2Party,
-          "온라인 4인 파티 배틀 시작!\n1P와 2P의 전투가 시작되었습니다.\n1라운드 - 1P 메인1부터 행동합니다."
+          "온라인 4인 파티 배틀 시작!
+1P와 2P의 전투가 시작되었습니다.
+1라운드 - 1P 메인1부터 행동합니다."
         );
 
         await update(ref(db, "rooms/" + currentRoomCode), {
@@ -1369,7 +1375,11 @@
           "state/log": "전투 시작!",
           updatedAt: Date.now()
         });
+
+        return true;
       }
+
+      return false;
     }
 
     function renderOnlineRoom(room) {
