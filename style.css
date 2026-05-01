@@ -223,6 +223,12 @@
         margin-top: 3px;
       }
 
+      button:disabled .skill-power,
+      button:disabled .skill-desc {
+        color: inherit;
+        opacity: 1;
+      }
+
       .log {
         white-space: pre-line;
         background: #030712;

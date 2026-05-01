@@ -1102,20 +1102,23 @@ const modeSelect = document.getElementById("modeSelect");
           partyActionButtons.appendChild(btn);
         });
 
-        if (canUseUltimate(actor)) {
-          const ultBtn = document.createElement("button");
-          ultBtn.className = "skill-button";
-          ultBtn.innerHTML = `
+        const ultBtn = document.createElement("button");
+        const ultimateGauge = actor?.ultimateGauge || 0;
+        const ultimateReady = canUseUltimate(actor);
+        ultBtn.className = "skill-button";
+        ultBtn.disabled = !ultimateReady;
+        ultBtn.innerHTML = `
           <div class="skill-name">궁극기: 한계 돌파</div>
           <div class="skill-power">위력 35 / 적 메인 1명</div>
-          <div class="skill-desc">게이지 4를 소모해 강력한 일격을 가한다.</div>
+          <div class="skill-desc">${ultimateReady ? `게이지 ${ultimateGauge}/${ULTIMATE_READY_GAUGE} - 사용 가능` : `게이지 ${ultimateGauge}/${ULTIMATE_READY_GAUGE}`}</div>
         `;
+        if (ultimateReady) {
           ultBtn.addEventListener("click", () => {
             pendingPartySkillId = ULTIMATE_SKILL_ID;
             renderPartyBattle();
           });
-          partyActionButtons.appendChild(ultBtn);
         }
+        partyActionButtons.appendChild(ultBtn);
 
         [2, 3].forEach((subIndex) => {
           const sub = state.teams[info.side][subIndex];
