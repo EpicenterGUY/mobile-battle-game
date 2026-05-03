@@ -694,16 +694,17 @@ function sideLabel(side) {
           const div = document.createElement("div");
           div.className = "character-card";
 
-          const previewSkills = selectedMember?.skillIds || c.defaultSkillIds;
+          const selectedMember = findPartyMember(c.name);
+          const selected = !!selectedMember;
+          const previewSkills = selectedMember?.skillIds || c.defaultSkillIds || ["basic"];
+
           const skillNames = previewSkills
-            .map((id) => `${tx(skills[id].name)} - ${tx(skills[id].powerText)}`)
+            .map((id) => `${tx(skills[id]?.name || id)} - ${tx(skills[id]?.powerText || "")}`)
             .join("<br>");
           const ultimateText = c.ultimate
             ? `${tx(c.ultimate.name)} - ${tx(c.ultimate.desc)}`
             : "한계 돌파 - 적 메인 1명에게 위력 35 피해";
 
-          const selectedMember = findPartyMember(c.name);
-          const selected = !!selectedMember;
           const buttonText = selected
             ? "선택됨"
             : `파티에 추가 (${partySelection.length}/4)`;
@@ -1694,8 +1695,12 @@ function sideLabel(side) {
   copyCodeBtn.textContent = t("common.copyRoom");
   waitingBackBtn.textContent = t("common.leave");
   selectBackBtn.textContent = t("common.back");
-  renderCharacterList();
-  if (currentMode === "partyBattle" || singlePartyState || latestOnlineBattle) renderPartyBattle();
+  if (characterList && !selectCharacter.classList.contains("hidden")) {
+    renderCharacterList();
+  }
+  if (!partyBattle.classList.contains("hidden") && (singlePartyState || latestOnlineBattle)) {
+    renderPartyBattle();
+  }
 }
 
 function switchLanguage(lang) {
