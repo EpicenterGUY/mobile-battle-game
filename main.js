@@ -736,12 +736,12 @@ const modeSelect = document.getElementById("modeSelect");
           if (!selectedName) return `<div>${role}: 미선택</div>`;
           const loadout =
             selectedSkillLoadouts[selectedName] || getDefaultLoadout(selectedName);
-          const skillText = loadout
-            .map((skillId) => tx(skills[skillId]?.name || skillId))
-            .join(" / ");
+          const skillListItems = loadout
+            .map((skillId) => `<li>${tx(skills[skillId]?.name || skillId)}</li>` )
+            .join("");
           return `<div class="selected-member-preview" data-char="${selectedName}">
             <div>${role}: ${tx(selectedName)}</div>
-            <div>${t("ui.equipped")}: ${skillText}</div>
+            <div class="equipped-skills"><div>${t("ui.equipped")}:</div><ul>${skillListItems}</ul></div>
             <button type="button" class="green skill-edit-btn" data-char="${selectedName}">${t("ui.changeSkill")}</button>
             <div class="skill-editor" data-char="${selectedName}"></div>
           </div>`;
@@ -780,7 +780,7 @@ const modeSelect = document.getElementById("modeSelect");
         const optionsHtml = available
           .map((skillId) => {
             const checked = selectedSet.has(skillId) ? "checked" : "";
-            return `<label style="display:block;margin-top:4px;">
+            return `<label class="skill-option-label ${checked ? "selected-skill-option" : ""}">
               <input type="checkbox" value="${skillId}" ${checked}>
               ${tx(skills[skillId]?.name || skillId)}
             </label>`;
@@ -791,6 +791,7 @@ const modeSelect = document.getElementById("modeSelect");
           <div style="margin-top:6px;padding:8px;border:1px solid #444;border-radius:8px;">
             <div>${t("ui.changeSkill")} - ${tx(charName)}</div>
             <div class="skill-options">${optionsHtml}</div>
+            <div class="skill-select-count"></div>
             <div class="skill-select-error" style="color:#ff6b6b;margin-top:6px;"></div>
             <button type="button" class="green apply-skill-btn">${t("common.apply")}</button>
             <button type="button" class="gray cancel-skill-btn">${t("common.cancel")}</button>
@@ -798,16 +799,23 @@ const modeSelect = document.getElementById("modeSelect");
         `;
 
         const errorNode = editor.querySelector(".skill-select-error");
+        const countNode = editor.querySelector(".skill-select-count");
+        const applyButton = editor.querySelector(".apply-skill-btn");
         const checkboxes = Array.from(editor.querySelectorAll('input[type="checkbox"]'));
-        const updateError = () => {
+        const updateSelectionState = () => {
           const selectedCount = checkboxes.filter((cb) => cb.checked).length;
+          countNode.textContent = `선택됨 ${selectedCount}/4`;
           errorNode.textContent = selectedCount === 4 ? "" : t("ui.needFourSkills");
+          if (applyButton) applyButton.disabled = selectedCount !== 4;
+          checkboxes.forEach((cb) => {
+            cb.closest(".skill-option-label")?.classList.toggle("selected-skill-option", cb.checked);
+          });
           return selectedCount;
         };
-        updateError();
-        checkboxes.forEach((cb) => cb.addEventListener("change", updateError));
+        updateSelectionState();
+        checkboxes.forEach((cb) => cb.addEventListener("change", updateSelectionState));
 
-        editor.querySelector(".apply-skill-btn")?.addEventListener("click", () => {
+        applyButton?.addEventListener("click", () => {
           const selected = checkboxes
             .filter((cb) => cb.checked)
             .map((cb) => cb.value);

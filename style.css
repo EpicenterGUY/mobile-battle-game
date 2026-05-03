@@ -354,3 +354,25 @@
         margin: 16px 0 8px;
       }
     
+
+      .equipped-skills ul {
+        margin: 4px 0 0 0;
+        padding-left: 18px;
+      }
+
+      .skill-option-label {
+        display: block;
+        margin-top: 4px;
+        padding: 4px 6px;
+        border-radius: 6px;
+      }
+
+      .selected-skill-option {
+        background: rgba(74, 222, 128, 0.16);
+        border: 1px solid rgba(74, 222, 128, 0.5);
+      }
+
+      .skill-select-count {
+        margin-top: 8px;
+        font-weight: 700;
+      }
