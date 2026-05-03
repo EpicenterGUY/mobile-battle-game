@@ -209,7 +209,7 @@ export const skills = {
         },
       };
 
-      export const characters = {
+export const characters = {
         검사: {
           name: "검사",
           hp: 110,
@@ -218,6 +218,13 @@ export const skills = {
           passiveName: "검의 호흡",
           passiveDesc: "공격 시 20% 확률로 추가 피해 8",
           skillIds: ["slash", "guard", "halfmoon"],
+          ultimate: {
+            name: "진 일섬",
+            desc: "적 메인 1명에게 위력 42 피해",
+            type: "attack",
+            power: 42,
+            target: "enemySingle",
+          },
         },
         마법사: {
           name: "마법사",
@@ -227,6 +234,13 @@ export const skills = {
           passiveName: "마력 순환",
           passiveDesc: "자신의 3번째 행동마다 공격 스킬 피해 +10",
           skillIds: ["fireball", "ice", "heal"],
+          ultimate: {
+            name: "메테오",
+            desc: "적 메인 2명에게 위력 24 피해",
+            type: "attack",
+            power: 24,
+            target: "enemyAllMain",
+          },
         },
         도적: {
           name: "도적",
@@ -236,6 +250,14 @@ export const skills = {
           passiveName: "그림자 걸음",
           passiveDesc: "공격받을 때 15% 확률로 공격 회피",
           skillIds: ["poison", "weak", "smoke"],
+          ultimate: {
+            name: "그림자 난무",
+            desc: "적 메인 1명에게 위력 30 피해, 대상이 독 상태면 추가 피해 15",
+            type: "weakAttack",
+            power: 30,
+            bonusIfPoison: 15,
+            target: "enemySingle",
+          },
         },
         탱커: {
           name: "탱커",
@@ -245,6 +267,13 @@ export const skills = {
           passiveName: "불굴의 육체",
           passiveDesc: "HP가 40% 이하일 때 받는 피해 20% 감소",
           skillIds: ["shield_bash", "fortress", "heavy_strike"],
+          ultimate: {
+            name: "철벽의 수호",
+            desc: "아군 메인 2명이 다음에 받는 피해 50% 감소",
+            type: "teamGuard",
+            guardRate: 0.5,
+            target: "allyAllMain",
+          },
         },
         광전사: {
           name: "광전사",
@@ -254,6 +283,14 @@ export const skills = {
           passiveName: "피의 갈망",
           passiveDesc: "HP가 50% 이하일 때 공격 피해 +10",
           skillIds: ["berserk_axe", "blood_slash", "rage"],
+          ultimate: {
+            name: "광폭화",
+            desc: "적 메인 1명에게 위력 48 피해, 자신도 10 피해",
+            type: "selfHarmAttack",
+            power: 48,
+            selfDamage: 10,
+            target: "enemySingle",
+          },
         },
         성직자: {
           name: "성직자",
@@ -263,6 +300,13 @@ export const skills = {
           passiveName: "성스러운 가호",
           passiveDesc: "회복 스킬의 회복량 20% 증가",
           skillIds: ["priest_heal", "judgment", "blessing"],
+          ultimate: {
+            name: "대치유",
+            desc: "아군 메인 2명의 HP를 35 회복",
+            type: "teamHeal",
+            heal: 35,
+            target: "allyAllMain",
+          },
         },
         궁수: {
           name: "궁수",
@@ -272,6 +316,13 @@ export const skills = {
           passiveName: "매의 눈",
           passiveDesc: "공격 시 15% 확률로 추가 피해 10",
           skillIds: ["pierce_arrow", "rapid_shot", "focus_aim"],
+          ultimate: {
+            name: "폭풍 사격",
+            desc: "적 메인 2명에게 위력 22 피해",
+            type: "attack",
+            power: 22,
+            target: "enemyAllMain",
+          },
         },
         주술사: {
           name: "주술사",
@@ -281,14 +332,14 @@ export const skills = {
           passiveName: "저주의 낙인",
           passiveDesc: "독 또는 공격감소 상태의 적에게 피해 +8",
           skillIds: ["curse", "soul_drain", "dark_orb"],
+          ultimate: {
+            name: "파멸의 저주",
+            desc: "적 메인 1명에게 위력 25 피해, 공격 감소 10, 독 3턴",
+            type: "poisonDebuffAttack",
+            power: 25,
+            debuff: 10,
+            poison: 3,
+            target: "enemySingle",
+          },
         },
       };
-
-      let currentMode = null;
-      let currentRoomCode = null;
-      let mySide = null;
-      let partySelection = [];
-      let singlePartyState = null;
-      let latestOnlineBattle = null;
-      let partyBusy = false;
-      let pendingPartySkillId = null;
