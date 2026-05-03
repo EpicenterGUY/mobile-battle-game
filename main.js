@@ -706,7 +706,24 @@ const modeSelect = document.getElementById("modeSelect");
         });
       }
 
+      function renderSingleStartButton() {
+        const existing = document.getElementById("singleStartBattleBtn");
+        if (existing) existing.remove();
 
+        if (currentMode !== "single") return;
+        if (partySelection.length !== 4) return;
+
+        const btn = document.createElement("button");
+        btn.id = "singleStartBattleBtn";
+        btn.className = "green";
+        btn.type = "button";
+        btn.textContent = "전투 시작";
+        btn.addEventListener("click", () => {
+          startSinglePartyBattle(partySelection);
+        });
+
+        characterList.insertAdjacentElement("afterend", btn);
+      }
 
 
       function renderRecommendedButtons() {
@@ -732,6 +749,7 @@ const modeSelect = document.getElementById("modeSelect");
           myRoleText.textContent =
             "파티 4명 선택 완료! 다음 단계에서 전투 시작 버튼을 추가할 예정입니다.";
           renderCharacterList();
+          renderSingleStartButton();
           return;
         }
 
@@ -792,6 +810,7 @@ const modeSelect = document.getElementById("modeSelect");
           "선택 순서대로 1,2번은 메인 / 3,4번은 서브가 됩니다.";
 
         renderCharacterList();
+        renderSingleStartButton();
         showScreen("select");
       }
 
@@ -841,6 +860,7 @@ const modeSelect = document.getElementById("modeSelect");
           "선택 순서대로 1,2번은 메인 / 3,4번은 서브입니다.";
 
         renderCharacterList();
+        renderSingleStartButton();
         showScreen("select");
         listenRoom(code);
       }
@@ -908,6 +928,7 @@ const modeSelect = document.getElementById("modeSelect");
           "선택 순서대로 1,2번은 메인 / 3,4번은 서브입니다.";
 
         renderCharacterList();
+        renderSingleStartButton();
         showScreen("select");
         listenRoom(code);
       }
@@ -929,6 +950,7 @@ const modeSelect = document.getElementById("modeSelect");
           }
 
           renderCharacterList();
+          renderSingleStartButton();
           return;
         }
 
@@ -937,6 +959,7 @@ const modeSelect = document.getElementById("modeSelect");
 
           if (partySelection.length < 4) {
             renderCharacterList();
+            renderSingleStartButton();
             return;
           }
 
@@ -1633,6 +1656,7 @@ const modeSelect = document.getElementById("modeSelect");
   waitingBackBtn.textContent = t("common.leave");
   selectBackBtn.textContent = t("common.back");
   renderCharacterList();
+  renderSingleStartButton();
   if (currentMode === "partyBattle" || singlePartyState || latestOnlineBattle) renderPartyBattle();
 }
 
