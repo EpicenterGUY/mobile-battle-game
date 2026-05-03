@@ -1,16 +1,14 @@
-let services = {
-  db: null,
-  ref: null,
-  set: null,
-  update: null,
-  get: null,
-  onValue: null,
-  remove: null,
-};
+let db = null;
+let ref = null;
+let set = null;
+let update = null;
+let get = null;
+let onValue = null;
+let remove = null;
 let firebaseReadyPromise = null;
 
 async function initFirebase() {
-  if (services.db && services.ref && services.set && services.update && services.get && services.onValue && services.remove) {
+  if (db && ref && set && update && get && onValue && remove) {
     return true;
   }
 
@@ -33,15 +31,13 @@ async function initFirebase() {
     };
 
     const app = initializeApp(firebaseConfig);
-    services = {
-      db: dbModule.getDatabase(app),
-      ref: dbModule.ref,
-      set: dbModule.set,
-      update: dbModule.update,
-      get: dbModule.get,
-      onValue: dbModule.onValue,
-      remove: dbModule.remove,
-    };
+    db = dbModule.getDatabase(app);
+    ref = dbModule.ref;
+    set = dbModule.set;
+    update = dbModule.update;
+    get = dbModule.get;
+    onValue = dbModule.onValue;
+    remove = dbModule.remove;
     return true;
   } catch (error) {
     console.warn("Firebase 로드 실패: 온라인 모드 비활성화", error);
@@ -57,8 +53,4 @@ function ensureFirebaseReady() {
   return firebaseReadyPromise;
 }
 
-function getFirebaseServices() {
-  return services;
-}
-
-export { ensureFirebaseReady, getFirebaseServices };
+export { db, ref, set, update, get, onValue, remove, ensureFirebaseReady };
