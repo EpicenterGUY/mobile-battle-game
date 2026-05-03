@@ -1,4 +1,3 @@
-import { ensureFirebaseReady, getFirebaseServices } from "./firebase.js";
 import { skills, characters } from "./data.js";
 import { BATTLE_MODULE } from "./battle.js";
 import { ONLINE_MODULE } from "./online.js";
@@ -9,8 +8,39 @@ void BATTLE_MODULE;
 void ONLINE_MODULE;
 void UI_MODULE;
 
+let firebaseModulePromise = null;
+
+function loadFirebaseModule() {
+  if (!firebaseModulePromise) {
+    firebaseModulePromise = import("./firebase.js");
+  }
+
+  return firebaseModulePromise;
+}
+
+async function ensureFirebaseReady() {
+  const module = await loadFirebaseModule();
+  return module.ensureFirebaseReady();
+}
+
 function firebase() {
-  return getFirebaseServices();
+  return firebaseServices;
+}
+
+let firebaseServices = {
+  db: null,
+  ref: null,
+  set: null,
+  update: null,
+  get: null,
+  onValue: null,
+  remove: null,
+};
+
+async function syncFirebaseServices() {
+  const module = await loadFirebaseModule();
+  firebaseServices = module.getFirebaseServices();
+  return firebaseServices;
 }
 
 
@@ -806,6 +836,7 @@ function sideLabel(side) {
 
       async function ensureOnlineAvailable() {
         await ensureFirebaseReady();
+        await syncFirebaseServices();
 
         const { db, ref, get, set, update, onValue, remove } = firebase();
         if (!db || !ref || !get || !set || !update || !onValue || !remove) {
