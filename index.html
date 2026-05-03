@@ -294,6 +294,24 @@
       font-weight: 900;
       margin: 16px 0 8px;
     }
+
+    .recommend-wrap {
+      margin: 10px 0 12px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .recommend-row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .recommend-row button {
+      margin: 0;
+      font-size: 13px;
+      padding: 10px 8px;
+    }
   </style>
 </head>
 
@@ -334,6 +352,7 @@
       <div id="selectRoomCodeView" class="room-code">0/4</div>
       <h2 id="selectTitle">파티 4명 선택</h2>
       <div id="myRoleText" class="status">선택 순서대로 1,2번은 메인 / 3,4번은 서브입니다.</div>
+      <div id="recommendWrap" class="recommend-wrap"></div>
       <div id="characterList" class="character-grid"></div>
       <button id="selectBackBtn" class="secondary">뒤로가기</button>
     </section>
@@ -763,6 +782,13 @@
     let partyBusy = false;
     let pendingPartySkillId = null;
     let pendingSupportIndex = null;
+    const recommendedParties = [
+      { label: "초보 추천", party: ["검사", "탱커", "성직자", "궁수"] },
+      { label: "극딜 조합", party: ["광전사", "마법사", "궁수", "주술사"] },
+      { label: "독 묻히고 런", party: ["도적", "주술사", "탱커", "성직자"] },
+      { label: "버티기 조합", party: ["탱커", "성직자", "검사", "마법사"] },
+      { label: "기도메타", party: ["궁수", "광전사", "마법사", "도적"] }
+    ];
 
     const modeSelect = document.getElementById("modeSelect");
     const lobby = document.getElementById("lobby");
@@ -785,6 +811,7 @@
     const copyCodeBtn = document.getElementById("copyCodeBtn");
     const waitingBackBtn = document.getElementById("waitingBackBtn");
     const myRoleText = document.getElementById("myRoleText");
+    const recommendWrap = document.getElementById("recommendWrap");
     const characterList = document.getElementById("characterList");
     const selectBackBtn = document.getElementById("selectBackBtn");
 
@@ -1346,6 +1373,56 @@
       });
     }
 
+    function renderRecommendedParties() {
+      recommendWrap.innerHTML = "";
+
+      for (let i = 0; i < recommendedParties.length; i += 2) {
+        const row = document.createElement("div");
+        row.className = "recommend-row";
+
+        recommendedParties.slice(i, i + 2).forEach((item, offset) => {
+          const index = i + offset;
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "secondary";
+          btn.textContent = `${item.label}: ${item.party.join(" / ")}`;
+          btn.addEventListener("click", () => applyRecommendedParty(index));
+          row.appendChild(btn);
+        });
+
+        recommendWrap.appendChild(row);
+      }
+    }
+
+    async function applyRecommendedParty(index) {
+      const selected = recommendedParties[index];
+      if (!selected) return;
+
+      partySelection = [...selected.party];
+
+      if (currentMode === "single") {
+        selectRoomCodeView.textContent = "4/4";
+        myRoleText.textContent = `선택됨: ${partySelection.join(" / ")}`;
+        startSinglePartyBattle(partySelection);
+        return;
+      }
+
+      if (currentMode === "online") {
+        myRoleText.textContent = `선택됨: ${partySelection.join(" / ")}`;
+        const party = partySelection.map(makePlayerFromCharacter);
+        const updates = {};
+        updates[`state/${mySide}Party`] = party;
+        updates["state/log"] = `${sideLabel(mySide)} 파티 선택 완료!`;
+        updates["updatedAt"] = Date.now();
+
+        await update(ref(db, "rooms/" + currentRoomCode), updates);
+
+        roomCodeView.textContent = currentRoomCode;
+        waitingText.textContent = "상대의 파티 선택을 기다리는 중...";
+        showScreen("waiting");
+      }
+    }
+
     function openOnlineMode() {
       currentMode = "online";
       currentRoomCode = null;
@@ -1372,6 +1449,7 @@
       selectTitle.textContent = "파티 4명 선택";
       myRoleText.textContent = "선택 순서대로 1,2번은 메인 / 3,4번은 서브가 됩니다.";
 
+      renderRecommendedParties();
       renderCharacterList();
       showScreen("select");
     }
@@ -1418,6 +1496,7 @@
       selectTitle.textContent = "1P 파티 4명 선택";
       myRoleText.textContent = "선택 순서대로 1,2번은 메인 / 3,4번은 서브입니다.";
 
+      renderRecommendedParties();
       renderCharacterList();
       showScreen("select");
       listenRoom(code);
@@ -1466,6 +1545,7 @@
       selectTitle.textContent = "2P 파티 4명 선택";
       myRoleText.textContent = "선택 순서대로 1,2번은 메인 / 3,4번은 서브입니다.";
 
+      renderRecommendedParties();
       renderCharacterList();
       showScreen("select");
       listenRoom(code);
