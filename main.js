@@ -1,13 +1,4 @@
-import {
-  db,
-  ref,
-  set,
-  update,
-  get,
-  onValue,
-  remove,
-  ensureFirebaseReady,
-} from "./firebase.js";
+import { ensureFirebaseReady, getFirebaseServices } from "./firebase.js";
 import { skills, characters } from "./data.js";
 import { BATTLE_MODULE } from "./battle.js";
 import { ONLINE_MODULE } from "./online.js";
@@ -17,6 +8,10 @@ import { getLang, setLang, t, tx, applyLanguage } from "./i18n.js";
 void BATTLE_MODULE;
 void ONLINE_MODULE;
 void UI_MODULE;
+
+function firebase() {
+  return getFirebaseServices();
+}
 
 
 let currentMode = null;
@@ -799,6 +794,7 @@ function sideLabel(side) {
           updates["state/log"] = `${sideLabel(mySide)} 파티 선택 완료!`;
           updates["updatedAt"] = Date.now();
 
+          const { db, ref, update } = firebase();
           await update(ref(db, "rooms/" + currentRoomCode), updates);
 
           roomCodeView.textContent = currentRoomCode;
@@ -810,6 +806,7 @@ function sideLabel(side) {
       async function ensureOnlineAvailable() {
         await ensureFirebaseReady();
 
+        const { db, ref, get, set, update, onValue, remove } = firebase();
         if (!db || !ref || !get || !set || !update || !onValue || !remove) {
           alert("온라인 모드를 불러오지 못했습니다. 네트워크 상태를 확인한 뒤 다시 시도해 주세요.");
           return false;
@@ -872,6 +869,7 @@ function sideLabel(side) {
         currentMode = "online";
 
         let code = makeRoomCode();
+        const { db, ref, get, set } = firebase();
         let roomRef = ref(db, "rooms/" + code);
         let snapshot = await get(roomRef);
 
@@ -927,6 +925,7 @@ function sideLabel(side) {
           return;
         }
 
+        const { db, ref, get, update } = firebase();
         const roomRef = ref(db, "rooms/" + code);
         const snapshot = await get(roomRef);
 
@@ -999,6 +998,7 @@ function sideLabel(side) {
           updates["state/log"] = `${sideLabel(mySide)} 파티 선택 완료!`;
           updates["updatedAt"] = Date.now();
 
+          const { db, ref, update } = firebase();
           await update(ref(db, "rooms/" + currentRoomCode), updates);
 
           roomCodeView.textContent = currentRoomCode;
@@ -1039,8 +1039,10 @@ function sideLabel(side) {
       }
 
       function listenRoom(code) {
+        const { db, ref, get, update } = firebase();
         const roomRef = ref(db, "rooms/" + code);
 
+        const { onValue } = firebase();
         onValue(roomRef, async (snapshot) => {
           if (currentMode !== "online") return;
 
@@ -1086,12 +1088,13 @@ function sideLabel(side) {
             battleLog,
           );
 
+          { const { db, ref, update } = firebase();
           await update(ref(db, "rooms/" + currentRoomCode), {
             "state/started": true,
             "state/battle": battle,
             "state/log": "전투 시작!",
             updatedAt: Date.now(),
-          });
+          }); }
 
           return true;
         }
@@ -1391,6 +1394,7 @@ function sideLabel(side) {
         }
 
         if (currentMode === "online") {
+          const { db, ref, get, update } = firebase();
           const roomRef = ref(db, "rooms/" + currentRoomCode);
           const snapshot = await get(roomRef);
 
@@ -1418,7 +1422,7 @@ function sideLabel(side) {
           await update(roomRef, {
             "state/battle": newBattle,
             updatedAt: Date.now(),
-          });
+          }); }
         }
       }
 
@@ -1433,6 +1437,7 @@ function sideLabel(side) {
         }
 
         if (currentMode === "online") {
+          const { db, ref, get, update } = firebase();
           const roomRef = ref(db, "rooms/" + currentRoomCode);
           const snapshot = await get(roomRef);
 
@@ -1455,7 +1460,7 @@ function sideLabel(side) {
           await update(roomRef, {
             "state/battle": newBattle,
             updatedAt: Date.now(),
-          });
+          }); }
         }
       }
       async function handlePartySubSkill(subIndex, targetSide, targetSlot) {
@@ -1467,6 +1472,7 @@ function sideLabel(side) {
           return;
         }
         if (currentMode === "online") {
+          const { db, ref, get, update } = firebase();
           const roomRef = ref(db, "rooms/" + currentRoomCode);
           const snapshot = await get(roomRef);
           if (!snapshot.exists()) return;
@@ -1614,8 +1620,10 @@ function sideLabel(side) {
         }
 
         if (mySide === "p1") {
+          const { db, ref, remove } = firebase();
           await remove(ref(db, "rooms/" + currentRoomCode));
         } else {
+          const { db, ref, update } = firebase();
           await update(ref(db, "rooms/" + currentRoomCode), {
             "players/p2": false,
             "state/p2Party": [],
@@ -1641,6 +1649,7 @@ function sideLabel(side) {
         showScreen("mode");
       }
 
+      function bindInitialEvents() {
       onlineModeBtn.addEventListener("click", openOnlineMode);
       singleModeBtn.addEventListener("click", openSingleMode);
       createRoomBtn.addEventListener("click", createRoom);
@@ -1650,6 +1659,7 @@ function sideLabel(side) {
 
       selectBackBtn.addEventListener("click", async () => {
         if (currentMode === "online" && currentRoomCode && mySide === "p1") {
+          const { db, ref, remove } = firebase();
           await remove(ref(db, "rooms/" + currentRoomCode));
         }
 
@@ -1669,7 +1679,7 @@ function sideLabel(side) {
           alert("복사 실패. 방 코드를 직접 보내줘: " + currentRoomCode);
         }
       });
-    
+      }
 
       function applyI18nToUI() {
   applyLanguage();
@@ -1694,5 +1704,6 @@ function switchLanguage(lang) {
   applyI18nToUI();
 }
 
+      bindInitialEvents();
       applyI18nToUI();
       renderRecommendedButtons();
