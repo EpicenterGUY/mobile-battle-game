@@ -690,10 +690,10 @@ const modeSelect = document.getElementById("modeSelect");
           <div class="character-name">${tx(c.name)}</div>
           <div class="character-info">
             HP ${c.hp} / 공격 ${c.atk} / 방어 ${c.def}<br>
-            <span class="passive">패시브: ${tx(c.passiveName)}</span><br>
+            <span class="passive">${t("ui.passive")}: ${tx(c.passiveName)}</span><br>
             ${tx(c.passiveDesc)}<br>
-            스킬:<br>${skillNames}
-            <br>궁극기:<br>${ultimateText}
+            ${t("ui.skill")}:<br>${skillNames}
+            <br>${t("ui.ultimate")}:<br>${ultimateText}
           </div>
           <button class="green" ${selected ? "disabled" : ""}>${buttonText}</button>
         `;
@@ -848,18 +848,14 @@ const modeSelect = document.getElementById("modeSelect");
         const command = rawCode.toLowerCase();
 
         if (command === "jpn") {
-          setLang("ja");
-          applyLanguage();
-          applyI18nToUI();
+          switchLanguage("ja");
           roomInput.value = "";
           alert(t("lang.switchedJa"));
           return;
         }
 
         if (command === "kor") {
-          setLang("ko");
-          applyLanguage();
-          applyI18nToUI();
+          switchLanguage("ko");
           roomInput.value = "";
           alert(t("lang.switchedKo"));
           return;
@@ -1192,7 +1188,7 @@ const modeSelect = document.getElementById("modeSelect");
 
           const title = document.createElement("div");
           title.className = "status";
-          title.textContent = `[${tx(skill.name)}] 대상 선택`;
+          title.textContent = `[${tx(skill.name)}] ${t("ui.targetSelect")}`;
           partyActionButtons.appendChild(title);
 
           [0, 1].forEach((slot) => {
@@ -1259,9 +1255,9 @@ const modeSelect = document.getElementById("modeSelect");
         ultBtn.className = `skill-button${ultimateReady ? " ultimate-ready" : ""}`;
         ultBtn.disabled = !ultimateReady;
         ultBtn.innerHTML = `
-          <div class="skill-name">궁극기: ${tx(ultimateSkill.name)}</div>
+          <div class="skill-name">${t("ui.ultimate")}: ${tx(ultimateSkill.name)}</div>
           <div class="skill-power">${tx(ultimateSkill.desc)}</div>
-          <div class="skill-desc">게이지 ${ultimateGauge}/${ULTIMATE_READY_GAUGE} - ${ultimateReady ? "사용 가능" : "사용 불가"}</div>
+          <div class="skill-desc">게이지 ${ultimateGauge}/${ULTIMATE_READY_GAUGE} - ${ultimateReady ? t("state.available") : t("state.unavailable")}</div>
         `;
         if (ultimateReady) {
           ultBtn.addEventListener("click", () => {
@@ -1288,11 +1284,11 @@ const modeSelect = document.getElementById("modeSelect");
           rotateBtn.disabled = !canRotate || !alive(actor);
           rotateBtn.innerHTML = canRotate
             ? `
-              <div class="rotate-title">로테이션 가능</div>
+              <div class="rotate-title">${t("ui.rotationAvailable")}</div>
               <div class="rotate-main">${mainLabel} ${actor.character} ↔ ${subLabel} ${sub?.character || "빈 자리"}</div>
             `
             : `
-              <div class="rotate-title unavailable">${t("battle.rotate")} 불가</div>
+              <div class="rotate-title unavailable">${t("ui.rotationUnavailable")}</div>
               <div class="rotate-main">${subLabel} ${sub?.character || "빈 자리"} [전투불능]</div>
             `;
           rotateBtn.addEventListener("click", () => handlePartyRotate(subIndex));
@@ -1301,8 +1297,8 @@ const modeSelect = document.getElementById("modeSelect");
           subSkillBtn.className = "skill-button secondary";
           subSkillBtn.disabled = !canRotate || !alive(actor) || !subSkill;
           subSkillBtn.innerHTML = `
-            <div class="skill-name">서브${subIndex - 1} 스킬: ${subSkill?.name || "없음"}</div>
-            <div class="skill-desc">${subSkill?.desc || "사용 불가"}</div>
+            <div class="skill-name">서브${subIndex - 1} ${t("ui.skill")}: ${tx(subSkill?.name || "없음")}</div>
+            <div class="skill-desc">${tx(subSkill?.desc || t("state.unavailable"))}</div>
           `;
           if (!subSkillBtn.disabled) {
             subSkillBtn.addEventListener("click", () => {
@@ -1632,6 +1628,14 @@ const modeSelect = document.getElementById("modeSelect");
   copyCodeBtn.textContent = t("common.copyRoom");
   waitingBackBtn.textContent = t("common.leave");
   selectBackBtn.textContent = t("common.back");
+  renderCharacterList();
+  if (currentMode === "partyBattle" || singlePartyState || latestOnlineBattle) renderPartyBattle();
+}
+
+function switchLanguage(lang) {
+  setLang(lang);
+  applyLanguage();
+  applyI18nToUI();
 }
 
       applyI18nToUI();
