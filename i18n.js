@@ -41,6 +41,11 @@ export const I18N = {
     "ui.targetSelect": "대상 선택",
     "ui.rotationAvailable": "로테이션 가능",
     "ui.rotationUnavailable": "로테이션 불가",
+    "ui.changeSkill": "스킬 변경",
+    "ui.equipped": "장착",
+    "ui.needFourSkills": "4개 선택 필요",
+    "common.apply": "적용",
+    "common.cancel": "취소",
   },
   ja: {
     "app.title": "モバイルオンラインバトル",
@@ -82,6 +87,11 @@ export const I18N = {
     "ui.targetSelect": "対象選択",
     "ui.rotationAvailable": "ローテーション可能",
     "ui.rotationUnavailable": "ローテーション不可",
+    "ui.changeSkill": "スキル変更",
+    "ui.equipped": "装着",
+    "ui.needFourSkills": "4つ選択が必要",
+    "common.apply": "適用",
+    "common.cancel": "キャンセル",
   },
 };
 
