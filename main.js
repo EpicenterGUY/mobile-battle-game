@@ -781,14 +781,25 @@ const modeSelect = document.getElementById("modeSelect");
       }
 
       async function joinRoom() {
-        const raw = roomInput.value.trim().toLowerCase();
-        if (raw === "jpn") { setLang("ja"); applyI18nToUI(); return; }
-        if (raw === "kor") { setLang("ko"); applyI18nToUI(); return; }
+        const rawCode = roomInput.value;
+        const command = rawCode.trim().toLowerCase();
+
+        if (command === "jpn") {
+          setLang("ja");
+          applyI18nToUI();
+          return;
+        }
+
+        if (command === "kor") {
+          setLang("ko");
+          applyI18nToUI();
+          return;
+        }
 
         if (!(await ensureOnlineAvailable())) return;
 
         currentMode = "online";
-        const code = roomInput.value.trim().toUpperCase();
+        const code = rawCode.trim().toUpperCase();
 
         if (code.length !== 4) {
           alert("방 코드는 4글자입니다.");
