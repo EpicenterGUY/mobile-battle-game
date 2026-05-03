@@ -94,7 +94,7 @@ const modeSelect = document.getElementById("modeSelect");
       const waitingBackBtn = document.getElementById("waitingBackBtn");
       const myRoleText = document.getElementById("myRoleText");
       const characterList = document.getElementById("characterList");
-      const recommendButtons = document.getElementById("recommendButtons");
+      const recommendWrap = document.getElementById("recommendWrap");
       const selectBackBtn = document.getElementById("selectBackBtn");
       let partyPreviewWrap = null;
       let partyActionWrap = null;
@@ -723,7 +723,7 @@ function sideLabel(side) {
           partyPreviewWrap.style.textAlign = "left";
           partyPreviewWrap.style.margin = "10px 0";
           partyPreviewWrap.style.whiteSpace = "normal";
-          selectCard.insertBefore(partyPreviewWrap, recommendButtons.parentElement || characterList);
+          selectCard.insertBefore(partyPreviewWrap, recommendWrap?.parentElement || characterList);
         }
         if (!partyActionWrap) {
           partyActionWrap = document.createElement("div");
@@ -896,7 +896,8 @@ ${options.map((id)=>`${id}:${tx(skills[id]?.name || id)}`).join(' / ')}
       }
 
       function renderRecommendedButtons() {
-        recommendButtons.innerHTML = "";
+        if (!recommendWrap) return;
+        recommendWrap.innerHTML = "";
 
         recommendedParties.forEach((preset) => {
           const button = document.createElement("button");
@@ -906,7 +907,7 @@ ${options.map((id)=>`${id}:${tx(skills[id]?.name || id)}`).join(' / ')}
           button.addEventListener("click", () => {
             applyRecommendedParty(preset.members);
           });
-          recommendButtons.appendChild(button);
+          recommendWrap.appendChild(button);
         });
       }
 
@@ -1203,13 +1204,13 @@ ${options.map((id)=>`${id}:${tx(skills[id]?.name || id)}`).join(' / ')}
             battleLog,
           );
 
-          { const { db, ref, update } = firebase();
+          const { db, ref, update } = firebase();
           await update(ref(db, "rooms/" + currentRoomCode), {
             "state/started": true,
             "state/battle": battle,
             "state/log": "전투 시작!",
             updatedAt: Date.now(),
-          }); }
+          });
 
           return true;
         }
@@ -1537,7 +1538,7 @@ ${options.map((id)=>`${id}:${tx(skills[id]?.name || id)}`).join(' / ')}
           await update(roomRef, {
             "state/battle": newBattle,
             updatedAt: Date.now(),
-          }); }
+          });
         }
       }
 
@@ -1575,7 +1576,7 @@ ${options.map((id)=>`${id}:${tx(skills[id]?.name || id)}`).join(' / ')}
           await update(roomRef, {
             "state/battle": newBattle,
             updatedAt: Date.now(),
-          }); }
+          });
         }
       }
       async function handlePartySubSkill(subIndex, targetSide, targetSlot) {
@@ -1765,14 +1766,14 @@ ${options.map((id)=>`${id}:${tx(skills[id]?.name || id)}`).join(' / ')}
       }
 
       function bindInitialEvents() {
-      onlineModeBtn.addEventListener("click", openOnlineMode);
-      singleModeBtn.addEventListener("click", openSingleMode);
-      createRoomBtn.addEventListener("click", createRoom);
-      joinRoomBtn.addEventListener("click", joinRoom);
-      backToModeBtn.addEventListener("click", backToMode);
-      waitingBackBtn.addEventListener("click", leaveRoom);
+      if (onlineModeBtn) onlineModeBtn.addEventListener("click", openOnlineMode);
+      if (singleModeBtn) singleModeBtn.addEventListener("click", openSingleMode);
+      if (createRoomBtn) createRoomBtn.addEventListener("click", createRoom);
+      if (joinRoomBtn) joinRoomBtn.addEventListener("click", joinRoom);
+      if (backToModeBtn) backToModeBtn.addEventListener("click", backToMode);
+      if (waitingBackBtn) waitingBackBtn.addEventListener("click", leaveRoom);
 
-      selectBackBtn.addEventListener("click", async () => {
+      if (selectBackBtn) selectBackBtn.addEventListener("click", async () => {
         if (currentMode === "online" && currentRoomCode && mySide === "p1") {
           const { db, ref, remove } = firebase();
           await remove(ref(db, "rooms/" + currentRoomCode));
@@ -1781,10 +1782,10 @@ ${options.map((id)=>`${id}:${tx(skills[id]?.name || id)}`).join(' / ')}
         backToMode();
       });
 
-      partyResetBtn.addEventListener("click", resetBattle);
-      partyLeaveBtn.addEventListener("click", leaveRoom);
+      if (partyResetBtn) partyResetBtn.addEventListener("click", resetBattle);
+      if (partyLeaveBtn) partyLeaveBtn.addEventListener("click", leaveRoom);
 
-      copyCodeBtn.addEventListener("click", async () => {
+      if (copyCodeBtn) copyCodeBtn.addEventListener("click", async () => {
         if (!currentRoomCode) return;
 
         try {
