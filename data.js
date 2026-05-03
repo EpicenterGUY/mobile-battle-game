@@ -218,6 +218,7 @@ export const characters = {
           passiveName: "검의 호흡",
           passiveDesc: "공격 시 20% 확률로 추가 피해 8",
           skillIds: ["slash", "guard", "halfmoon"],
+          subSkill: { id: "sub_warrior_cheer", name: "전열 격려", type: "allyAtkBuff", buff: 5, target: "allySingleMain", desc: "아군 메인 1명의 다음 공격 피해 +5" },
           ultimate: {
             name: "진 일섬",
             desc: "적 메인 1명에게 위력 42 피해",
@@ -234,6 +235,7 @@ export const characters = {
           passiveName: "마력 순환",
           passiveDesc: "자신의 3번째 행동마다 공격 스킬 피해 +10",
           skillIds: ["fireball", "ice", "heal"],
+          subSkill: { id: "sub_mage_mana", name: "마력 보조", type: "allyUltimateGauge", gain: 1, target: "allySingleMain", desc: "아군 메인 1명의 궁극기 게이지 +1" },
           ultimate: {
             name: "메테오",
             desc: "적 메인 2명에게 위력 24 피해",
@@ -250,6 +252,7 @@ export const characters = {
           passiveName: "그림자 걸음",
           passiveDesc: "공격받을 때 15% 확률로 공격 회피",
           skillIds: ["poison", "weak", "smoke"],
+          subSkill: { id: "sub_rogue_ambush", name: "기습 지원", type: "enemyDamage", damage: 8, target: "enemySingleMain", desc: "적 메인 1명에게 8 피해" },
           ultimate: {
             name: "그림자 난무",
             desc: "적 메인 1명에게 위력 30 피해, 대상이 독 상태면 추가 피해 15",
@@ -267,6 +270,7 @@ export const characters = {
           passiveName: "불굴의 육체",
           passiveDesc: "HP가 40% 이하일 때 받는 피해 20% 감소",
           skillIds: ["shield_bash", "fortress", "heavy_strike"],
+          subSkill: { id: "sub_tanker_protect", name: "보호 태세", type: "allyGuard", guardRate: 0.3, target: "allySingleMain", desc: "아군 메인 1명이 다음에 받는 피해 30% 감소" },
           ultimate: {
             name: "철벽의 수호",
             desc: "아군 메인 2명이 다음에 받는 피해 50% 감소",
@@ -283,6 +287,7 @@ export const characters = {
           passiveName: "피의 갈망",
           passiveDesc: "HP가 50% 이하일 때 공격 피해 +10",
           skillIds: ["berserk_axe", "blood_slash", "rage"],
+          subSkill: { id: "sub_berserker_rage", name: "분노 주입", type: "allyAtkBuffSelfHarm", buff: 8, selfDamage: 5, target: "allySingleMain", desc: "아군 메인 1명의 다음 공격 피해 +8, 대신 HP 5 감소" },
           ultimate: {
             name: "광폭화",
             desc: "적 메인 1명에게 위력 48 피해, 자신도 10 피해",
@@ -300,6 +305,7 @@ export const characters = {
           passiveName: "성스러운 가호",
           passiveDesc: "회복 스킬의 회복량 20% 증가",
           skillIds: ["priest_heal", "judgment", "blessing"],
+          subSkill: { id: "sub_priest_emergency_heal", name: "응급 치유", type: "allyHeal", heal: 20, target: "allySingleMain", desc: "아군 메인 1명 HP 20 회복" },
           ultimate: {
             name: "대치유",
             desc: "아군 메인 2명의 HP를 35 회복",
@@ -316,6 +322,7 @@ export const characters = {
           passiveName: "매의 눈",
           passiveDesc: "공격 시 15% 확률로 추가 피해 10",
           skillIds: ["pierce_arrow", "rapid_shot", "focus_aim"],
+          subSkill: { id: "sub_archer_cover", name: "엄호 사격", type: "enemyDamage", damage: 10, target: "enemySingleMain", desc: "적 메인 1명에게 10 피해" },
           ultimate: {
             name: "폭풍 사격",
             desc: "적 메인 2명에게 위력 22 피해",
@@ -332,6 +339,7 @@ export const characters = {
           passiveName: "저주의 낙인",
           passiveDesc: "독 또는 공격감소 상태의 적에게 피해 +8",
           skillIds: ["curse", "soul_drain", "dark_orb"],
+          subSkill: { id: "sub_shaman_curse", name: "약화 저주", type: "enemyAtkDebuff", debuff: 5, target: "enemySingleMain", desc: "적 메인 1명의 다음 공격 피해 -5" },
           ultimate: {
             name: "파멸의 저주",
             desc: "적 메인 1명에게 위력 25 피해, 공격 감소 10, 독 3턴",
