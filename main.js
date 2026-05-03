@@ -1,12 +1,6 @@
 import { skills, characters } from "./data.js";
-import { BATTLE_MODULE } from "./battle.js";
-import { ONLINE_MODULE } from "./online.js";
-import { UI_MODULE } from "./ui.js";
 import { getLang, setLang, t, tx, applyLanguage } from "./i18n.js";
 
-void BATTLE_MODULE;
-void ONLINE_MODULE;
-void UI_MODULE;
 
 let firebaseModulePromise = null;
 
