@@ -1256,12 +1256,12 @@ const modeSelect = document.getElementById("modeSelect");
         const ultimateGauge = clampUltimateGauge(actor?.ultimateGauge || 0);
         const ultimateReady = canUseUltimate(actor);
         const ultimateSkill = getUltimateSkill(actor);
-        ultBtn.className = "skill-button";
+        ultBtn.className = `skill-button${ultimateReady ? " ultimate-ready" : ""}`;
         ultBtn.disabled = !ultimateReady;
         ultBtn.innerHTML = `
-          <div class="skill-name">${t("skill.ult")}: ${tx(ultimateSkill.name)}</div>
+          <div class="skill-name">궁극기: ${tx(ultimateSkill.name)}</div>
           <div class="skill-power">${tx(ultimateSkill.desc)}</div>
-          <div class="skill-desc">${ultimateReady ? `게이지 ${ultimateGauge}/${ULTIMATE_READY_GAUGE} - ${t("state.available")}` : `게이지 ${ultimateGauge}/${ULTIMATE_READY_GAUGE} - ${t("state.unavailable")}`}</div>
+          <div class="skill-desc">게이지 ${ultimateGauge}/${ULTIMATE_READY_GAUGE} - ${ultimateReady ? "사용 가능" : "사용 불가"}</div>
         `;
         if (ultimateReady) {
           ultBtn.addEventListener("click", () => {

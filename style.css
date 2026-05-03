@@ -229,6 +229,11 @@
         opacity: 1;
       }
 
+
+      .ultimate-ready {
+        box-shadow: 0 0 0 2px rgba(250, 204, 21, 0.75);
+        border-color: #facc15;
+      }
       .log {
         white-space: pre-line;
         background: #030712;
