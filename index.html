@@ -409,6 +409,7 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
+    const NL = String.fromCharCode(10);
 
     const skills = {
       ultimate: {
@@ -705,6 +706,21 @@
     };
 
 
+    const ultimateSpecs = {
+      "검사": { name: "천월참", power: 40, desc: "위력 40 / 적 메인 1명" },
+      "마법사": { name: "메테오 버스트", power: 45, desc: "위력 45 / 적 메인 1명" },
+      "도적": { name: "그림자 처형", power: 35, bonusIfPoison: 15, desc: "위력 35 / 독 상태면 추가 피해" },
+      "탱커": { name: "철벽 붕괴", power: 25, selfGuardRate: 0.35, desc: "위력 25 / 사용 후 자신 피해 감소" },
+      "광전사": { name: "피의 광란", power: 50, desc: "위력 50 / 적 메인 1명" },
+      "성직자": { name: "성역의 기도", heal: 50, type: "selfHeal", desc: "자신 HP 50 회복" },
+      "궁수": { name: "천공 관통", power: 38, desc: "위력 38 / 적 메인 1명" },
+      "주술사": { name: "망령의 저주", power: 32, debuff: 9, desc: "위력 32 / 대상 공격 약화" }
+    };
+
+    function getUltimateSpec(characterName) {
+      return ultimateSpecs[characterName] || { name: "필살기", power: 35, desc: "위력 35 / 적 메인 1명" };
+    }
+
     const supportSkills = {
       "검사": {
         name: "검기 지원",
@@ -886,7 +902,7 @@
     }
 
     function isTargetSkill(skill) {
-      return ["attack", "attackBuff", "attackDebuff", "poisonAttack", "weakAttack"].includes(skill.type);
+      return ["attack", "attackBuff", "attackDebuff", "poisonAttack", "weakAttack", "ultimate"].includes(skill.type);
     }
 
     function getTeam(state, side) {
@@ -1148,6 +1164,9 @@
       const info = getTurnInfo(state);
       const actor = getTeam(state, info.side)[info.slot];
       const skill = skills[skillId] || skills.basic;
+      const isUltimate = skillId === "ultimate";
+      const ultimate = isUltimate ? getUltimateSpec(actor?.character) : null;
+      const actingSkillName = isUltimate ? ultimate.name : skill.name;
       let log = applyPoisonStart(state, info.side, info.slot);
 
       if (!alive(actor)) {
@@ -1158,10 +1177,13 @@
       }
 
       actor.turnCount = (actor.turnCount || 0) + 1;
-      log += `${sideLabel(info.side)} 메인${info.slot + 1} ${actor.character}의 [${skill.name}]!\n`;
-      const isUltimate = skill.id === "ultimate";
+      log += `${sideLabel(info.side)} 메인${info.slot + 1} ${actor.character}의 [${actingSkillName}]!${NL}`;
 
-      if (skill.type === "guard") {
+      if (isUltimate && ultimate && ultimate.type === "selfHeal") {
+        const before = actor.hp;
+        actor.hp = Math.min(actor.maxHp, actor.hp + ultimate.heal);
+        log += `HP를 ${actor.hp - before} 회복했다!`;
+      } else if (skill.type === "guard") {
         actor.guardRate = skill.guardRate;
         log += "다음에 받는 피해가 감소한다!";
       } else if (skill.type === "heal") {
@@ -1184,8 +1206,8 @@
         const result = applyDamageCore(
           actor,
           defender,
-          skill.power,
-          { bonusIfPoison: skill.bonusIfPoison },
+          isUltimate && ultimate ? ultimate.power : skill.power,
+          { bonusIfPoison: isUltimate && ultimate ? ultimate.bonusIfPoison : skill.bonusIfPoison },
           logs,
           sideLabel(info.side),
           sideLabel(targetSide)
@@ -1210,7 +1232,17 @@
 
           if (skill.type === "poisonAttack") {
             defender.poison = 3;
-            log += `\n${sideLabel(targetSide)} ${defender.character}이 독 상태가 되었다!`;
+            log += `${NL}${sideLabel(targetSide)} ${defender.character}이 독 상태가 되었다!`;
+          }
+
+          if (isUltimate && ultimate?.debuff) {
+            defender.atkDebuff += ultimate.debuff;
+            log += `${NL}${sideLabel(targetSide)} ${defender.character}의 다음 공격 피해가 ${ultimate.debuff} 감소한다!`;
+          }
+
+          if (isUltimate && ultimate?.selfGuardRate) {
+            actor.guardRate = Math.max(actor.guardRate || 0, ultimate.selfGuardRate);
+            log += `${NL}${actor.character}이 철벽 태세를 갖춰 다음 피해를 줄인다!`;
           }
         }
       }
@@ -1846,7 +1878,8 @@
 
         const title = document.createElement("div");
         title.className = "status";
-        title.textContent = `[${skill.name}] 대상 선택`;
+        const pickedName = pendingPartySkillId === "ultimate" ? getUltimateSpec(actor.character).name : skill.name;
+        title.textContent = `[${pickedName}] 대상 선택`;
         partyActionButtons.appendChild(title);
 
         [0, 1].forEach((slot) => {
@@ -1940,11 +1973,16 @@
       const canUseUltimate = (actor.ultimateGauge || 0) >= 100;
       ultimateBtn.disabled = !canUseUltimate;
       ultimateBtn.innerHTML = `
-        <div class="skill-name">필살기 (궁극기)</div>
-        <div class="skill-power">위력 35 / 적 메인 1명</div>
+        <div class="skill-name">${getUltimateSpec(actor.character).name} (궁극기)</div>
+        <div class="skill-power">${getUltimateSpec(actor.character).desc}</div>
         <div class="skill-desc">${canUseUltimate ? "사용 가능" : `게이지 부족 (${Math.min(100, actor.ultimateGauge || 0)}%)`}</div>
       `;
       ultimateBtn.addEventListener("click", () => {
+        const ultimate = getUltimateSpec(actor.character);
+        if (ultimate.type === "selfHeal") {
+          handlePartySkill("ultimate");
+          return;
+        }
         pendingPartySkillId = "ultimate";
         renderPartyBattle();
       });
