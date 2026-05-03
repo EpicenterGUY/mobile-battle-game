@@ -476,7 +476,7 @@ const modeSelect = document.getElementById("modeSelect");
 
         if (skill.type === "guard") {
           actor.guardRate = skill.guardRate;
-          log += "다음에 받는 피해가 감소한다!";
+          log += `다음 피해 ${Math.round((skill.guardRate || 0) * 100)}% 감소`;
         } else if (skill.type === "heal") {
           let healAmount = skill.heal;
 
@@ -487,7 +487,7 @@ const modeSelect = document.getElementById("modeSelect");
 
           const before = actor.hp;
           actor.hp = Math.min(actor.maxHp, actor.hp + healAmount);
-          log += `HP를 ${actor.hp - before} 회복했다!`;
+          log += `${actor.character} HP ${actor.hp - before} 회복`;
         } else if (skill.type === "evasion") {
           actor.evasion = true;
           log += "다음 공격을 회피할 준비를 했다!";
@@ -542,22 +542,23 @@ const modeSelect = document.getElementById("modeSelect");
 
             if (skill.type === "attackBuff") {
               actor.atkBuff += skill.buff;
-              log += `\n다음 공격 피해가 ${skill.buff} 증가한다!`;
+              log += `\n${actor.character}의 다음 공격 피해 +${skill.buff || 0}`;
             }
 
             if (skill.type === "attackDebuff") {
               defender.atkDebuff += skill.debuff;
-              log += `\n${sideLabel(targetSide)} ${defender.character}의 다음 공격 피해가 감소한다!`;
+              log += `\n${sideLabel(targetSide)} ${defender.character}의 다음 공격 피해 -${skill.debuff || 0}`;
             }
 
             if (skill.type === "poisonAttack") {
               defender.poison = 3;
-              log += `\n${sideLabel(targetSide)} ${defender.character}이 독 상태가 되었다!`;
+              log += `\n${sideLabel(targetSide)} ${defender.character}이 독 상태가 되었다! (${defender.poison}턴)`;
             }
             if (skill.type === "poisonDebuffAttack") {
               defender.atkDebuff += skill.debuff || 0;
               defender.poison = skill.poison || 0;
-              log += `\n${sideLabel(targetSide)} ${defender.character}이 공격 감소와 독 상태가 되었다!`;
+              log += `\n${sideLabel(targetSide)} ${defender.character}의 다음 공격 피해 -${skill.debuff || 0}`;
+              log += `\n${sideLabel(targetSide)} ${defender.character}이 독 상태가 되었다! (${defender.poison}턴)`;
             }
             if (skill.type === "selfHarmAttack") {
               actor.hp = Math.max(0, actor.hp - (skill.selfDamage || 0));
@@ -639,7 +640,7 @@ const modeSelect = document.getElementById("modeSelect");
               log += `\n${sideLabel(targetSide)} 메인${targetSlot + 1} ${target.character}에게 ${subSkill.damage || 0} 피해를 주었다!`;
             } else if (subSkill.type === "allyGuard") {
               target.guardRate = Math.max(target.guardRate || 0, subSkill.guardRate || 0);
-              log += `\n${sideLabel(targetSide)} 메인${targetSlot + 1} ${target.character}가 다음 피해를 30% 줄인다!`;
+              log += `\n${sideLabel(targetSide)} 메인${targetSlot + 1} ${target.character} 다음 피해 ${Math.round((subSkill.guardRate || 0) * 100)}% 감소`;
             } else if (subSkill.type === "allyAtkBuffSelfHarm") {
               target.atkBuff += subSkill.buff || 0;
               sub.hp = Math.max(0, sub.hp - (subSkill.selfDamage || 0));
@@ -649,10 +650,10 @@ const modeSelect = document.getElementById("modeSelect");
               const healAmount = subSkill.heal || 0;
               const beforeHp = target.hp;
               target.hp = Math.min(target.maxHp, target.hp + healAmount);
-              log += `\n메인${targetSlot + 1} ${target.character} HP를 ${target.hp - beforeHp} 회복했다!`;
+              log += `\n${target.character} HP ${target.hp - beforeHp} 회복`;
             } else if (subSkill.type === "enemyAtkDebuff") {
               target.atkDebuff += subSkill.debuff || 0;
-              log += `\n${sideLabel(targetSide)} 메인${targetSlot + 1} ${target.character}의 다음 공격 피해가 ${subSkill.debuff || 0} 감소했다!`;
+              log += `\n${sideLabel(targetSide)} 메인${targetSlot + 1} ${target.character}의 다음 공격 피해 -${subSkill.debuff || 0}`;
             }
           }
         }
@@ -1232,7 +1233,7 @@ const modeSelect = document.getElementById("modeSelect");
           btn.className = "skill-button";
           btn.innerHTML = `
           <div class="skill-name">${tx(skill.name)}</div>
-          <div class="skill-power">${tx(skill.powerText)}</div>
+          <div class="skill-power">${tx(skill.powerText || "")}</div>
           <div class="skill-desc">${tx(skill.desc)}</div>
         `;
 
