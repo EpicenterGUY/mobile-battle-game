@@ -1,80 +1,86 @@
 <!DOCTYPE html>
 <html lang="ko">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>모바일 온라인 배틀</title>
-  <link rel="stylesheet" href="./style.css" />
-</head>
-<body>
-  <div class="app">
-    <h1>온라인 배틀</h1>
-    <div class="subtitle">모바일 턴제 대전 테스트</div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>모바일 온라인 배틀</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
 
-    <section id="modeSelect" class="card">
-      <div class="mode-title">모드 선택</div>
-      <div class="mode-desc">
-        온라인 멀티도 4인 파티 베타로 확장되었습니다.<br />
-        싱글 AI와 온라인 모두 메인 2명 / 서브 2명 구조입니다.
-      </div>
-      <button id="onlineModeBtn">온라인 멀티 4인 파티</button>
-      <button id="singleModeBtn" class="yellow">싱글 AI 4인 파티</button>
-    </section>
+  <body>
+    <div class="app">
+      <h1>온라인 배틀</h1>
+      <div class="subtitle">모바일 턴제 대전 테스트</div>
 
-    <section id="lobby" class="card hidden">
-      <button id="createRoomBtn">방 만들기</button>
-      <hr class="line" />
-      <input id="roomInput" maxlength="4" placeholder="방 코드 입력" />
-      <button id="joinRoomBtn">방 참가</button>
-      <button id="backToModeBtn" class="secondary">모드 선택으로</button>
-      <div class="small">방을 만들거나 참가한 뒤 파티 4명을 선택합니다.</div>
-    </section>
-
-    <section id="waiting" class="card hidden">
-      <div class="status">방 코드</div>
-      <div id="roomCodeView" class="room-code">----</div>
-      <div id="waitingText" class="status">기다리는 중...</div>
-      <button id="copyCodeBtn" class="secondary">방 코드 복사</button>
-      <button id="waitingBackBtn" class="danger">나가기</button>
-    </section>
-
-    <section id="selectCharacter" class="card hidden">
-      <div class="status" id="selectTopLabel">파티 선택</div>
-      <div id="selectRoomCodeView" class="room-code">0/4</div>
-      <h2 id="selectTitle">파티 4명 선택</h2>
-      <div id="myRoleText" class="status">선택 순서대로 1,2번은 메인 / 3,4번은 서브입니다.</div>
-      <div id="recommendWrap" class="recommend-wrap"></div>
-      <div id="characterList" class="character-grid"></div>
-      <button id="selectBackBtn" class="secondary">뒤로가기</button>
-    </section>
-
-    <section id="partyBattle" class="card hidden">
-      <div class="party-grid">
-        <div>
-          <div id="leftPartyTitle" class="party-title">플레이어</div>
-          <div class="party-label">메인</div>
-          <div id="leftMainList"></div>
-          <div class="party-label">서브</div>
-          <div id="leftSubList"></div>
+      <section id="modeSelect" class="card">
+        <div class="mode-title">모드 선택</div>
+        <div class="mode-desc">
+          온라인 멀티도 4인 파티 베타로 확장되었습니다.<br />
+          싱글 AI와 온라인 모두 메인 2명 / 서브 2명 구조입니다.
         </div>
-        <div>
-          <div id="rightPartyTitle" class="party-title">AI</div>
-          <div class="party-label">메인</div>
-          <div id="rightMainList"></div>
-          <div class="party-label">서브</div>
-          <div id="rightSubList"></div>
+        <button id="onlineModeBtn">온라인 멀티 4인 파티</button>
+        <button id="singleModeBtn" class="yellow">싱글 AI 4인 파티</button>
+      </section>
+
+      <section id="lobby" class="card hidden">
+        <button id="createRoomBtn">방 만들기</button>
+        <hr class="line" />
+        <input id="roomInput" maxlength="4" placeholder="방 코드 입력" />
+        <button id="joinRoomBtn">방 참가</button>
+        <button id="backToModeBtn" class="secondary">모드 선택으로</button>
+        <div class="small">방을 만들거나 참가한 뒤 파티 4명을 선택합니다.</div>
+      </section>
+
+      <section id="waiting" class="card hidden">
+        <div class="status">방 코드</div>
+        <div id="roomCodeView" class="room-code">----</div>
+        <div id="waitingText" class="status">기다리는 중...</div>
+        <button id="copyCodeBtn" class="secondary">방 코드 복사</button>
+        <button id="waitingBackBtn" class="danger">나가기</button>
+      </section>
+
+      <section id="selectCharacter" class="card hidden">
+        <div class="status" id="selectTopLabel">파티 선택</div>
+        <div id="selectRoomCodeView" class="room-code">0/4</div>
+        <h2 id="selectTitle">파티 4명 선택</h2>
+        <div id="myRoleText" class="status">
+          선택 순서대로 1,2번은 메인 / 3,4번은 서브입니다.
         </div>
-      </div>
+        <div class="recommend-area">
+          <div class="recommend-title">추천 조합</div>
+          <div id="recommendButtons" class="recommend-grid"></div>
+        </div>
+        <div id="characterList" class="character-grid"></div>
+        <button id="selectBackBtn" class="secondary">뒤로가기</button>
+      </section>
 
-      <div id="partyTurnText" class="turn">대기 중...</div>
-      <div id="partyActionButtons" class="party-actions"></div>
-      <div style="height: 14px"></div>
-      <div id="partyLog" class="log">전투 로그</div>
-      <button id="partyResetBtn" class="secondary">다시 시작</button>
-      <button id="partyLeaveBtn" class="danger">나가기</button>
-    </section>
-  </div>
+      <section id="partyBattle" class="card hidden">
+        <div class="party-grid">
+          <div>
+            <div id="leftPartyTitle" class="party-title">플레이어</div>
+            <div class="party-label">메인</div>
+            <div id="leftMainList"></div>
+            <div class="party-label">서브</div>
+            <div id="leftSubList"></div>
+          </div>
+          <div>
+            <div id="rightPartyTitle" class="party-title">AI</div>
+            <div class="party-label">메인</div>
+            <div id="rightMainList"></div>
+            <div class="party-label">서브</div>
+            <div id="rightSubList"></div>
+          </div>
+        </div>
 
-  <script type="module" src="./main.js"></script>
-</body>
+        <div id="partyTurnText" class="turn">대기 중...</div>
+        <div id="partyActionButtons" class="party-actions"></div>
+        <div style="height: 14px"></div>
+        <div id="partyLog" class="log">전투 로그</div>
+        <button id="partyResetBtn" class="secondary">다시 시작</button>
+        <button id="partyLeaveBtn" class="danger">나가기</button>
+      </section>
+    </div>
+
+    <script type="module" src="./main.js"></script>
+  </body>
 </html>
