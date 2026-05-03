@@ -729,8 +729,9 @@ const modeSelect = document.getElementById("modeSelect");
 
         if (currentMode === "single") {
           selectRoomCodeView.textContent = `${partySelection.length}/4`;
-          myRoleText.textContent = `선택됨: ${partySelection.join(" / ")}`;
-          startSinglePartyBattle(partySelection);
+          myRoleText.textContent =
+            "파티 4명 선택 완료! 다음 단계에서 전투 시작 버튼을 추가할 예정입니다.";
+          renderCharacterList();
           return;
         }
 
@@ -913,19 +914,21 @@ const modeSelect = document.getElementById("modeSelect");
 
       async function selectPartyCharacter(charName) {
         if (partySelection.includes(charName)) return;
+        if (partySelection.length >= 4) return;
 
         partySelection.push(charName);
 
         if (currentMode === "single") {
           selectRoomCodeView.textContent = `${partySelection.length}/4`;
-          myRoleText.textContent = `선택됨: ${partySelection.join(" / ")}`;
 
           if (partySelection.length >= 4) {
-            startSinglePartyBattle(partySelection);
+            myRoleText.textContent =
+              "파티 4명 선택 완료! 다음 단계에서 전투 시작 버튼을 추가할 예정입니다.";
           } else {
-            renderCharacterList();
+            myRoleText.textContent = `선택됨: ${partySelection.join(" / ")}`;
           }
 
+          renderCharacterList();
           return;
         }
 
