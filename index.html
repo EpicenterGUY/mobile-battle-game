@@ -392,6 +392,14 @@
     const db = getDatabase(app);
 
     const skills = {
+      ultimate: {
+        id: "ultimate",
+        name: "필살기",
+        type: "attack",
+        power: 35,
+        powerText: "위력 35 / 적 메인 1명",
+        desc: "궁극기 게이지를 모두 소모해 큰 피해를 준다."
+      },
       basic: {
         id: "basic",
         name: "기본 공격",
@@ -833,7 +841,8 @@
         evasion: false,
         atkBuff: 0,
         atkDebuff: 0,
-        poison: 0
+        poison: 0,
+        ultimateGauge: 0
       };
     }
 
@@ -877,6 +886,7 @@
       if (player.atkBuff > 0) list.push(`공격강화 +${player.atkBuff}`);
       if (player.atkDebuff > 0) list.push(`공격감소 -${player.atkDebuff}`);
       if (player.poison > 0) list.push(`독 ${player.poison}`);
+      list.push(`궁극기 ${Math.min(100, player.ultimateGauge || 0)}%`);
 
       return list.length ? list.join(" / ") : "상태 없음";
     }
@@ -1022,6 +1032,7 @@
 
       damage = Math.max(1, damage);
       defender.hp = Math.max(0, defender.hp - damage);
+      defender.ultimateGauge = Math.min(100, (defender.ultimateGauge || 0) + 10);
 
       return { hit: true, damage };
     }
@@ -1121,6 +1132,7 @@
 
       actor.turnCount = (actor.turnCount || 0) + 1;
       log += `${sideLabel(info.side)} 메인${info.slot + 1} ${actor.character}의 [${skill.name}]!\n`;
+      const isUltimate = skill.id === "ultimate";
 
       if (skill.type === "guard") {
         actor.guardRate = skill.guardRate;
@@ -1174,6 +1186,12 @@
             log += `\n${sideLabel(targetSide)} ${defender.character}이 독 상태가 되었다!`;
           }
         }
+      }
+      if (isUltimate) {
+        actor.ultimateGauge = 0;
+        log += "\n궁극기 게이지를 모두 소모했다!";
+      } else {
+        actor.ultimateGauge = Math.min(100, (actor.ultimateGauge || 0) + 25);
       }
 
       state.log = log;
@@ -1244,6 +1262,7 @@
       }
 
       state.supportUsedRound[side] = state.round;
+      sub.ultimateGauge = Math.min(100, (sub.ultimateGauge || 0) + 15);
 
       log += `${sideLabel(side)} 서브${subIndex - 1} ${sub.character}의 서브스킬 [${support.name}]!\n`;
 
@@ -1836,6 +1855,21 @@
         partyActionButtons.appendChild(btn);
       });
 
+      const ultimateBtn = document.createElement("button");
+      ultimateBtn.className = "skill-button danger";
+      const canUseUltimate = (actor.ultimateGauge || 0) >= 100;
+      ultimateBtn.disabled = !canUseUltimate;
+      ultimateBtn.innerHTML = `
+        <div class="skill-name">필살기 (궁극기)</div>
+        <div class="skill-power">위력 35 / 적 메인 1명</div>
+        <div class="skill-desc">${canUseUltimate ? "사용 가능" : `게이지 부족 (${Math.min(100, actor.ultimateGauge || 0)}%)`}</div>
+      `;
+      ultimateBtn.addEventListener("click", () => {
+        pendingPartySkillId = "ultimate";
+        renderPartyBattle();
+      });
+      partyActionButtons.appendChild(ultimateBtn);
+
       [2, 3].forEach((subIndex) => {
         const sub = state.teams[info.side][subIndex];
         const btn = document.createElement("button");
@@ -1970,6 +2004,9 @@
     }
 
     function chooseAiSkill(actor) {
+      if ((actor.ultimateGauge || 0) >= 100 && Math.random() < 0.75) {
+        return "ultimate";
+      }
       const list = getSkillListForPlayer(actor);
       const heal = list.find((id) => skills[id].type === "heal");
 
