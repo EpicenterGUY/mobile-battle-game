@@ -150,6 +150,18 @@ const modeSelect = document.getElementById("modeSelect");
       function canUseUltimate(player) {
         return (player?.ultimateGauge || 0) >= ULTIMATE_READY_GAUGE;
       }
+      function getUltimateSkill(player) {
+        const ultimate = characters[player?.character]?.ultimate;
+        return (
+          ultimate || {
+            name: "한계 돌파",
+            desc: "적 메인 1명에게 위력 35 피해",
+            type: "attack",
+            power: 35,
+            target: "enemySingle",
+          }
+        );
+      }
 
       function clampUltimateGauge(gauge) {
         return Math.min(ULTIMATE_READY_GAUGE, gauge || 0);
@@ -438,12 +450,7 @@ const modeSelect = document.getElementById("modeSelect");
         const actor = getTeam(state, info.side)[info.slot];
         const usingUltimate = skillId === ULTIMATE_SKILL_ID;
         const skill = usingUltimate
-          ? {
-              id: ULTIMATE_SKILL_ID,
-              name: "궁극기: 한계 돌파",
-              type: "attack",
-              power: 35,
-            }
+          ? { id: ULTIMATE_SKILL_ID, ...getUltimateSkill(actor) }
           : skills[skillId] || skills.basic;
         let log = applyPoisonStart(state, info.side, info.slot);
 
@@ -480,6 +487,35 @@ const modeSelect = document.getElementById("modeSelect");
         } else if (skill.type === "evasion") {
           actor.evasion = true;
           log += "다음 공격을 회피할 준비를 했다!";
+        } else if (skill.type === "teamGuard") {
+          [0, 1].forEach((slot) => {
+            const ally = getTeam(state, info.side)[slot];
+            if (alive(ally)) ally.guardRate = Math.max(ally.guardRate || 0, skill.guardRate || 0);
+          });
+          log += "아군 메인 전원이 피해 감소 효과를 얻었다!";
+        } else if (skill.type === "teamHeal") {
+          let totalHeal = 0;
+          [0, 1].forEach((slot) => {
+            const ally = getTeam(state, info.side)[slot];
+            if (!alive(ally)) return;
+            const before = ally.hp;
+            ally.hp = Math.min(ally.maxHp, ally.hp + (skill.heal || 0));
+            totalHeal += ally.hp - before;
+          });
+          log += `아군 메인 전원의 HP를 총 ${totalHeal} 회복했다!`;
+        } else if (skill.target === "enemyAllMain") {
+          const enemySide = getEnemySide(state, info.side);
+          const hitLogs = [];
+          [0, 1].forEach((slot) => {
+            const defender = getTeam(state, enemySide)[slot];
+            const result = applyDamageCore(
+              actor, defender, skill.power, { bonusIfPoison: skill.bonusIfPoison }, hitLogs, sideLabel(info.side), sideLabel(enemySide),
+            );
+            if (result.hit) {
+              log += `${sideLabel(enemySide)} 메인${slot + 1} ${defender.character}에게 ${result.damage} 데미지!\n`;
+            }
+          });
+          if (hitLogs.length) log += hitLogs.join("\n");
         } else {
           const defender = getTeam(state, targetSide)[targetSlot];
           const logs = [];
@@ -513,6 +549,15 @@ const modeSelect = document.getElementById("modeSelect");
             if (skill.type === "poisonAttack") {
               defender.poison = 3;
               log += `\n${sideLabel(targetSide)} ${defender.character}이 독 상태가 되었다!`;
+            }
+            if (skill.type === "poisonDebuffAttack") {
+              defender.atkDebuff += skill.debuff || 0;
+              defender.poison = skill.poison || 0;
+              log += `\n${sideLabel(targetSide)} ${defender.character}이 공격 감소와 독 상태가 되었다!`;
+            }
+            if (skill.type === "selfHarmAttack") {
+              actor.hp = Math.max(0, actor.hp - (skill.selfDamage || 0));
+              log += `\n${actor.character}도 ${skill.selfDamage || 0}의 반동 피해를 받았다!`;
             }
           }
         }
@@ -568,6 +613,9 @@ const modeSelect = document.getElementById("modeSelect");
           const skillNames = c.skillIds
             .map((id) => `${skills[id].name} - ${skills[id].powerText}`)
             .join("<br>");
+          const ultimateText = c.ultimate
+            ? `${c.ultimate.name} - ${c.ultimate.desc}`
+            : "한계 돌파 - 적 메인 1명에게 위력 35 피해";
 
           const selected = partySelection.includes(c.name);
           const buttonText = selected
@@ -581,6 +629,7 @@ const modeSelect = document.getElementById("modeSelect");
             <span class="passive">패시브: ${c.passiveName}</span><br>
             ${c.passiveDesc}<br>
             스킬:<br>${skillNames}
+            <br>궁극기:<br>${ultimateText}
           </div>
           <button class="green" ${selected ? "disabled" : ""}>${buttonText}</button>
         `;
@@ -1051,7 +1100,7 @@ const modeSelect = document.getElementById("modeSelect");
         if (pendingPartySkillId) {
           const skill =
             pendingPartySkillId === ULTIMATE_SKILL_ID
-              ? { name: "궁극기: 한계 돌파" }
+              ? { name: `궁극기: ${getUltimateSkill(actor).name}` }
               : skills[pendingPartySkillId];
           const enemySide = getEnemySide(state, info.side);
 
@@ -1118,17 +1167,22 @@ const modeSelect = document.getElementById("modeSelect");
         const ultBtn = document.createElement("button");
         const ultimateGauge = clampUltimateGauge(actor?.ultimateGauge || 0);
         const ultimateReady = canUseUltimate(actor);
+        const ultimateSkill = getUltimateSkill(actor);
         ultBtn.className = "skill-button";
         ultBtn.disabled = !ultimateReady;
         ultBtn.innerHTML = `
-          <div class="skill-name">궁극기: 한계 돌파</div>
-          <div class="skill-power">위력 35 / 적 메인 1명</div>
-          <div class="skill-desc">${ultimateReady ? `게이지 ${ultimateGauge}/${ULTIMATE_READY_GAUGE} - 사용 가능` : `게이지 ${ultimateGauge}/${ULTIMATE_READY_GAUGE}`}</div>
+          <div class="skill-name">궁극기: ${ultimateSkill.name}</div>
+          <div class="skill-power">${ultimateSkill.desc}</div>
+          <div class="skill-desc">${ultimateReady ? `게이지 ${ultimateGauge}/${ULTIMATE_READY_GAUGE} - 사용 가능` : `게이지 ${ultimateGauge}/${ULTIMATE_READY_GAUGE} - 사용 불가`}</div>
         `;
         if (ultimateReady) {
           ultBtn.addEventListener("click", () => {
-            pendingPartySkillId = ULTIMATE_SKILL_ID;
-            renderPartyBattle();
+            if (ultimateSkill.target === "enemySingle") {
+              pendingPartySkillId = ULTIMATE_SKILL_ID;
+              renderPartyBattle();
+              return;
+            }
+            handlePartySkill(ULTIMATE_SKILL_ID);
           });
         }
         partyActionButtons.appendChild(ultBtn);
