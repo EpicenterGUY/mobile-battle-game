@@ -12,6 +12,7 @@ import { skills, characters } from "./data.js";
 import { BATTLE_MODULE } from "./battle.js";
 import { ONLINE_MODULE } from "./online.js";
 import { UI_MODULE } from "./ui.js";
+import { getLang, setLang, t, tx, applyLanguage } from "./i18n.js";
 
 void BATTLE_MODULE;
 void ONLINE_MODULE;
@@ -193,10 +194,10 @@ const modeSelect = document.getElementById("modeSelect");
       }
 
       function sideLabel(side) {
-        if (side === "player") return "플레이어";
-        if (side === "ai") return "AI";
-        if (side === "p1") return "1P";
-        if (side === "p2") return "2P";
+        if (side === "player") return t("party.player");
+        if (side === "ai") return t("party.ai");
+        if (side === "p1") return t("party.p1");
+        if (side === "p2") return t("party.p2");
         return side;
       }
 
@@ -468,7 +469,7 @@ const modeSelect = document.getElementById("modeSelect");
 
         actor.turnCount = (actor.turnCount || 0) + 1;
         increaseUltimateGauge(actor);
-        log += `${sideLabel(info.side)} 메인${info.slot + 1} ${actor.character}의 [${skill.name}]!\n`;
+        log += `${sideLabel(info.side)} 메인${info.slot + 1} ${actor.character}의 [${tx(skill.name)}]!\n`;
 
         if (skill.type === "guard") {
           actor.guardRate = skill.guardRate;
@@ -611,10 +612,10 @@ const modeSelect = document.getElementById("modeSelect");
           div.className = "character-card";
 
           const skillNames = c.skillIds
-            .map((id) => `${skills[id].name} - ${skills[id].powerText}`)
+            .map((id) => `${tx(skills[id].name)} - ${tx(skills[id].powerText)}`)
             .join("<br>");
           const ultimateText = c.ultimate
-            ? `${c.ultimate.name} - ${c.ultimate.desc}`
+            ? `${tx(c.ultimate.name)} - ${tx(c.ultimate.desc)}`
             : "한계 돌파 - 적 메인 1명에게 위력 35 피해";
 
           const selected = partySelection.includes(c.name);
@@ -623,11 +624,11 @@ const modeSelect = document.getElementById("modeSelect");
             : `파티에 추가 (${partySelection.length}/4)`;
 
           div.innerHTML = `
-          <div class="character-name">${c.name}</div>
+          <div class="character-name">${tx(c.name)}</div>
           <div class="character-info">
             HP ${c.hp} / 공격 ${c.atk} / 방어 ${c.def}<br>
-            <span class="passive">패시브: ${c.passiveName}</span><br>
-            ${c.passiveDesc}<br>
+            <span class="passive">패시브: ${tx(c.passiveName)}</span><br>
+            ${tx(c.passiveDesc)}<br>
             스킬:<br>${skillNames}
             <br>궁극기:<br>${ultimateText}
           </div>
@@ -651,7 +652,7 @@ const modeSelect = document.getElementById("modeSelect");
           const button = document.createElement("button");
           button.className = "recommend-btn";
           button.type = "button";
-          button.textContent = `${preset.label}: ${preset.members.join(" / ")}`;
+          button.textContent = `${tx(preset.label)}: ${preset.members.map(tx).join(" / ")}`;
           button.addEventListener("click", () => {
             applyRecommendedParty(preset.members);
           });
@@ -780,10 +781,13 @@ const modeSelect = document.getElementById("modeSelect");
       }
 
       async function joinRoom() {
+        const raw = roomInput.value.trim().toLowerCase();
+        if (raw === "jpn") { setLang("ja"); applyI18nToUI(); return; }
+        if (raw === "kor") { setLang("ko"); applyI18nToUI(); return; }
+
         if (!(await ensureOnlineAvailable())) return;
 
         currentMode = "online";
-
         const code = roomInput.value.trim().toUpperCase();
 
         if (code.length !== 4) {
@@ -1000,14 +1004,14 @@ const modeSelect = document.getElementById("modeSelect");
         if (active && !isDead) classes.push("active");
         if (isDead) classes.push("dead");
 
-        const deadLabel = isDead ? " [전투불능]" : "";
+        const deadLabel = isDead ? ` [${t("state.dead")}]` : "";
         const stateText = isDead
           ? "행동 불가 / 로테이션 불가"
           : getStateText(unit);
 
         return `
         <div class="${classes.join(" ")}">
-          <div class="unit-name">${unit.character || "빈 자리"}${deadLabel}</div>
+          <div class="unit-name">${tx(unit.character || "빈 자리")}${deadLabel}</div>
           <div class="unit-detail">
             HP ${unit.hp} / ${unit.maxHp}<br>
             공격 ${unit.atk} / 방어 ${unit.def}<br>
@@ -1062,10 +1066,10 @@ const modeSelect = document.getElementById("modeSelect");
         if (state.winner) {
           if (currentMode === "single") {
             partyTurnText.textContent =
-              state.winner === "player" ? "승리!" : "패배!";
+              state.winner === "player" ? t("result.win") : t("result.lose");
           } else {
             partyTurnText.textContent =
-              state.winner === mySide ? "승리!" : "패배!";
+              state.winner === mySide ? t("result.win") : t("result.lose");
           }
 
           partyActionButtons.innerHTML = "";
@@ -1106,7 +1110,7 @@ const modeSelect = document.getElementById("modeSelect");
 
           const title = document.createElement("div");
           title.className = "status";
-          title.textContent = `[${skill.name}] 대상 선택`;
+          title.textContent = `[${tx(skill.name)}] 대상 선택`;
           partyActionButtons.appendChild(title);
 
           [0, 1].forEach((slot) => {
@@ -1147,9 +1151,9 @@ const modeSelect = document.getElementById("modeSelect");
 
           btn.className = "skill-button";
           btn.innerHTML = `
-          <div class="skill-name">${skill.name}</div>
-          <div class="skill-power">${skill.powerText}</div>
-          <div class="skill-desc">${skill.desc}</div>
+          <div class="skill-name">${tx(skill.name)}</div>
+          <div class="skill-power">${tx(skill.powerText)}</div>
+          <div class="skill-desc">${tx(skill.desc)}</div>
         `;
 
           btn.addEventListener("click", () => {
@@ -1171,9 +1175,9 @@ const modeSelect = document.getElementById("modeSelect");
         ultBtn.className = "skill-button";
         ultBtn.disabled = !ultimateReady;
         ultBtn.innerHTML = `
-          <div class="skill-name">궁극기: ${ultimateSkill.name}</div>
-          <div class="skill-power">${ultimateSkill.desc}</div>
-          <div class="skill-desc">${ultimateReady ? `게이지 ${ultimateGauge}/${ULTIMATE_READY_GAUGE} - 사용 가능` : `게이지 ${ultimateGauge}/${ULTIMATE_READY_GAUGE} - 사용 불가`}</div>
+          <div class="skill-name">${t("skill.ult")}: ${tx(ultimateSkill.name)}</div>
+          <div class="skill-power">${tx(ultimateSkill.desc)}</div>
+          <div class="skill-desc">${ultimateReady ? `게이지 ${ultimateGauge}/${ULTIMATE_READY_GAUGE} - ${t("state.available")}` : `게이지 ${ultimateGauge}/${ULTIMATE_READY_GAUGE} - ${t("state.unavailable")}`}</div>
         `;
         if (ultimateReady) {
           ultBtn.addEventListener("click", () => {
@@ -1209,7 +1213,7 @@ const modeSelect = document.getElementById("modeSelect");
               <div class="rotate-subskill">서브스킬: ${subSkillNames}</div>
             `
             : `
-              <div class="rotate-title unavailable">로테이션 불가</div>
+              <div class="rotate-title unavailable">${t("battle.rotate")} 불가</div>
               <div class="rotate-main">${subLabel} ${sub?.character || "빈 자리"} [전투불능]</div>
               <div class="rotate-subskill">서브스킬: ${subSkillNames}</div>
             `;
@@ -1495,4 +1499,20 @@ const modeSelect = document.getElementById("modeSelect");
       });
     
 
+      function applyI18nToUI() {
+  applyLanguage();
+  const title = document.querySelector("h1"); if (title) title.textContent = t("header.title");
+  const sub = document.querySelector(".subtitle"); if (sub) sub.textContent = t("header.subtitle");
+  const modeTitle = document.querySelector(".mode-title"); if (modeTitle) modeTitle.textContent = t("mode.select");
+  onlineModeBtn.textContent = t("mode.online");
+  singleModeBtn.textContent = t("mode.single");
+  createRoomBtn.textContent = t("lobby.create");
+  joinRoomBtn.textContent = t("lobby.join");
+  roomInput.placeholder = t("lobby.input");
+  copyCodeBtn.textContent = t("common.copyRoom");
+  waitingBackBtn.textContent = t("common.leave");
+  selectBackBtn.textContent = t("common.back");
+}
+
+      applyI18nToUI();
       renderRecommendedButtons();
