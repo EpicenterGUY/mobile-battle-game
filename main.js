@@ -23,6 +23,7 @@ let currentMode = null;
 let currentRoomCode = null;
 let mySide = null;
 let partySelection = [];
+let selectedSkillLoadouts = {};
 let singlePartyState = null;
 let latestOnlineBattle = null;
 let pendingPartyAction = null;
@@ -113,7 +114,17 @@ const modeSelect = document.getElementById("modeSelect");
         return code;
       }
 
-      function makePlayerFromCharacter(charName) {
+      function getDefaultLoadout(charName) {
+        const c = characters[charName];
+        return ["basic", ...((c?.skillIds || []).slice(0, 3))];
+      }
+
+      function getAvailableSkillsForCharacter(charName) {
+        const c = characters[charName];
+        return ["basic", ...(c?.skillIds || [])];
+      }
+
+      function makePlayerFromCharacter(charName, loadout = null) {
         const c = characters[charName];
 
         return {
@@ -125,7 +136,7 @@ const modeSelect = document.getElementById("modeSelect");
           def: c.def,
           passiveName: c.passiveName,
           passiveDesc: c.passiveDesc,
-          skillIds: c.skillIds,
+          skillIds: loadout || getDefaultLoadout(charName),
           turnCount: 0,
           guardRate: 0,
           evasion: false,
@@ -145,7 +156,7 @@ const modeSelect = document.getElementById("modeSelect");
       }
 
       function getSkillListForPlayer(player) {
-        return ["basic", ...(player.skillIds || [])];
+        return player.skillIds || ["basic"];
       }
       function getSubSkillForPlayer(player) {
         return characters[player?.character]?.subSkill || null;
@@ -722,7 +733,18 @@ const modeSelect = document.getElementById("modeSelect");
 
         const lines = roles.map((role, index) => {
           const selectedName = partySelection[index];
-          return `<div>${role}: ${selectedName ? tx(selectedName) : "미선택"}</div>`;
+          if (!selectedName) return `<div>${role}: 미선택</div>`;
+          const loadout =
+            selectedSkillLoadouts[selectedName] || getDefaultLoadout(selectedName);
+          const skillText = loadout
+            .map((skillId) => tx(skills[skillId]?.name || skillId))
+            .join(" / ");
+          return `<div class="selected-member-preview" data-char="${selectedName}">
+            <div>${role}: ${tx(selectedName)}</div>
+            <div>${t("ui.equipped")}: ${skillText}</div>
+            <button type="button" class="green skill-edit-btn" data-char="${selectedName}">${t("ui.changeSkill")}</button>
+            <div class="skill-editor" data-char="${selectedName}"></div>
+          </div>`;
         });
 
         preview.innerHTML = `
@@ -731,6 +753,75 @@ const modeSelect = document.getElementById("modeSelect");
         `;
 
         characterList.insertAdjacentElement("beforebegin", preview);
+
+        preview.querySelectorAll(".skill-edit-btn").forEach((button) => {
+          button.addEventListener("click", () => {
+            const charName = button.dataset.char;
+            if (!charName) return;
+            renderSkillEditor(charName);
+          });
+        });
+      }
+
+      function renderSkillEditor(charName) {
+        const preview = document.getElementById("selectedPartyPreview");
+        if (!preview) return;
+        preview.querySelectorAll(".skill-editor").forEach((node) => {
+          if (node.dataset.char !== charName) node.innerHTML = "";
+        });
+        const editor = preview.querySelector(`.skill-editor[data-char="${charName}"]`);
+        if (!editor) return;
+
+        const available = getAvailableSkillsForCharacter(charName);
+        const current =
+          selectedSkillLoadouts[charName] || getDefaultLoadout(charName);
+        const selectedSet = new Set(current);
+
+        const optionsHtml = available
+          .map((skillId) => {
+            const checked = selectedSet.has(skillId) ? "checked" : "";
+            return `<label style="display:block;margin-top:4px;">
+              <input type="checkbox" value="${skillId}" ${checked}>
+              ${tx(skills[skillId]?.name || skillId)}
+            </label>`;
+          })
+          .join("");
+
+        editor.innerHTML = `
+          <div style="margin-top:6px;padding:8px;border:1px solid #444;border-radius:8px;">
+            <div>${t("ui.changeSkill")} - ${tx(charName)}</div>
+            <div class="skill-options">${optionsHtml}</div>
+            <div class="skill-select-error" style="color:#ff6b6b;margin-top:6px;"></div>
+            <button type="button" class="green apply-skill-btn">${t("common.apply")}</button>
+            <button type="button" class="gray cancel-skill-btn">${t("common.cancel")}</button>
+          </div>
+        `;
+
+        const errorNode = editor.querySelector(".skill-select-error");
+        const checkboxes = Array.from(editor.querySelectorAll('input[type="checkbox"]'));
+        const updateError = () => {
+          const selectedCount = checkboxes.filter((cb) => cb.checked).length;
+          errorNode.textContent = selectedCount === 4 ? "" : t("ui.needFourSkills");
+          return selectedCount;
+        };
+        updateError();
+        checkboxes.forEach((cb) => cb.addEventListener("change", updateError));
+
+        editor.querySelector(".apply-skill-btn")?.addEventListener("click", () => {
+          const selected = checkboxes
+            .filter((cb) => cb.checked)
+            .map((cb) => cb.value);
+          if (selected.length !== 4) {
+            errorNode.textContent = t("ui.needFourSkills");
+            return;
+          }
+          selectedSkillLoadouts[charName] = selected;
+          renderCharacterList();
+          renderSingleStartButton();
+        });
+        editor.querySelector(".cancel-skill-btn")?.addEventListener("click", () => {
+          editor.innerHTML = "";
+        });
       }
 
       function renderSingleStartButton() {
@@ -770,6 +861,10 @@ const modeSelect = document.getElementById("modeSelect");
 
       async function applyRecommendedParty(members) {
         partySelection = [...members];
+        selectedSkillLoadouts = {};
+        members.forEach((charName) => {
+          selectedSkillLoadouts[charName] = getDefaultLoadout(charName);
+        });
 
         if (currentMode === "single") {
           selectRoomCodeView.textContent = `${partySelection.length}/4`;
@@ -783,7 +878,12 @@ const modeSelect = document.getElementById("modeSelect");
         if (currentMode === "online") {
           myRoleText.textContent = `선택됨: ${partySelection.join(" / ")}`;
 
-          const party = partySelection.map(makePlayerFromCharacter);
+          const party = partySelection.map((charName) =>
+            makePlayerFromCharacter(
+              charName,
+              selectedSkillLoadouts[charName] || getDefaultLoadout(charName),
+            ),
+          );
           const updates = {};
 
           updates[`state/${mySide}Party`] = party;
@@ -816,6 +916,7 @@ const modeSelect = document.getElementById("modeSelect");
         currentRoomCode = null;
         mySide = null;
         partySelection = [];
+        selectedSkillLoadouts = {};
         latestOnlineBattle = null;
         roomInput.value = "";
         showScreen("lobby");
@@ -826,6 +927,7 @@ const modeSelect = document.getElementById("modeSelect");
         currentRoomCode = null;
         mySide = "player";
         partySelection = [];
+        selectedSkillLoadouts = {};
         singlePartyState = null;
         pendingPartyAction = null;
         partyBusy = false;
@@ -878,6 +980,7 @@ const modeSelect = document.getElementById("modeSelect");
         currentRoomCode = code;
         mySide = "p1";
         partySelection = [];
+        selectedSkillLoadouts = {};
 
         roomCodeView.textContent = code;
         selectTopLabel.textContent = "방 코드";
@@ -947,6 +1050,7 @@ const modeSelect = document.getElementById("modeSelect");
         currentRoomCode = code;
         mySide = "p2";
         partySelection = [];
+        selectedSkillLoadouts = {};
 
         selectTopLabel.textContent = "방 코드";
         selectRoomCodeView.textContent = code;
@@ -965,6 +1069,8 @@ const modeSelect = document.getElementById("modeSelect");
         if (partySelection.length >= 4) return;
 
         partySelection.push(charName);
+        selectedSkillLoadouts[charName] =
+          selectedSkillLoadouts[charName] || getDefaultLoadout(charName);
 
         if (currentMode === "single") {
           selectRoomCodeView.textContent = `${partySelection.length}/4`;
@@ -990,7 +1096,12 @@ const modeSelect = document.getElementById("modeSelect");
             return;
           }
 
-          const party = partySelection.map(makePlayerFromCharacter);
+          const party = partySelection.map((name) =>
+            makePlayerFromCharacter(
+              name,
+              selectedSkillLoadouts[name] || getDefaultLoadout(name),
+            ),
+          );
           const updates = {};
 
           updates[`state/${mySide}Party`] = party;
@@ -1024,8 +1135,13 @@ const modeSelect = document.getElementById("modeSelect");
         singlePartyState = createBattleState(
           "player",
           "ai",
-          playerNames.map(makePlayerFromCharacter),
-          aiNames.map(makePlayerFromCharacter),
+          playerNames.map((name) =>
+            makePlayerFromCharacter(
+              name,
+              selectedSkillLoadouts[name] || getDefaultLoadout(name),
+            ),
+          ),
+          aiNames.map((name) => makePlayerFromCharacter(name, getDefaultLoadout(name))),
           `싱글 4인 파티 배틀 시작!\n플레이어: ${playerNames.join(" / ")}\nAI: ${aiNames.join(" / ")}\n1라운드 시작!`,
         );
 
