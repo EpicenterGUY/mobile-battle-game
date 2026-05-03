@@ -25,7 +25,7 @@ let mySide = null;
 let partySelection = [];
 let singlePartyState = null;
 let latestOnlineBattle = null;
-let pendingPartySkillId = null;
+let pendingPartyAction = null;
 let partyBusy = false;
 const ULTIMATE_READY_GAUGE = 4;
 const ULTIMATE_SKILL_ID = "__ultimate__";
@@ -146,6 +146,9 @@ const modeSelect = document.getElementById("modeSelect");
 
       function getSkillListForPlayer(player) {
         return ["basic", ...(player.skillIds || [])];
+      }
+      function getSubSkillForPlayer(player) {
+        return characters[player?.character]?.subSkill || null;
       }
 
       function canUseUltimate(player) {
@@ -604,6 +607,66 @@ const modeSelect = document.getElementById("modeSelect");
         return state;
       }
 
+      function processPartySubSkill(oldState, subIndex, targetSide, targetSlot) {
+        const state = clone(oldState);
+        const info = getTurnInfo(state);
+        const team = getTeam(state, info.side);
+        const actor = team[info.slot];
+        const sub = team[subIndex];
+        const subSkill = getSubSkillForPlayer(sub);
+        let log = applyPoisonStart(state, info.side, info.slot);
+
+        if (!alive(actor)) {
+          log += `${actor?.character || "빈 자리"}이 쓰러져 행동할 수 없습니다.`;
+        } else if (!alive(sub)) {
+          log += `${sub?.character || "빈 자리"}은 쓰러져 서브스킬을 사용할 수 없습니다.`;
+        } else if (!subSkill) {
+          log += `${sub?.character || "빈 자리"}의 서브스킬이 없습니다.`;
+        } else {
+          const target = state.teams[targetSide]?.[targetSlot];
+          if (!alive(target)) {
+            log += `대상이 전투불능이라 서브스킬을 사용할 수 없습니다.`;
+          } else {
+            log += `[서브스킬] 서브${subIndex - 1} ${sub.character}의 ${subSkill.name} 발동!`;
+            if (subSkill.type === "allyAtkBuff") {
+              target.atkBuff += subSkill.buff || 0;
+              log += `\n${sideLabel(targetSide)} 메인${targetSlot + 1} ${target.character}의 다음 공격 피해가 ${subSkill.buff || 0} 증가했다!`;
+            } else if (subSkill.type === "allyUltimateGauge") {
+              increaseUltimateGauge(target);
+              log += `\n${sideLabel(targetSide)} 메인${targetSlot + 1} ${target.character}의 궁극기 게이지가 1 증가했다!`;
+            } else if (subSkill.type === "enemyDamage") {
+              target.hp = Math.max(0, target.hp - (subSkill.damage || 0));
+              log += `\n${sideLabel(targetSide)} 메인${targetSlot + 1} ${target.character}에게 ${subSkill.damage || 0} 피해를 주었다!`;
+            } else if (subSkill.type === "allyGuard") {
+              target.guardRate = Math.max(target.guardRate || 0, subSkill.guardRate || 0);
+              log += `\n${sideLabel(targetSide)} 메인${targetSlot + 1} ${target.character}가 다음 피해를 30% 줄인다!`;
+            } else if (subSkill.type === "allyAtkBuffSelfHarm") {
+              target.atkBuff += subSkill.buff || 0;
+              sub.hp = Math.max(0, sub.hp - (subSkill.selfDamage || 0));
+              log += `\n${sideLabel(targetSide)} 메인${targetSlot + 1} ${target.character}의 다음 공격 피해가 ${subSkill.buff || 0} 증가했다!`;
+              log += `\n서브${subIndex - 1} ${sub.character}는 HP ${subSkill.selfDamage || 0} 감소했다!`;
+            } else if (subSkill.type === "allyHeal") {
+              const healAmount = subSkill.heal || 0;
+              const beforeHp = target.hp;
+              target.hp = Math.min(target.maxHp, target.hp + healAmount);
+              log += `\n메인${targetSlot + 1} ${target.character} HP를 ${target.hp - beforeHp} 회복했다!`;
+            } else if (subSkill.type === "enemyAtkDebuff") {
+              target.atkDebuff += subSkill.debuff || 0;
+              log += `\n${sideLabel(targetSide)} 메인${targetSlot + 1} ${target.character}의 다음 공격 피해가 ${subSkill.debuff || 0} 감소했다!`;
+            }
+          }
+        }
+
+        state.log = log;
+        autoPromoteAll(state);
+        if (checkWinner(state)) {
+          state.log += `\n${sideLabel(state.winner)} 승리!`;
+        } else {
+          advanceTurn(state);
+        }
+        return state;
+      }
+
       function renderCharacterList() {
         characterList.innerHTML = "";
 
@@ -717,7 +780,7 @@ const modeSelect = document.getElementById("modeSelect");
         mySide = "player";
         partySelection = [];
         singlePartyState = null;
-        pendingPartySkillId = null;
+        pendingPartyAction = null;
         partyBusy = false;
 
         selectTopLabel.textContent = "싱글 파티";
@@ -916,7 +979,7 @@ const modeSelect = document.getElementById("modeSelect");
           `싱글 4인 파티 배틀 시작!\n플레이어: ${playerNames.join(" / ")}\nAI: ${aiNames.join(" / ")}\n1라운드 시작!`,
         );
 
-        pendingPartySkillId = null;
+        pendingPartyAction = null;
         partyBusy = false;
 
         renderPartyBattle();
@@ -1118,12 +1181,14 @@ const modeSelect = document.getElementById("modeSelect");
           return;
         }
 
-        if (pendingPartySkillId) {
+        if (pendingPartyAction) {
           const skill =
-            pendingPartySkillId === ULTIMATE_SKILL_ID
+            pendingPartyAction.kind === "main" && pendingPartyAction.skillId === ULTIMATE_SKILL_ID
               ? { name: `궁극기: ${getUltimateSkill(actor).name}` }
-              : skills[pendingPartySkillId];
-          const enemySide = getEnemySide(state, info.side);
+              : pendingPartyAction.kind === "main"
+                ? skills[pendingPartyAction.skillId]
+                : { name: `서브스킬: ${pendingPartyAction.subSkill?.name || "-"}` };
+          const selectionSide = pendingPartyAction.targetSide;
 
           const title = document.createElement("div");
           title.className = "status";
@@ -1131,7 +1196,7 @@ const modeSelect = document.getElementById("modeSelect");
           partyActionButtons.appendChild(title);
 
           [0, 1].forEach((slot) => {
-            const target = state.teams[enemySide][slot];
+            const target = state.teams[selectionSide][slot];
             const btn = document.createElement("button");
             const targetDead = !alive(target);
             const targetLabel = targetDead
@@ -1141,12 +1206,14 @@ const modeSelect = document.getElementById("modeSelect");
             btn.className = "target-button";
             btn.disabled = !alive(target);
             btn.innerHTML = `
-            <div class="skill-name">${sideLabel(enemySide)} 메인${slot + 1} ${targetLabel}</div>
+            <div class="skill-name">${sideLabel(selectionSide)} 메인${slot + 1} ${targetLabel}</div>
             <div class="skill-desc">HP ${target?.hp || 0} / ${target?.maxHp || 0}</div>
           `;
 
             btn.addEventListener("click", () =>
-              handlePartySkill(pendingPartySkillId, enemySide, slot),
+              pendingPartyAction.kind === "main"
+                ? handlePartySkill(pendingPartyAction.skillId, selectionSide, slot)
+                : handlePartySubSkill(pendingPartyAction.subIndex, selectionSide, slot),
             );
             partyActionButtons.appendChild(btn);
           });
@@ -1155,7 +1222,7 @@ const modeSelect = document.getElementById("modeSelect");
           cancel.className = "secondary";
           cancel.textContent = "취소";
           cancel.addEventListener("click", () => {
-            pendingPartySkillId = null;
+            pendingPartyAction = null;
             renderPartyBattle();
           });
           partyActionButtons.appendChild(cancel);
@@ -1175,7 +1242,7 @@ const modeSelect = document.getElementById("modeSelect");
 
           btn.addEventListener("click", () => {
             if (isTargetSkill(skill)) {
-              pendingPartySkillId = skillId;
+              pendingPartyAction = { kind: "main", skillId, targetSide: getEnemySide(state, info.side) };
               renderPartyBattle();
             } else {
               handlePartySkill(skillId);
@@ -1199,7 +1266,7 @@ const modeSelect = document.getElementById("modeSelect");
         if (ultimateReady) {
           ultBtn.addEventListener("click", () => {
             if (ultimateSkill.target === "enemySingle") {
-              pendingPartySkillId = ULTIMATE_SKILL_ID;
+              pendingPartyAction = { kind: "main", skillId: ULTIMATE_SKILL_ID, targetSide: getEnemySide(state, info.side) };
               renderPartyBattle();
               return;
             }
@@ -1210,33 +1277,45 @@ const modeSelect = document.getElementById("modeSelect");
 
         [2, 3].forEach((subIndex) => {
           const sub = state.teams[info.side][subIndex];
-          const btn = document.createElement("button");
+          const rotateBtn = document.createElement("button");
+          const subSkillBtn = document.createElement("button");
           const mainLabel = `메인${info.slot + 1}`;
           const subLabel = `서브${subIndex - 1}`;
           const canRotate = alive(sub);
-          const subSkillNames = canRotate
-            ? getSkillListForPlayer(sub)
-                .map((id) => skills[id]?.name)
-                .filter(Boolean)
-                .join(" · ")
-            : "사용 불가";
+          const subSkill = getSubSkillForPlayer(sub);
 
-          btn.className = "rotate-button secondary";
-          btn.disabled = !canRotate;
-          btn.innerHTML = canRotate
+          rotateBtn.className = "rotate-button secondary";
+          rotateBtn.disabled = !canRotate || !alive(actor);
+          rotateBtn.innerHTML = canRotate
             ? `
               <div class="rotate-title">로테이션 가능</div>
               <div class="rotate-main">${mainLabel} ${actor.character} ↔ ${subLabel} ${sub?.character || "빈 자리"}</div>
-              <div class="rotate-subskill">서브스킬: ${subSkillNames}</div>
             `
             : `
               <div class="rotate-title unavailable">${t("battle.rotate")} 불가</div>
               <div class="rotate-main">${subLabel} ${sub?.character || "빈 자리"} [전투불능]</div>
-              <div class="rotate-subskill">서브스킬: ${subSkillNames}</div>
             `;
+          rotateBtn.addEventListener("click", () => handlePartyRotate(subIndex));
+          partyActionButtons.appendChild(rotateBtn);
 
-          btn.addEventListener("click", () => handlePartyRotate(subIndex));
-          partyActionButtons.appendChild(btn);
+          subSkillBtn.className = "skill-button secondary";
+          subSkillBtn.disabled = !canRotate || !alive(actor) || !subSkill;
+          subSkillBtn.innerHTML = `
+            <div class="skill-name">서브${subIndex - 1} 스킬: ${subSkill?.name || "없음"}</div>
+            <div class="skill-desc">${subSkill?.desc || "사용 불가"}</div>
+          `;
+          if (!subSkillBtn.disabled) {
+            subSkillBtn.addEventListener("click", () => {
+              pendingPartyAction = {
+                kind: "sub",
+                subIndex,
+                subSkill,
+                targetSide: subSkill.target === "allySingleMain" ? info.side : getEnemySide(state, info.side),
+              };
+              renderPartyBattle();
+            });
+          }
+          partyActionButtons.appendChild(subSkillBtn);
         });
       }
 
@@ -1245,7 +1324,7 @@ const modeSelect = document.getElementById("modeSelect");
         targetSide = null,
         targetSlot = null,
       ) {
-        pendingPartySkillId = null;
+        pendingPartyAction = null;
 
         if (currentMode === "single") {
           singlePartyState = processPartySkill(
@@ -1292,7 +1371,7 @@ const modeSelect = document.getElementById("modeSelect");
       }
 
       async function handlePartyRotate(subIndex) {
-        pendingPartySkillId = null;
+        pendingPartyAction = null;
 
         if (currentMode === "single") {
           singlePartyState = processPartyRotate(singlePartyState, subIndex);
@@ -1325,6 +1404,30 @@ const modeSelect = document.getElementById("modeSelect");
             "state/battle": newBattle,
             updatedAt: Date.now(),
           });
+        }
+      }
+      async function handlePartySubSkill(subIndex, targetSide, targetSlot) {
+        pendingPartyAction = null;
+        if (currentMode === "single") {
+          singlePartyState = processPartySubSkill(singlePartyState, subIndex, targetSide, targetSlot);
+          renderPartyBattle();
+          triggerAiIfNeeded();
+          return;
+        }
+        if (currentMode === "online") {
+          const roomRef = ref(db, "rooms/" + currentRoomCode);
+          const snapshot = await get(roomRef);
+          if (!snapshot.exists()) return;
+          const room = snapshot.val();
+          const battle = room.state.battle;
+          if (!battle || battle.winner) return;
+          const info = getTurnInfo(battle);
+          if (info.side !== mySide) {
+            alert("아직 내 턴이 아닙니다.");
+            return;
+          }
+          const newBattle = processPartySubSkill(battle, subIndex, targetSide, targetSlot);
+          await update(roomRef, { "state/battle": newBattle, updatedAt: Date.now() });
         }
       }
 
@@ -1482,7 +1585,7 @@ const modeSelect = document.getElementById("modeSelect");
         singlePartyState = null;
         latestOnlineBattle = null;
         partyBusy = false;
-        pendingPartySkillId = null;
+        pendingPartyAction = null;
         showScreen("mode");
       }
 
