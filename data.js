@@ -180,8 +180,8 @@ export const skills = {
           id: "priest_heal",
           name: "치유",
           type: "heal",
-          heal: 32,
-          powerText: "회복 32 / 자신",
+          heal: 28,
+          powerText: "회복 28 / 자신",
           desc: "자신의 HP를 크게 회복한다.",
         },
         judgment: {
@@ -281,9 +281,9 @@ export const skills = {
 export const characters = {
         검사: {
           name: "검사",
-          hp: 110,
+          hp: 104,
           atk: 15,
-          def: 8,
+          def: 7,
           passiveName: "검의 호흡",
           passiveDesc: "공격 시 20% 확률로 추가 피해 8",
           skillIds: ["slash", "guard", "halfmoon", "double_slash"],
@@ -374,7 +374,7 @@ export const characters = {
           passiveName: "성스러운 가호",
           passiveDesc: "회복 스킬의 회복량 20% 증가",
           skillIds: ["priest_heal", "judgment", "blessing", "barrier"],
-          subSkill: { id: "sub_priest_emergency_heal", name: "응급 치유", type: "allyHeal", heal: 20, target: "allySingleMain", desc: "아군 메인 1명 HP 20 회복" },
+          subSkill: { id: "sub_priest_emergency_heal", name: "응급 치유", type: "allyHeal", heal: 18, target: "allySingleMain", desc: "아군 메인 1명 HP 18 회복" },
           ultimate: {
             name: "대치유",
             desc: "아군 메인 2명의 HP를 35 회복",
@@ -386,7 +386,7 @@ export const characters = {
         궁수: {
           name: "궁수",
           hp: 90,
-          atk: 17,
+          atk: 18,
           def: 5,
           passiveName: "매의 눈",
           passiveDesc: "공격 시 15% 확률로 추가 피해 10",
