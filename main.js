@@ -125,7 +125,7 @@ const modeSelect = document.getElementById("modeSelect");
           def: c.def,
           passiveName: c.passiveName,
           passiveDesc: c.passiveDesc,
-          skillIds: c.skillIds,
+          skillIds: [...(c.defaultSkillIds || ["basic"])],
           turnCount: 0,
           guardRate: 0,
           evasion: false,
@@ -145,7 +145,7 @@ const modeSelect = document.getElementById("modeSelect");
       }
 
       function getSkillListForPlayer(player) {
-        return ["basic", ...(player.skillIds || [])];
+        return player.skillIds || ["basic"];
       }
       function getSubSkillForPlayer(player) {
         return characters[player?.character]?.subSkill || null;
@@ -196,7 +196,16 @@ const modeSelect = document.getElementById("modeSelect");
         return state.sides.find((s) => s !== side);
       }
 
-      function sideLabel(side) {
+      function makePartySelectionEntry(charName) {
+        const c = characters[charName];
+        return { character: c.name, skillIds: [...(c.defaultSkillIds || ["basic"]) ] };
+      }
+
+      function findPartyMember(charName) {
+        return partySelection.find((m) => m.character === charName);
+      }
+
+function sideLabel(side) {
         if (side === "player") return t("party.player");
         if (side === "ai") return t("party.ai");
         if (side === "p1") return t("party.p1");
@@ -474,7 +483,18 @@ const modeSelect = document.getElementById("modeSelect");
         increaseUltimateGauge(actor);
         log += `${sideLabel(info.side)} 메인${info.slot + 1} ${actor.character}의 [${tx(skill.name)}]!\n`;
 
-        if (skill.type === "guard") {
+        if (skill.type === "guardCounter") {
+          actor.guardRate = skill.guardRate;
+          actor.atkBuff += skill.buff || 0;
+          log += "방어 태세를 취하고 다음 공격이 강화된다!";
+        } else if (skill.type === "selfUltimateGauge") {
+          for (let i = 0; i < (skill.gain || 1); i += 1) increaseUltimateGauge(actor);
+          log += "궁극기 게이지가 증가했다!";
+        } else if (skill.type === "cleanse") {
+          actor.poison = 0;
+          actor.atkDebuff = 0;
+          log += "나쁜 상태를 정화했다!";
+        } else if (skill.type === "guard") {
           actor.guardRate = skill.guardRate;
           log += "다음에 받는 피해가 감소한다!";
         } else if (skill.type === "heal") {
@@ -558,6 +578,11 @@ const modeSelect = document.getElementById("modeSelect");
               defender.atkDebuff += skill.debuff || 0;
               defender.poison = skill.poison || 0;
               log += `\n${sideLabel(targetSide)} ${defender.character}이 공격 감소와 독 상태가 되었다!`;
+            }
+            if (skill.type === "healAttack") {
+              const beforeHeal = actor.hp;
+              actor.hp = Math.min(actor.maxHp, actor.hp + (skill.heal || 0));
+              log += `\n${actor.character} HP를 ${actor.hp - beforeHeal} 회복했다!`;
             }
             if (skill.type === "selfHarmAttack") {
               actor.hp = Math.max(0, actor.hp - (skill.selfDamage || 0));
@@ -674,14 +699,16 @@ const modeSelect = document.getElementById("modeSelect");
           const div = document.createElement("div");
           div.className = "character-card";
 
-          const skillNames = c.skillIds
+          const previewSkills = selectedMember?.skillIds || c.defaultSkillIds;
+          const skillNames = previewSkills
             .map((id) => `${tx(skills[id].name)} - ${tx(skills[id].powerText)}`)
             .join("<br>");
           const ultimateText = c.ultimate
             ? `${tx(c.ultimate.name)} - ${tx(c.ultimate.desc)}`
             : "한계 돌파 - 적 메인 1명에게 위력 35 피해";
 
-          const selected = partySelection.includes(c.name);
+          const selectedMember = findPartyMember(c.name);
+          const selected = !!selectedMember;
           const buttonText = selected
             ? "선택됨"
             : `파티에 추가 (${partySelection.length}/4)`;
@@ -696,17 +723,46 @@ const modeSelect = document.getElementById("modeSelect");
             <br>${t("ui.ultimate")}:<br>${ultimateText}
           </div>
           <button class="green" ${selected ? "disabled" : ""}>${buttonText}</button>
+          ${selected ? `<button class="recommend-btn skill-edit-btn" data-char="${c.name}">${t("ui.changeSkills")}</button><div class="skill-editor hidden" data-editor="${c.name}"></div>` : ""}
         `;
 
           div
             .querySelector("button")
             .addEventListener("click", () => selectPartyCharacter(c.name));
+          if (selected) {
+            div.querySelector(".skill-edit-btn").addEventListener("click", () => openSkillEditor(c.name, div));
+          }
           characterList.appendChild(div);
         });
       }
 
 
 
+
+
+      function openSkillEditor(charName, card) {
+        const member = findPartyMember(charName);
+        const c = characters[charName];
+        const editor = card.querySelector(`[data-editor="${charName}"]`);
+        editor.classList.remove("hidden");
+        const selectedSet = new Set(member.skillIds || c.defaultSkillIds);
+        const rows = c.availableSkillIds.map((id) => `<label><input type="checkbox" value="${id}" ${selectedSet.has(id) ? "checked" : ""}/> ${tx(skills[id].name)}</label>`).join("<br>");
+        editor.innerHTML = `${rows}<div class="skill-editor-msg"></div><button class="green apply-skill">${t("ui.apply")}</button> <button class="cancel-skill">${t("ui.cancel")}</button>`;
+        const msg = editor.querySelector('.skill-editor-msg');
+        const updateMsg = () => {
+          const n = editor.querySelectorAll('input:checked').length;
+          msg.textContent = n === 4 ? '' : t('ui.need4skills');
+        };
+        updateMsg();
+        editor.querySelectorAll('input').forEach((el)=>el.addEventListener('change', updateMsg));
+        editor.querySelector('.cancel-skill').addEventListener('click', ()=> editor.classList.add('hidden'));
+        editor.querySelector('.apply-skill').addEventListener('click', ()=>{
+          const next = Array.from(editor.querySelectorAll('input:checked')).map((el)=>el.value);
+          if (next.length !== 4) { msg.textContent = t('ui.need4skills'); return; }
+          member.skillIds = next;
+          renderCharacterList();
+        });
+      }
 
       function renderRecommendedButtons() {
         recommendButtons.innerHTML = "";
@@ -724,19 +780,19 @@ const modeSelect = document.getElementById("modeSelect");
       }
 
       async function applyRecommendedParty(members) {
-        partySelection = [...members];
+        partySelection = members.map(makePartySelectionEntry);
 
         if (currentMode === "single") {
           selectRoomCodeView.textContent = `${partySelection.length}/4`;
-          myRoleText.textContent = `선택됨: ${partySelection.join(" / ")}`;
-          startSinglePartyBattle(partySelection);
+          myRoleText.textContent = `선택됨: ${partySelection.map((m) => m.character).join(" / ")}`;
+          startSinglePartyBattle(partySelection.map((m) => m.character), partySelection);
           return;
         }
 
         if (currentMode === "online") {
-          myRoleText.textContent = `선택됨: ${partySelection.join(" / ")}`;
+          myRoleText.textContent = `선택됨: ${partySelection.map((m) => m.character).join(" / ")}`;
 
-          const party = partySelection.map(makePlayerFromCharacter);
+          const party = partySelection.map((m) => ({ ...makePlayerFromCharacter(m.character), skillIds: [...m.skillIds] }));
           const updates = {};
 
           updates[`state/${mySide}Party`] = party;
@@ -911,16 +967,16 @@ const modeSelect = document.getElementById("modeSelect");
       }
 
       async function selectPartyCharacter(charName) {
-        if (partySelection.includes(charName)) return;
+        if (findPartyMember(charName)) return;
 
-        partySelection.push(charName);
+        partySelection.push(makePartySelectionEntry(charName));
 
         if (currentMode === "single") {
           selectRoomCodeView.textContent = `${partySelection.length}/4`;
-          myRoleText.textContent = `선택됨: ${partySelection.join(" / ")}`;
+          myRoleText.textContent = `선택됨: ${partySelection.map((m) => m.character).join(" / ")}`;
 
           if (partySelection.length >= 4) {
-            startSinglePartyBattle(partySelection);
+            startSinglePartyBattle(partySelection.map((m) => m.character), partySelection);
           } else {
             renderCharacterList();
           }
@@ -929,14 +985,14 @@ const modeSelect = document.getElementById("modeSelect");
         }
 
         if (currentMode === "online") {
-          myRoleText.textContent = `선택됨: ${partySelection.join(" / ")}`;
+          myRoleText.textContent = `선택됨: ${partySelection.map((m) => m.character).join(" / ")}`;
 
           if (partySelection.length < 4) {
             renderCharacterList();
             return;
           }
 
-          const party = partySelection.map(makePlayerFromCharacter);
+          const party = partySelection.map((m) => ({ ...makePlayerFromCharacter(m.character), skillIds: [...m.skillIds] }));
           const updates = {};
 
           updates[`state/${mySide}Party`] = party;
@@ -964,13 +1020,13 @@ const modeSelect = document.getElementById("modeSelect");
         return result;
       }
 
-      function startSinglePartyBattle(playerNames) {
+      function startSinglePartyBattle(playerNames, customMembers = null) {
         const aiNames = pickRandomParty();
 
         singlePartyState = createBattleState(
           "player",
           "ai",
-          playerNames.map(makePlayerFromCharacter),
+          (customMembers || playerNames.map(makePartySelectionEntry)).map((m) => ({ ...makePlayerFromCharacter(m.character), skillIds: [...m.skillIds] })),
           aiNames.map(makePlayerFromCharacter),
           `싱글 4인 파티 배틀 시작!\n플레이어: ${playerNames.join(" / ")}\nAI: ${aiNames.join(" / ")}\n1라운드 시작!`,
         );
