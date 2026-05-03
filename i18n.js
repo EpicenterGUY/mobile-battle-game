@@ -45,6 +45,10 @@ export const I18N = {
     "ui.need4skills": "4개 선택 필요",
     "ui.apply": "적용",
     "ui.cancel": "취소",
+    "ui.startBattle": "전투 시작",
+    "ui.confirmParty": "파티 확정",
+    "ui.resetParty": "파티 초기화",
+    "ui.need4skillsPrompt": "사용할 스킬 ID 4개를 쉼표로 입력하세요 (basic 포함 가능)",
   },
   ja: {
     "app.title": "モバイルオンラインバトル",
@@ -90,6 +94,10 @@ export const I18N = {
     "ui.need4skills": "4つ選択が必要",
     "ui.apply": "適用",
     "ui.cancel": "キャンセル",
+    "ui.startBattle": "戦闘開始",
+    "ui.confirmParty": "パーティー確定",
+    "ui.resetParty": "パーティー初期化",
+    "ui.need4skillsPrompt": "使用スキルIDを4つカンマ区切りで入力してください（basic可）",
   },
 };
 
