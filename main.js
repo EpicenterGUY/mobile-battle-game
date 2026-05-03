@@ -96,6 +96,8 @@ const modeSelect = document.getElementById("modeSelect");
       const characterList = document.getElementById("characterList");
       const recommendButtons = document.getElementById("recommendButtons");
       const selectBackBtn = document.getElementById("selectBackBtn");
+      let partyPreviewWrap = null;
+      let partyActionWrap = null;
 
       const leftPartyTitle = document.getElementById("leftPartyTitle");
       const rightPartyTitle = document.getElementById("rightPartyTitle");
@@ -711,6 +713,115 @@ function sideLabel(side) {
         return state;
       }
 
+
+      function ensureSelectActionUi() {
+        const selectCard = document.getElementById("selectCharacter");
+        if (!partyPreviewWrap) {
+          partyPreviewWrap = document.createElement("div");
+          partyPreviewWrap.id = "partyPreviewWrap";
+          partyPreviewWrap.className = "status";
+          partyPreviewWrap.style.textAlign = "left";
+          partyPreviewWrap.style.margin = "10px 0";
+          partyPreviewWrap.style.whiteSpace = "normal";
+          selectCard.insertBefore(partyPreviewWrap, recommendButtons.parentElement || characterList);
+        }
+        if (!partyActionWrap) {
+          partyActionWrap = document.createElement("div");
+          partyActionWrap.id = "partyActionWrap";
+          partyActionWrap.style.display = "flex";
+          partyActionWrap.style.gap = "8px";
+          partyActionWrap.style.flexWrap = "wrap";
+          partyActionWrap.style.marginBottom = "10px";
+          selectCard.insertBefore(partyActionWrap, characterList);
+        }
+      }
+
+      function renderPartySummaryAndActions() {
+        ensureSelectActionUi();
+        const labels = ["메인1", "메인2", "서브1", "서브2"];
+        const slots = labels.map((label, i) => {
+          const member = partySelection[i];
+          if (!member) return `<div>${label}: -</div>`;
+          const skillText = (member.skillIds || ["basic"]).map((id) => tx(skills[id]?.name || id)).join(", ");
+          return `<div><strong>${label}:</strong> ${tx(member.character)}<br><small>${t("ui.skill")}: ${skillText}</small> <button type="button" class="recommend-btn member-skill-btn" data-slot="${i}">${t("ui.changeSkills")}</button></div>`;
+        }).join("<hr>");
+        partyPreviewWrap.innerHTML = slots;
+        partyPreviewWrap.querySelectorAll('.member-skill-btn').forEach((btn) => {
+          btn.addEventListener('click', () => openMemberSkillEditor(Number(btn.dataset.slot)));
+        });
+
+        partyActionWrap.innerHTML = '';
+        const resetBtn = document.createElement('button');
+        resetBtn.type = 'button';
+        resetBtn.className = 'secondary';
+        resetBtn.textContent = t('ui.resetParty');
+        resetBtn.addEventListener('click', resetPartySelection);
+        partyActionWrap.appendChild(resetBtn);
+
+        if (partySelection.length === 4) {
+          const confirmBtn = document.createElement('button');
+          confirmBtn.type = 'button';
+          confirmBtn.className = 'green';
+          confirmBtn.textContent = currentMode === 'online' ? t('ui.confirmParty') : t('ui.startBattle');
+          confirmBtn.addEventListener('click', confirmPartySelection);
+          partyActionWrap.appendChild(confirmBtn);
+        }
+      }
+
+      function openMemberSkillEditor(slotIndex) {
+        const member = partySelection[slotIndex];
+        if (!member) return;
+        const c = characters[member.character];
+        const options = c.availableSkillIds || c.defaultSkillIds || ["basic"];
+        const current = new Set(member.skillIds || c.defaultSkillIds || ["basic"]);
+        const next = [];
+        for (const id of options) {
+          const checked = current.has(id) ? '[x]' : '[ ]';
+          next.push(`${checked} ${id}`);
+        }
+        const input = prompt(`${member.character} ${t('ui.changeSkills')}
+${t('ui.need4skillsPrompt')}
+${options.map((id)=>`${id}:${tx(skills[id]?.name || id)}`).join(' / ')}
+
+예시: basic,slash,guard,stab`, (member.skillIds || []).join(','));
+        if (input === null) return;
+        const picked = input.split(',').map((v)=>v.trim()).filter(Boolean);
+        const unique = [...new Set(picked)];
+        const valid = unique.length === 4 && unique.every((id)=>options.includes(id));
+        if (!valid) { alert(t('ui.need4skills')); return; }
+        member.skillIds = unique;
+        renderPartySummaryAndActions();
+        renderCharacterList();
+      }
+
+      function resetPartySelection() {
+        partySelection = [];
+        if (currentMode === 'single') selectRoomCodeView.textContent = '0/4';
+        myRoleText.textContent = '선택 순서대로 1,2번은 메인 / 3,4번은 서브입니다.';
+        renderPartySummaryAndActions();
+        renderCharacterList();
+      }
+
+      async function confirmPartySelection() {
+        if (partySelection.length !== 4) return;
+        if (currentMode === 'single') {
+          startSinglePartyBattle(partySelection.map((m) => m.character), partySelection);
+          return;
+        }
+        if (currentMode === 'online') {
+          const party = partySelection.map((m) => ({ ...makePlayerFromCharacter(m.character), skillIds: [...m.skillIds] }));
+          const updates = {};
+          updates[`state/${mySide}Party`] = party;
+          updates['state/log'] = `${sideLabel(mySide)} 파티 확정 완료!`;
+          updates['updatedAt'] = Date.now();
+          const { db, ref, update } = firebase();
+          await update(ref(db, 'rooms/' + currentRoomCode), updates);
+          roomCodeView.textContent = currentRoomCode;
+          waitingText.textContent = '상대의 파티 선택을 기다리는 중...';
+          showScreen('waiting');
+        }
+      }
+
       function renderCharacterList() {
         characterList.innerHTML = "";
 
@@ -805,26 +916,16 @@ function sideLabel(side) {
         if (currentMode === "single") {
           selectRoomCodeView.textContent = `${partySelection.length}/4`;
           myRoleText.textContent = `선택됨: ${partySelection.map((m) => m.character).join(" / ")}`;
-          startSinglePartyBattle(partySelection.map((m) => m.character), partySelection);
+          renderPartySummaryAndActions();
+          renderCharacterList();
           return;
         }
 
         if (currentMode === "online") {
           myRoleText.textContent = `선택됨: ${partySelection.map((m) => m.character).join(" / ")}`;
 
-          const party = partySelection.map((m) => ({ ...makePlayerFromCharacter(m.character), skillIds: [...m.skillIds] }));
-          const updates = {};
-
-          updates[`state/${mySide}Party`] = party;
-          updates["state/log"] = `${sideLabel(mySide)} 파티 선택 완료!`;
-          updates["updatedAt"] = Date.now();
-
-          const { db, ref, update } = firebase();
-          await update(ref(db, "rooms/" + currentRoomCode), updates);
-
-          roomCodeView.textContent = currentRoomCode;
-          waitingText.textContent = "상대의 파티 선택을 기다리는 중...";
-          showScreen("waiting");
+          renderPartySummaryAndActions();
+          renderCharacterList();
         }
       }
 
@@ -868,6 +969,7 @@ function sideLabel(side) {
         myRoleText.textContent =
           "선택 순서대로 1,2번은 메인 / 3,4번은 서브가 됩니다.";
 
+        renderPartySummaryAndActions();
         renderCharacterList();
         showScreen("select");
       }
@@ -918,6 +1020,7 @@ function sideLabel(side) {
         myRoleText.textContent =
           "선택 순서대로 1,2번은 메인 / 3,4번은 서브입니다.";
 
+        renderPartySummaryAndActions();
         renderCharacterList();
         showScreen("select");
         listenRoom(code);
@@ -986,6 +1089,7 @@ function sideLabel(side) {
         myRoleText.textContent =
           "선택 순서대로 1,2번은 메인 / 3,4번은 서브입니다.";
 
+        renderPartySummaryAndActions();
         renderCharacterList();
         showScreen("select");
         listenRoom(code);
@@ -1000,12 +1104,8 @@ function sideLabel(side) {
           selectRoomCodeView.textContent = `${partySelection.length}/4`;
           myRoleText.textContent = `선택됨: ${partySelection.map((m) => m.character).join(" / ")}`;
 
-          if (partySelection.length >= 4) {
-            startSinglePartyBattle(partySelection.map((m) => m.character), partySelection);
-          } else {
-            renderCharacterList();
-          }
-
+          renderPartySummaryAndActions();
+          renderCharacterList();
           return;
         }
 
@@ -1017,19 +1117,8 @@ function sideLabel(side) {
             return;
           }
 
-          const party = partySelection.map((m) => ({ ...makePlayerFromCharacter(m.character), skillIds: [...m.skillIds] }));
-          const updates = {};
-
-          updates[`state/${mySide}Party`] = party;
-          updates["state/log"] = `${sideLabel(mySide)} 파티 선택 완료!`;
-          updates["updatedAt"] = Date.now();
-
-          const { db, ref, update } = firebase();
-          await update(ref(db, "rooms/" + currentRoomCode), updates);
-
-          roomCodeView.textContent = currentRoomCode;
-          waitingText.textContent = "상대의 파티 선택을 기다리는 중...";
-          showScreen("waiting");
+          renderPartySummaryAndActions();
+          renderCharacterList();
         }
       }
 
