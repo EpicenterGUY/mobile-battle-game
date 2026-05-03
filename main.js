@@ -98,6 +98,7 @@ const modeSelect = document.getElementById("modeSelect");
       const selectBackBtn = document.getElementById("selectBackBtn");
       let partyPreviewWrap = null;
       let partyActionWrap = null;
+let initialEventsBound = false;
 
       const leftPartyTitle = document.getElementById("leftPartyTitle");
       const rightPartyTitle = document.getElementById("rightPartyTitle");
@@ -1766,6 +1767,9 @@ ${options.map((id)=>`${id}:${tx(skills[id]?.name || id)}`).join(' / ')}
       }
 
       function bindInitialEvents() {
+      if (initialEventsBound) return;
+      initialEventsBound = true;
+
       if (onlineModeBtn) onlineModeBtn.addEventListener("click", openOnlineMode);
       if (singleModeBtn) singleModeBtn.addEventListener("click", openSingleMode);
       if (createRoomBtn) createRoomBtn.addEventListener("click", createRoom);
@@ -1810,7 +1814,7 @@ ${options.map((id)=>`${id}:${tx(skills[id]?.name || id)}`).join(' / ')}
   copyCodeBtn.textContent = t("common.copyRoom");
   waitingBackBtn.textContent = t("common.leave");
   selectBackBtn.textContent = t("common.back");
-  if (characterList && !selectCharacter.classList.contains("hidden")) {
+  if (!selectCharacter.classList.contains("hidden")) {
     renderCharacterList();
   }
   if (!partyBattle.classList.contains("hidden") && (singlePartyState || latestOnlineBattle)) {
