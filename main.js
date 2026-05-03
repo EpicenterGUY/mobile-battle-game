@@ -704,6 +704,33 @@ const modeSelect = document.getElementById("modeSelect");
             .addEventListener("click", () => selectPartyCharacter(c.name));
           characterList.appendChild(div);
         });
+
+        renderSelectedPartyPreview();
+      }
+
+
+      function renderSelectedPartyPreview() {
+        const existing = document.getElementById("selectedPartyPreview");
+        if (existing) existing.remove();
+
+        if (!selectCharacter || selectCharacter.classList.contains("hidden")) return;
+
+        const roles = ["메인1", "메인2", "서브1", "서브2"];
+        const preview = document.createElement("div");
+        preview.id = "selectedPartyPreview";
+        preview.className = "selected-party-preview";
+
+        const lines = roles.map((role, index) => {
+          const selectedName = partySelection[index];
+          return `<div>${role}: ${selectedName ? tx(selectedName) : "미선택"}</div>`;
+        });
+
+        preview.innerHTML = `
+          <div><strong>선택 파티</strong></div>
+          ${lines.join("")}
+        `;
+
+        characterList.insertAdjacentElement("beforebegin", preview);
       }
 
       function renderSingleStartButton() {
@@ -722,7 +749,7 @@ const modeSelect = document.getElementById("modeSelect");
           startSinglePartyBattle(partySelection);
         });
 
-        characterList.insertAdjacentElement("afterend", btn);
+        characterList.insertAdjacentElement("beforebegin", btn);
       }
 
 
