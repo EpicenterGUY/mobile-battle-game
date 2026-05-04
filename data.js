@@ -7,6 +7,54 @@ export const skills = {
           powerText: "위력 10 / 적 메인 1명",
           desc: "기본 피해를 준다.",
         },
+        common_jab: {
+          id: "common_jab",
+          name: "견제타",
+          type: "attack",
+          power: 12,
+          powerText: "위력 12 / 적 메인 1명",
+          desc: "가볍게 공격해 안정적인 피해를 준다.",
+        },
+        common_power_strike: {
+          id: "common_power_strike",
+          name: "강공격",
+          type: "attack",
+          power: 18,
+          powerText: "위력 18 / 적 메인 1명",
+          desc: "큰 피해를 주지만 특별한 효과는 없다.",
+        },
+        common_shake: {
+          id: "common_shake",
+          name: "흔들기",
+          type: "attackDebuff",
+          power: 8,
+          debuff: 5,
+          powerText: "위력 8 / 다음 공격 피해 -5",
+          desc: "피해를 주고 상대의 다음 공격을 약화한다.",
+        },
+        common_defend: {
+          id: "common_defend",
+          name: "방어 태세",
+          type: "guard",
+          guardRate: 0.35,
+          powerText: "피해 감소 35% / 자신",
+          desc: "다음에 받는 피해를 줄인다.",
+        },
+        common_dodge: {
+          id: "common_dodge",
+          name: "회피 준비",
+          type: "evasion",
+          powerText: "회피 40% / 자신",
+          desc: "다음 공격을 40% 확률로 회피한다.",
+        },
+        common_first_aid: {
+          id: "common_first_aid",
+          name: "응급 처치",
+          type: "heal",
+          heal: 16,
+          powerText: "회복 16 / 자신",
+          desc: "자신의 HP를 조금 회복한다.",
+        },
         slash: {
           id: "slash",
           name: "일섬",
@@ -479,6 +527,15 @@ export const skills = {
           desc: "혼령의 힘으로 다음 피해를 줄인다.",
         },
       };
+
+export const commonSkillIds = [
+  "common_jab",
+  "common_power_strike",
+  "common_shake",
+  "common_defend",
+  "common_dodge",
+  "common_first_aid",
+];
 
 export const characters = {
         검사: {
