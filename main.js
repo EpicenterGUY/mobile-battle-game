@@ -34,22 +34,37 @@ const ULTIMATE_SKILL_ID = "__ultimate__";
 const recommendedParties = [
   {
     label: "초보 추천 조합",
+    description: "공격/방어/회복/원거리 딜이 모두 있는 안정 조합",
     members: ["검사", "탱커", "성직자", "궁수"],
   },
   {
     label: "극딜 조합",
-    members: ["광전사", "마법사", "궁수", "주술사"],
-  },
-  {
-    label: "버티기 조합",
-    members: ["탱커", "성직자", "검사", "도적"],
+    description: "높은 피해로 빠르게 승부를 보는 고위험 조합",
+    members: ["광전사", "마법사", "궁수", "도적"],
   },
   {
     label: "독살 조합",
-    members: ["도적", "주술사", "성직자", "탱커"],
+    description: "독과 약점 공격, 디버프로 상대를 압박하는 조합",
+    members: ["도적", "주술사", "탱커", "성직자"],
+  },
+  {
+    label: "철벽 버티기 조합",
+    description: "방어와 회복으로 버티면서 안정적으로 싸우는 조합",
+    members: ["탱커", "성직자", "검사", "궁수"],
+  },
+  {
+    label: "궁극기 러시 조합",
+    description: "마력 보조와 안정적인 전열로 궁극기 회전을 노리는 조합",
+    members: ["마법사", "검사", "성직자", "주술사"],
+  },
+  {
+    label: "견제 조합",
+    description: "공격 감소와 독, 견제 기술로 상대 화력을 낮추는 조합",
+    members: ["궁수", "주술사", "탱커", "마법사"],
   },
   {
     label: "예능 조합",
+    description: "몸은 약하지만 상태이상과 폭딜을 노리는 재미용 조합",
     members: ["광전사", "도적", "주술사", "마법사"],
   },
 ];
@@ -990,7 +1005,8 @@ const modeSelect = document.getElementById("modeSelect");
           const button = document.createElement("button");
           button.className = "recommend-btn";
           button.type = "button";
-          button.textContent = `${tx(preset.label)}: ${preset.members.map(tx).join(" / ")}`;
+          const membersText = preset.members.map(tx).join(" / ");
+          button.innerHTML = `<strong>${tx(preset.label)}</strong><br>${tx(preset.description)}<br>${membersText}`;
           button.addEventListener("click", () => {
             applyRecommendedParty(preset.members);
           });
