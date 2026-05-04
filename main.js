@@ -36,36 +36,78 @@ const recommendedParties = [
     label: "초보 추천 조합",
     description: "공격/방어/회복/원거리 딜이 모두 있는 안정 조합",
     members: ["검사", "탱커", "성직자", "궁수"],
+    loadouts: {
+      검사: ["basic", "slash", "guard", "double_slash"],
+      탱커: ["basic", "shield_bash", "fortress", "taunt"],
+      성직자: ["basic", "priest_heal", "blessing", "barrier"],
+      궁수: ["basic", "pierce_arrow", "focus_aim", "ankle_shot"],
+    },
   },
   {
     label: "극딜 조합",
     description: "높은 피해로 빠르게 승부를 보는 고위험 조합",
     members: ["광전사", "마법사", "궁수", "도적"],
+    loadouts: {
+      광전사: ["basic", "berserk_axe", "blood_slash", "battle_cry"],
+      마법사: ["basic", "fireball", "ice", "lightning"],
+      궁수: ["basic", "pierce_arrow", "rapid_shot", "focus_aim"],
+      도적: ["basic", "poison", "weak", "ambush"],
+    },
   },
   {
     label: "독살 조합",
     description: "독과 약점 공격, 디버프로 상대를 압박하는 조합",
     members: ["도적", "주술사", "탱커", "성직자"],
+    loadouts: {
+      도적: ["basic", "poison", "weak", "ambush"],
+      주술사: ["basic", "curse", "poison_mist", "dark_orb"],
+      탱커: ["basic", "taunt", "fortress", "shield_bash"],
+      성직자: ["basic", "priest_heal", "blessing", "barrier"],
+    },
   },
   {
     label: "철벽 버티기 조합",
     description: "방어와 회복으로 버티면서 안정적으로 싸우는 조합",
     members: ["탱커", "성직자", "검사", "궁수"],
+    loadouts: {
+      탱커: ["basic", "fortress", "taunt", "shield_bash"],
+      성직자: ["basic", "priest_heal", "blessing", "barrier"],
+      검사: ["basic", "guard", "halfmoon", "double_slash"],
+      궁수: ["basic", "pierce_arrow", "ankle_shot", "focus_aim"],
+    },
   },
   {
     label: "궁극기 러시 조합",
     description: "마력 보조와 안정적인 전열로 궁극기 회전을 노리는 조합",
     members: ["마법사", "검사", "성직자", "주술사"],
+    loadouts: {
+      마법사: ["basic", "fireball", "ice", "lightning"],
+      검사: ["basic", "slash", "halfmoon", "double_slash"],
+      성직자: ["basic", "priest_heal", "blessing", "barrier"],
+      주술사: ["basic", "curse", "poison_mist", "dark_orb"],
+    },
   },
   {
     label: "견제 조합",
     description: "공격 감소와 독, 견제 기술로 상대 화력을 낮추는 조합",
     members: ["궁수", "주술사", "탱커", "마법사"],
+    loadouts: {
+      궁수: ["basic", "ankle_shot", "pierce_arrow", "focus_aim"],
+      주술사: ["basic", "curse", "poison_mist", "dark_orb"],
+      탱커: ["basic", "taunt", "shield_bash", "fortress"],
+      마법사: ["basic", "ice", "lightning", "fireball"],
+    },
   },
   {
     label: "예능 조합",
     description: "몸은 약하지만 상태이상과 폭딜을 노리는 재미용 조합",
     members: ["광전사", "도적", "주술사", "마법사"],
+    loadouts: {
+      광전사: ["basic", "berserk_axe", "rage", "battle_cry"],
+      도적: ["basic", "poison", "smoke", "ambush"],
+      주술사: ["basic", "curse", "poison_mist", "dark_orb"],
+      마법사: ["basic", "fireball", "lightning", "heal"],
+    },
   },
 ];
 
@@ -137,6 +179,28 @@ const modeSelect = document.getElementById("modeSelect");
       function getAvailableSkillsForCharacter(charName) {
         const c = characters[charName];
         return ["basic", ...(c?.skillIds || [])];
+      }
+
+      function sanitizeLoadout(charName, loadout) {
+        if (!Array.isArray(loadout) || loadout.length !== 4) return null;
+        const available = new Set(getAvailableSkillsForCharacter(charName));
+        const unique = new Set(loadout);
+        if (unique.size !== 4) return null;
+        if (!loadout.every((skillId) => available.has(skillId))) return null;
+        return [...loadout];
+      }
+
+      function getRecommendedPartyLoadout(preset, charName) {
+        const presetLoadout = sanitizeLoadout(charName, preset?.loadouts?.[charName]);
+        if (presetLoadout) return presetLoadout;
+
+        const characterRecommended = sanitizeLoadout(
+          charName,
+          characters[charName]?.recommendedSkillIds,
+        );
+        if (characterRecommended) return characterRecommended;
+
+        return getDefaultLoadout(charName);
       }
 
       function makePlayerFromCharacter(charName, loadout = null) {
@@ -1008,17 +1072,19 @@ const modeSelect = document.getElementById("modeSelect");
           const membersText = preset.members.map(tx).join(" / ");
           button.innerHTML = `<strong>${tx(preset.label)}</strong><br>${tx(preset.description)}<br>${membersText}`;
           button.addEventListener("click", () => {
-            applyRecommendedParty(preset.members);
+            applyRecommendedParty(preset);
           });
           recommendButtons.appendChild(button);
         });
       }
 
-      async function applyRecommendedParty(members) {
+      async function applyRecommendedParty(preset) {
+        if (!preset || !Array.isArray(preset.members)) return;
+        const members = preset.members;
         partySelection = [...members];
         selectedSkillLoadouts = {};
         members.forEach((charName) => {
-          selectedSkillLoadouts[charName] = getDefaultLoadout(charName);
+          selectedSkillLoadouts[charName] = getRecommendedPartyLoadout(preset, charName);
         });
 
         updatePartySelectionStatus();
