@@ -941,22 +941,45 @@ const modeSelect = document.getElementById("modeSelect");
         const current =
           selectedSkillLoadouts[charName] || getDefaultLoadout(charName);
         const selectedSet = new Set(current);
+        const commonIdsSet = new Set(commonSkillIds || []);
+        const characterSkillIds = characters[charName]?.skillIds || [];
+        const characterSkillIdSet = new Set(characterSkillIds);
+        const commonSkills = available.filter(
+          (skillId) => skillId === "basic" || commonIdsSet.has(skillId),
+        );
+        const exclusiveSkills = available.filter(
+          (skillId) => characterSkillIdSet.has(skillId) && !commonIdsSet.has(skillId),
+        );
 
-        const optionsHtml = available
-          .map((skillId) => {
-            const checked = selectedSet.has(skillId) ? "checked" : "";
-            return `<label class="skill-option-label ${checked ? "selected-skill-option" : ""}">
-              <input type="checkbox" value="${skillId}" ${checked}>
-              ${tx(skills[skillId]?.name || skillId)}
-            </label>`;
-          })
-          .join("");
+        const makeSkillOptionCard = (skillId) => {
+          const skill = skills[skillId];
+          const checked = selectedSet.has(skillId) ? "checked" : "";
+          return `<label class="skill-option-card ${checked ? "selected-skill-option" : ""}">
+            <input type="checkbox" value="${skillId}" ${checked}>
+            <div class="skill-option-meta">
+              <div class="skill-option-name">${tx(skill?.name || skillId)}</div>
+              <div class="skill-option-power">${tx(skill?.powerText || "")}</div>
+              <div class="skill-option-desc">${tx(skill?.desc || "")}</div>
+            </div>
+          </label>`;
+        };
 
         editor.innerHTML = `
-          <div style="margin-top:6px;padding:8px;border:1px solid #444;border-radius:8px;">
+          <div class="skill-editor-panel">
             <div>${t("ui.changeSkill")} - ${tx(charName)}</div>
-            <div class="skill-options">${optionsHtml}</div>
+            <div class="equipped-skills">
+              <div>장착 중:</div>
+              <div>${current.map((skillId) => tx(skills[skillId]?.name || skillId)).join(" / ")}</div>
+            </div>
             <div class="skill-select-count"></div>
+            <div class="skill-section">
+              <div class="skill-section-title">공용 스킬</div>
+              <div class="skill-options">${commonSkills.map(makeSkillOptionCard).join("")}</div>
+            </div>
+            <div class="skill-section">
+              <div class="skill-section-title">캐릭터 전용 스킬</div>
+              <div class="skill-options">${exclusiveSkills.map(makeSkillOptionCard).join("")}</div>
+            </div>
             <div class="skill-select-error" style="color:#ff6b6b;margin-top:6px;"></div>
             <button type="button" class="green apply-skill-btn">${t("common.apply")}</button>
             <button type="button" class="gray cancel-skill-btn">${t("common.cancel")}</button>
@@ -973,7 +996,7 @@ const modeSelect = document.getElementById("modeSelect");
           errorNode.textContent = selectedCount === 4 ? "" : t("ui.needFourSkills");
           if (applyButton) applyButton.disabled = selectedCount !== 4;
           checkboxes.forEach((cb) => {
-            cb.closest(".skill-option-label")?.classList.toggle("selected-skill-option", cb.checked);
+            cb.closest(".skill-option-card")?.classList.toggle("selected-skill-option", cb.checked);
           });
           return selectedCount;
         };
