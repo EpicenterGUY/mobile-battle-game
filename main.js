@@ -777,7 +777,7 @@ const modeSelect = document.getElementById("modeSelect");
             <div class="equipped-skills"><div>${t("ui.equipped")}:</div><ul>${skillListItems}</ul></div>
             <div class="selected-member-actions">
               <button type="button" class="green skill-edit-btn" data-char="${selectedName}">${t("ui.changeSkill")}</button>
-              <button type="button" class="secondary party-member-remove-btn" data-char="${selectedName}">취소</button>
+              <button type="button" class="danger remove-party-member-btn" data-char="${selectedName}">취소</button>
             </div>
             <div class="skill-editor" data-char="${selectedName}"></div>
           </div>`;
@@ -811,7 +811,7 @@ const modeSelect = document.getElementById("modeSelect");
           });
         });
 
-        preview.querySelectorAll(".party-member-remove-btn").forEach((button) => {
+        preview.querySelectorAll(".remove-party-member-btn").forEach((button) => {
           button.addEventListener("click", () => {
             removeSelectedPartyMember(button.dataset.char);
           });
