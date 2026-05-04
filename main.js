@@ -758,6 +758,18 @@ const modeSelect = document.getElementById("modeSelect");
         renderOnlineSubmitButton();
       }
 
+      function applyRecommendedSkillSet(charName) {
+        const recommended = characters[charName]?.recommendedSkillIds || [];
+        if (recommended.length !== 4) {
+          alert("추천 세팅은 스킬 4개여야 합니다.");
+          return;
+        }
+        selectedSkillLoadouts[charName] = [...recommended];
+        renderCharacterList();
+        renderSingleStartButton();
+        renderOnlineSubmitButton();
+      }
+
       function renderSelectedPartyPreview() {
         const existing = document.getElementById("selectedPartyPreview");
         if (existing) existing.remove();
@@ -777,10 +789,18 @@ const modeSelect = document.getElementById("modeSelect");
           const skillListItems = loadout
             .map((skillId) => `<li>${tx(skills[skillId]?.name || skillId)}</li>` )
             .join("");
+          const recommended = characters[selectedName]?.recommendedSkillIds || [];
+          const canApplyRecommended = recommended.length === 4;
+          const recommendedButtonHtml = canApplyRecommended
+            ? `<button type="button" class="secondary apply-recommended-skills-btn" data-char="${selectedName}">
+              추천 세팅 적용
+            </button>`
+            : "";
           return `<div class="selected-member-preview" data-char="${selectedName}">
             <div>${role}: ${tx(selectedName)}</div>
             <div class="equipped-skills"><div>${t("ui.equipped")}:</div><ul>${skillListItems}</ul></div>
             <div class="selected-member-actions">
+              ${recommendedButtonHtml}
               <button type="button" class="green skill-edit-btn" data-char="${selectedName}">${t("ui.changeSkill")}</button>
               <button type="button" class="danger remove-party-member-btn" data-char="${selectedName}">취소</button>
             </div>
@@ -813,6 +833,12 @@ const modeSelect = document.getElementById("modeSelect");
             const charName = button.dataset.char;
             if (!charName) return;
             renderSkillEditor(charName);
+          });
+        });
+
+        preview.querySelectorAll(".apply-recommended-skills-btn").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            applyRecommendedSkillSet(btn.dataset.char);
           });
         });
 
