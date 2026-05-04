@@ -689,7 +689,7 @@ const modeSelect = document.getElementById("modeSelect");
           const skillNames = c.skillIds
             .map((id) => `${tx(skills[id].name)} - ${tx(skills[id].powerText)}`)
             .join("<br>");
-          const recommendedSkillNames = (c.recommendedSkillIds || getDefaultLoadout(c.name))
+          const recommendedSkillText = (c.recommendedSkillIds || [])
             .map((id) => tx(skills[id]?.name || id))
             .join(" / ");
           const ultimateText = c.ultimate
@@ -707,8 +707,8 @@ const modeSelect = document.getElementById("modeSelect");
             HP ${c.hp} / 공격 ${c.atk} / 방어 ${c.def}<br>
             <span class="passive">${t("ui.passive")}: ${tx(c.passiveName)}</span><br>
             ${tx(c.passiveDesc)}<br>
-            역할: ${c.roleText || "-"}<br>
-            추천 세팅:<br>${recommendedSkillNames}<br>
+            역할: ${tx(c.roleText || "역할 미정")}<br>
+            추천 세팅:<br>${recommendedSkillText || "추천 세팅 없음"}<br>
             ${t("ui.skill")}:<br>${skillNames}
             <br>${t("ui.ultimate")}:<br>${ultimateText}
           </div>
