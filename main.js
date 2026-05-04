@@ -719,18 +719,34 @@ const modeSelect = document.getElementById("modeSelect");
         renderSelectedPartyPreview();
       }
 
+
+      function updatePartySelectionStatus() {
+        if (currentMode === "single") {
+          selectRoomCodeView.textContent = `${partySelection.length}/4`;
+        }
+
+        myRoleText.textContent = partySelection.length
+          ? `선택됨: ${partySelection.map(tx).join(" / ")}`
+          : "선택 순서대로 1,2번은 메인 / 3,4번은 서브입니다.";
+      }
+
+      function removeSelectedPartyMember(charName) {
+        if (!charName || !partySelection.includes(charName)) return;
+
+        partySelection = partySelection.filter((name) => name !== charName);
+        delete selectedSkillLoadouts[charName];
+
+        updatePartySelectionStatus();
+        renderCharacterList();
+        renderSingleStartButton();
+        renderOnlineSubmitButton();
+      }
+
       function resetPartySelection() {
         partySelection = [];
         selectedSkillLoadouts = {};
 
-        if (currentMode === "single") {
-          selectRoomCodeView.textContent = "0/4";
-          myRoleText.textContent =
-            "선택 순서대로 1,2번은 메인 / 3,4번은 서브가 됩니다.";
-        } else if (currentMode === "online") {
-          myRoleText.textContent =
-            "선택 순서대로 1,2번은 메인 / 3,4번은 서브입니다.";
-        }
+        updatePartySelectionStatus();
 
         renderCharacterList();
         renderSingleStartButton();
@@ -759,7 +775,10 @@ const modeSelect = document.getElementById("modeSelect");
           return `<div class="selected-member-preview" data-char="${selectedName}">
             <div>${role}: ${tx(selectedName)}</div>
             <div class="equipped-skills"><div>${t("ui.equipped")}:</div><ul>${skillListItems}</ul></div>
-            <button type="button" class="green skill-edit-btn" data-char="${selectedName}">${t("ui.changeSkill")}</button>
+            <div class="selected-member-actions">
+              <button type="button" class="green skill-edit-btn" data-char="${selectedName}">${t("ui.changeSkill")}</button>
+              <button type="button" class="secondary party-member-remove-btn" data-char="${selectedName}">취소</button>
+            </div>
             <div class="skill-editor" data-char="${selectedName}"></div>
           </div>`;
         });
@@ -789,6 +808,12 @@ const modeSelect = document.getElementById("modeSelect");
             const charName = button.dataset.char;
             if (!charName) return;
             renderSkillEditor(charName);
+          });
+        });
+
+        preview.querySelectorAll(".party-member-remove-btn").forEach((button) => {
+          button.addEventListener("click", () => {
+            removeSelectedPartyMember(button.dataset.char);
           });
         });
       }
@@ -949,22 +974,10 @@ const modeSelect = document.getElementById("modeSelect");
           selectedSkillLoadouts[charName] = getDefaultLoadout(charName);
         });
 
-        if (currentMode === "single") {
-          selectRoomCodeView.textContent = `${partySelection.length}/4`;
-          myRoleText.textContent =
-            "파티 4명 선택 완료! 다음 단계에서 전투 시작 버튼을 추가할 예정입니다.";
-          renderCharacterList();
-          renderSingleStartButton();
-          renderOnlineSubmitButton();
-          return;
-        }
-
-        if (currentMode === "online") {
-          myRoleText.textContent = `선택됨: ${partySelection.join(" / ")}`;
-          renderCharacterList();
-          renderSingleStartButton();
-          renderOnlineSubmitButton();
-        }
+        updatePartySelectionStatus();
+        renderCharacterList();
+        renderSingleStartButton();
+        renderOnlineSubmitButton();
       }
 
       async function ensureOnlineAvailable() {
@@ -1141,27 +1154,10 @@ const modeSelect = document.getElementById("modeSelect");
         selectedSkillLoadouts[charName] =
           selectedSkillLoadouts[charName] || getDefaultLoadout(charName);
 
-        if (currentMode === "single") {
-          selectRoomCodeView.textContent = `${partySelection.length}/4`;
-
-          if (partySelection.length >= 4) {
-            myRoleText.textContent =
-              "파티 4명 선택 완료! 다음 단계에서 전투 시작 버튼을 추가할 예정입니다.";
-          } else {
-            myRoleText.textContent = `선택됨: ${partySelection.join(" / ")}`;
-          }
-
-          renderCharacterList();
-          renderSingleStartButton();
-          return;
-        }
-
-        if (currentMode === "online") {
-          myRoleText.textContent = `선택됨: ${partySelection.join(" / ")}`;
-          renderCharacterList();
-          renderSingleStartButton();
-          renderOnlineSubmitButton();
-        }
+        updatePartySelectionStatus();
+        renderCharacterList();
+        renderSingleStartButton();
+        renderOnlineSubmitButton();
       }
 
       function pickRandomParty() {
