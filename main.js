@@ -275,6 +275,9 @@ const modeSelect = document.getElementById("modeSelect");
           "attackDebuff",
           "poisonAttack",
           "weakAttack",
+          "lifestealAttack",
+          "shieldBreakAttack",
+          "executeAttack",
         ].includes(skill.type);
       }
 
@@ -597,6 +600,10 @@ const modeSelect = document.getElementById("modeSelect");
             totalHeal += ally.hp - before;
           });
           log += `아군 메인 전원의 HP를 총 ${totalHeal} 회복했다!`;
+        } else if (skill.type === "cleanse") {
+          actor.poison = 0;
+          actor.atkDebuff = 0;
+          log += "나쁜 상태를 정화했다!";
         } else if (skill.target === "enemyAllMain") {
           const enemySide = getEnemySide(state, info.side);
           const hitLogs = [];
@@ -613,10 +620,13 @@ const modeSelect = document.getElementById("modeSelect");
         } else {
           const defender = getTeam(state, targetSide)[targetSlot];
           const logs = [];
+          const executeThreshold = Math.floor((defender.maxHp || 0) * 0.35);
+          const executeTriggered = skill.type === "executeAttack" && defender.hp <= executeThreshold;
+          const basePower = (skill.power || 0) + (executeTriggered ? (skill.executeBonus || 0) : 0);
           const result = applyDamageCore(
             actor,
             defender,
-            skill.power,
+            basePower,
             { bonusIfPoison: skill.bonusIfPoison },
             logs,
             sideLabel(info.side),
@@ -653,6 +663,18 @@ const modeSelect = document.getElementById("modeSelect");
             if (skill.type === "selfHarmAttack") {
               actor.hp = Math.max(0, actor.hp - (skill.selfDamage || 0));
               log += `\n${actor.character}도 ${skill.selfDamage || 0}의 반동 피해를 받았다!`;
+            }
+            if (skill.type === "lifestealAttack") {
+              const beforeHp = actor.hp;
+              actor.hp = Math.min(actor.maxHp, actor.hp + (skill.heal || 0));
+              log += `\nHP를 ${actor.hp - beforeHp} 회복했다!`;
+            }
+            if (skill.type === "shieldBreakAttack") {
+              defender.guardRate = 0;
+              log += "\n방어 태세를 무너뜨렸다!";
+            }
+            if (executeTriggered) {
+              log += "\n약해진 대상을 처형했다!";
             }
           }
         }

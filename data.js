@@ -113,6 +113,14 @@ export const skills = {
           powerText: "위력 6 / 다음 공격 +6",
           desc: "가벼운 피해를 주고 다음 공격을 준비한다.",
         },
+        shield_break: {
+          id: "shield_break",
+          name: "방패 부수기",
+          type: "shieldBreakAttack",
+          power: 14,
+          powerText: "위력 14 / 방어 해제",
+          desc: "피해를 주고 대상의 방어 효과를 제거한다.",
+        },
         fireball: {
           id: "fireball",
           name: "화염구",
@@ -172,6 +180,13 @@ export const skills = {
           powerText: "위력 10 / 다음 공격 피해 -9",
           desc: "냉기로 피해를 주고 상대의 다음 공격을 크게 약화한다.",
         },
+        purify_mana: {
+          id: "purify_mana",
+          name: "마력 정화",
+          type: "cleanse",
+          powerText: "독/공격감소 제거 / 자신",
+          desc: "마력으로 나쁜 상태를 정화한다.",
+        },
         poison: {
           id: "poison",
           name: "독침",
@@ -228,6 +243,15 @@ export const skills = {
           type: "evasion",
           powerText: "회피 40% / 자신",
           desc: "다음 공격을 40% 확률로 회피한다.",
+        },
+        execute: {
+          id: "execute",
+          name: "처형",
+          type: "executeAttack",
+          power: 13,
+          executeBonus: 12,
+          powerText: "위력 13 / HP 35% 이하 추가 피해",
+          desc: "HP가 낮은 적에게 추가 피해를 준다.",
         },
         shield_bash: {
           id: "shield_bash",
@@ -288,6 +312,14 @@ export const skills = {
           debuff: 12,
           powerText: "위력 5 / 다음 공격 피해 -12",
           desc: "상대를 위축시켜 다음 공격을 크게 약화한다.",
+        },
+        armor_crush: {
+          id: "armor_crush",
+          name: "갑옷 파괴",
+          type: "shieldBreakAttack",
+          power: 10,
+          powerText: "위력 10 / 방어 해제",
+          desc: "피해를 주고 대상의 방어 효과를 제거한다.",
         },
         berserk_axe: {
           id: "berserk_axe",
@@ -350,6 +382,15 @@ export const skills = {
           powerText: "위력 4 / 다음 공격 +14",
           desc: "약한 피해를 주고 다음 공격을 크게 강화한다.",
         },
+        blood_drain: {
+          id: "blood_drain",
+          name: "피의 흡수",
+          type: "lifestealAttack",
+          power: 15,
+          heal: 8,
+          powerText: "위력 15 / 자신 HP 8 회복",
+          desc: "피해를 주고 자신의 HP를 회복한다.",
+        },
         priest_heal: {
           id: "priest_heal",
           name: "치유",
@@ -408,6 +449,13 @@ export const skills = {
           debuff: 6,
           powerText: "위력 9 / 다음 공격 피해 -6",
           desc: "성스러운 낙인을 새겨 상대의 다음 공격을 약화한다.",
+        },
+        cleanse: {
+          id: "cleanse",
+          name: "정화",
+          type: "cleanse",
+          powerText: "독/공격감소 제거 / 자신",
+          desc: "자신의 독과 공격 감소 상태를 제거한다.",
         },
         pierce_arrow: {
           id: "pierce_arrow",
@@ -468,6 +516,15 @@ export const skills = {
           powerText: "위력 9 / 다음 공격 피해 -8",
           desc: "상대를 견제해 다음 공격을 약화한다.",
         },
+        finishing_shot: {
+          id: "finishing_shot",
+          name: "마무리 사격",
+          type: "executeAttack",
+          power: 12,
+          executeBonus: 10,
+          powerText: "위력 12 / HP 35% 이하 추가 피해",
+          desc: "약해진 적에게 추가 피해를 주는 사격.",
+        },
         curse: {
           id: "curse",
           name: "저주",
@@ -484,6 +541,15 @@ export const skills = {
           power: 17,
           powerText: "위력 17 / 적 메인 1명",
           desc: "영혼을 갉아먹는 피해를 준다.",
+        },
+        soul_leech: {
+          id: "soul_leech",
+          name: "영혼 갈취",
+          type: "lifestealAttack",
+          power: 12,
+          heal: 10,
+          powerText: "위력 12 / 자신 HP 10 회복",
+          desc: "영혼을 빼앗아 피해를 주고 자신의 HP를 회복한다.",
         },
         dark_orb: {
           id: "dark_orb",
@@ -547,7 +613,7 @@ export const characters = {
           passiveDesc: "공격 시 20% 확률로 추가 피해 8",
           roleText: "안정형 딜러",
           recommendedSkillIds: ["basic", "slash", "halfmoon", "double_slash"],
-          skillIds: ["slash", "guard", "halfmoon", "double_slash", "counter_guard", "sword_wind", "defensive_shift"],
+          skillIds: ["slash", "guard", "halfmoon", "double_slash", "counter_guard", "sword_wind", "defensive_shift", "shield_break"],
           subSkill: { id: "sub_warrior_cheer", name: "전열 격려", type: "allyAtkBuff", buff: 5, target: "allySingleMain", desc: "아군 메인 1명의 다음 공격 피해 +5" },
           ultimate: {
             name: "진 일섬",
@@ -566,7 +632,7 @@ export const characters = {
           passiveDesc: "자신의 3번째 행동마다 공격 스킬 피해 +10",
           roleText: "고화력 마법 딜러",
           recommendedSkillIds: ["basic", "fireball", "ice", "lightning"],
-          skillIds: ["fireball", "ice", "heal", "lightning", "magic_bolt", "flame_burst", "frost_curse"],
+          skillIds: ["fireball", "ice", "heal", "lightning", "magic_bolt", "flame_burst", "frost_curse", "purify_mana"],
           subSkill: { id: "sub_mage_mana", name: "마력 보조", type: "allyUltimateGauge", gain: 1, target: "allySingleMain", desc: "아군 메인 1명의 궁극기 게이지 +1" },
           ultimate: {
             name: "메테오",
@@ -585,7 +651,7 @@ export const characters = {
           passiveDesc: "공격받을 때 15% 확률로 공격 회피",
           roleText: "독 연계 암살자",
           recommendedSkillIds: ["basic", "poison", "weak", "ambush"],
-          skillIds: ["poison", "weak", "smoke", "ambush", "quick_stab", "shadow_cut", "hidden_step"],
+          skillIds: ["poison", "weak", "smoke", "ambush", "quick_stab", "shadow_cut", "hidden_step", "execute"],
           subSkill: { id: "sub_rogue_ambush", name: "기습 지원", type: "enemyDamage", damage: 8, target: "enemySingleMain", desc: "적 메인 1명에게 8 피해" },
           ultimate: {
             name: "그림자 난무",
@@ -605,7 +671,7 @@ export const characters = {
           passiveDesc: "HP가 40% 이하일 때 받는 피해 20% 감소",
           roleText: "방어형 버티기",
           recommendedSkillIds: ["basic", "shield_bash", "fortress", "taunt"],
-          skillIds: ["shield_bash", "fortress", "heavy_strike", "taunt", "pressure", "iron_charge", "intimidation"],
+          skillIds: ["shield_bash", "fortress", "heavy_strike", "taunt", "pressure", "iron_charge", "intimidation", "armor_crush"],
           subSkill: { id: "sub_tanker_protect", name: "보호 태세", type: "allyGuard", guardRate: 0.3, target: "allySingleMain", desc: "아군 메인 1명이 다음에 받는 피해 30% 감소" },
           ultimate: {
             name: "철벽의 수호",
@@ -624,7 +690,7 @@ export const characters = {
           passiveDesc: "HP가 50% 이하일 때 공격 피해 +10",
           roleText: "고위험 고화력 딜러",
           recommendedSkillIds: ["basic", "berserk_axe", "blood_slash", "battle_cry"],
-          skillIds: ["berserk_axe", "blood_slash", "rage", "battle_cry", "blood_craving", "wild_swing", "rage_stack"],
+          skillIds: ["berserk_axe", "blood_slash", "rage", "battle_cry", "blood_craving", "wild_swing", "rage_stack", "blood_drain"],
           subSkill: { id: "sub_berserker_rage", name: "분노 주입", type: "allyAtkBuffSelfHarm", buff: 8, selfDamage: 5, target: "allySingleMain", desc: "아군 메인 1명의 다음 공격 피해 +8, 대신 HP 5 감소" },
           ultimate: {
             name: "광폭화",
@@ -644,7 +710,7 @@ export const characters = {
           passiveDesc: "회복 스킬의 회복량 20% 증가",
           roleText: "회복 지원가",
           recommendedSkillIds: ["basic", "priest_heal", "blessing", "barrier"],
-          skillIds: ["priest_heal", "judgment", "blessing", "barrier", "holy_strike", "small_heal", "holy_mark"],
+          skillIds: ["priest_heal", "judgment", "blessing", "barrier", "holy_strike", "small_heal", "holy_mark", "cleanse"],
           subSkill: { id: "sub_priest_emergency_heal", name: "응급 치유", type: "allyHeal", heal: 18, target: "allySingleMain", desc: "아군 메인 1명 HP 18 회복" },
           ultimate: {
             name: "대치유",
@@ -663,7 +729,7 @@ export const characters = {
           passiveDesc: "공격 시 15% 확률로 추가 피해 10",
           roleText: "안정형 원거리 딜러",
           recommendedSkillIds: ["basic", "pierce_arrow", "focus_aim", "ankle_shot"],
-          skillIds: ["pierce_arrow", "rapid_shot", "focus_aim", "ankle_shot", "precision_shot", "aimed_shot", "suppress_shot"],
+          skillIds: ["pierce_arrow", "rapid_shot", "focus_aim", "ankle_shot", "precision_shot", "aimed_shot", "suppress_shot", "finishing_shot"],
           subSkill: { id: "sub_archer_cover", name: "엄호 사격", type: "enemyDamage", damage: 10, target: "enemySingleMain", desc: "적 메인 1명에게 10 피해" },
           ultimate: {
             name: "폭풍 사격",
@@ -682,7 +748,7 @@ export const characters = {
           passiveDesc: "독 또는 공격감소 상태의 적에게 피해 +8",
           roleText: "저주/독 디버퍼",
           recommendedSkillIds: ["basic", "curse", "poison_mist", "dark_orb"],
-          skillIds: ["curse", "soul_drain", "dark_orb", "poison_mist", "spirit_guard", "dark_mark", "spirit_shield"],
+          skillIds: ["curse", "soul_drain", "dark_orb", "poison_mist", "spirit_guard", "dark_mark", "spirit_shield", "soul_leech"],
           subSkill: { id: "sub_shaman_curse", name: "약화 저주", type: "enemyAtkDebuff", debuff: 5, target: "enemySingleMain", desc: "적 메인 1명의 다음 공격 피해 -5" },
           ultimate: {
             name: "파멸의 저주",
