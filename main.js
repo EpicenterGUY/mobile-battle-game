@@ -1058,7 +1058,7 @@ const modeSelect = document.getElementById("modeSelect");
         btn.id = "singleStartBattleBtn";
         btn.className = "green";
         btn.type = "button";
-        btn.textContent = t("battle.start");
+        btn.textContent = t("ui.startBattle");
         btn.addEventListener("click", () => {
           startSinglePartyBattle(partySelection);
         });
@@ -1078,7 +1078,7 @@ const modeSelect = document.getElementById("modeSelect");
         btn.id = "onlineSubmitPartyBtn";
         btn.className = "green";
         btn.type = "button";
-        btn.textContent = t("party.confirm");
+        btn.textContent = t("ui.confirmParty");
         btn.addEventListener("click", () => {
           submitOnlinePartySelection();
         });
@@ -1240,32 +1240,32 @@ const modeSelect = document.getElementById("modeSelect");
       }
 
       async function joinRoom() {
-        const rawCode = roomInput.value.trim();
-        const command = rawCode.toLowerCase();
+        const code = roomInput.value.trim().toUpperCase();
 
-        if (command === "jpn") {
-          switchLanguage("ja");
-          roomInput.value = "";
+        if (code.toLowerCase() === "jpn") {
+          setLang("ja");
+          refreshLocalizedUI();
           alert(t("lang.switchedJa"));
+          roomInput.value = "";
           return;
         }
 
-        if (command === "kor") {
-          switchLanguage("ko");
-          roomInput.value = "";
+        if (code.toLowerCase() === "kor") {
+          setLang("ko");
+          refreshLocalizedUI();
           alert(t("lang.switchedKo"));
+          roomInput.value = "";
+          return;
+        }
+
+        if (code.length !== 4) {
+          alert(t("roomCodeLengthError"));
           return;
         }
 
         if (!(await ensureOnlineAvailable())) return;
 
         currentMode = "online";
-        const code = rawCode.toUpperCase();
-
-        if (code.length !== 4) {
-          alert(t("roomCodeLengthError"));
-          return;
-        }
 
         const roomRef = ref(db, "rooms/" + code);
         const snapshot = await get(roomRef);
