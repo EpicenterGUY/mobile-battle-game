@@ -802,7 +802,7 @@ const modeSelect = document.getElementById("modeSelect");
           const selected = partySelection.includes(c.name);
           const buttonText = selected
             ? tx("선택됨")
-            : `파티에 추가 (${partySelection.length}/4)`;
+            : `${tx("파티에 추가")} (${partySelection.length}/4)`;
 
           div.innerHTML = `
           <div class="character-name">${tx(c.name)}</div>
@@ -810,8 +810,8 @@ const modeSelect = document.getElementById("modeSelect");
             HP ${c.hp} / 공격 ${c.atk} / 방어 ${c.def}<br>
             <span class="passive">${t("ui.passive")}: ${tx(c.passiveName)}</span><br>
             ${tx(c.passiveDesc)}<br>
-            역할: ${tx(c.roleText || "역할 미정")}<br>
-            추천 세팅:<br>${recommendedSkillText || "추천 세팅 없음"}<br>
+            ${tx("역할")}: ${tx(c.roleText || "역할 미정")}<br>
+            ${tx("추천 세팅")}:<br>${recommendedSkillText || tx("추천 세팅 없음")}<br>
             ${t("ui.skill")}:<br>${skillNames}
             <br>${t("ui.ultimate")}:<br>${ultimateText}
           </div>
@@ -834,7 +834,7 @@ const modeSelect = document.getElementById("modeSelect");
         }
 
         myRoleText.textContent = partySelection.length
-          ? `선택됨: ${partySelection.map(tx).join(" / ")}`
+          ? `${tx("선택됨")}: ${partySelection.map(tx).join(" / ")}`
           : currentMode === "single"
             ? t("select.orderGuideSingle")
             : t("select.orderGuide");
@@ -898,7 +898,7 @@ const modeSelect = document.getElementById("modeSelect");
           const canApplyRecommended = recommended.length === 4;
           const recommendedButtonHtml = canApplyRecommended
             ? `<button type="button" class="secondary apply-recommended-skills-btn" data-char="${selectedName}">
-              추천 세팅 적용
+              ${tx("추천 세팅 적용")}
             </button>`
             : "";
           return `<div class="selected-member-preview" data-char="${selectedName}">
@@ -907,7 +907,7 @@ const modeSelect = document.getElementById("modeSelect");
             <div class="selected-member-actions">
               <button type="button" class="green skill-edit-btn" data-char="${selectedName}">${t("ui.changeSkill")}</button>
               ${recommendedButtonHtml}
-              <button type="button" class="danger remove-party-member-btn" data-char="${selectedName}">취소</button>
+              <button type="button" class="danger remove-party-member-btn" data-char="${selectedName}">${t("common.cancel")}</button>
             </div>
             <div class="skill-editor" data-char="${selectedName}"></div>
           </div>`;
@@ -915,11 +915,11 @@ const modeSelect = document.getElementById("modeSelect");
 
         const resetButtonHtml =
           partySelection.length > 0
-            ? `<button type="button" class="secondary" id="partySelectionResetBtn">파티 초기화</button>`
+            ? `<button type="button" class="secondary" id="partySelectionResetBtn">${tx("파티 초기화")}</button>`
             : "";
 
         preview.innerHTML = `
-          <div><strong>선택 파티</strong></div>
+          <div><strong>${tx("선택 파티")}</strong></div>
           ${resetButtonHtml}
           ${lines.join("")}
         `;
@@ -994,16 +994,16 @@ const modeSelect = document.getElementById("modeSelect");
           <div class="skill-editor-panel">
             <div>${t("ui.changeSkill")} - ${tx(charName)}</div>
             <div class="equipped-skills">
-              <div>장착 중:</div>
+              <div>${tx("장착 중:")}</div>
               <div>${current.map((skillId) => tx(skills[skillId]?.name || skillId)).join(" / ")}</div>
             </div>
             <div class="skill-select-count"></div>
             <div class="skill-section">
-              <div class="skill-section-title">공용 스킬</div>
+              <div class="skill-section-title">${tx("공용 스킬")}</div>
               <div class="skill-options">${commonSkills.map(makeSkillOptionCard).join("")}</div>
             </div>
             <div class="skill-section">
-              <div class="skill-section-title">캐릭터 전용 스킬</div>
+              <div class="skill-section-title">${tx("캐릭터 전용 스킬")}</div>
               <div class="skill-options">${exclusiveSkills.map(makeSkillOptionCard).join("")}</div>
             </div>
             <div class="skill-select-error" style="color:#ff6b6b;margin-top:6px;"></div>
@@ -1018,7 +1018,7 @@ const modeSelect = document.getElementById("modeSelect");
         const checkboxes = Array.from(editor.querySelectorAll('input[type="checkbox"]'));
         const updateSelectionState = () => {
           const selectedCount = checkboxes.filter((cb) => cb.checked).length;
-          countNode.textContent = `선택됨 ${selectedCount}/4`;
+          countNode.textContent = `${tx("선택됨")} ${selectedCount}/4`;
           errorNode.textContent = selectedCount === 4 ? "" : t("ui.needFourSkills");
           if (applyButton) applyButton.disabled = selectedCount !== 4;
           checkboxes.forEach((cb) => {
