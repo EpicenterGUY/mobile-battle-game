@@ -717,6 +717,44 @@ const modeSelect = document.getElementById("modeSelect");
         });
 
         renderSelectedPartyPreview();
+        renderPartyResetSelectionButton();
+      }
+
+      function resetPartySelection() {
+        partySelection = [];
+        selectedSkillLoadouts = {};
+
+        if (currentMode === "single") {
+          selectRoomCodeView.textContent = "0/4";
+          myRoleText.textContent =
+            "선택 순서대로 1,2번은 메인 / 3,4번은 서브가 됩니다.";
+        } else if (currentMode === "online") {
+          myRoleText.textContent =
+            "선택 순서대로 1,2번은 메인 / 3,4번은 서브입니다.";
+        }
+
+        renderCharacterList();
+        renderSingleStartButton();
+        renderOnlineSubmitButton();
+      }
+
+      function renderPartyResetSelectionButton() {
+        const existing = document.getElementById("partySelectionResetBtn");
+        if (existing) existing.remove();
+
+        if (!selectCharacter || selectCharacter.classList.contains("hidden")) return;
+        if (partySelection.length <= 0) return;
+
+        const btn = document.createElement("button");
+        btn.id = "partySelectionResetBtn";
+        btn.className = "gray";
+        btn.type = "button";
+        btn.textContent = "파티 초기화";
+        btn.addEventListener("click", () => {
+          resetPartySelection();
+        });
+
+        characterList.insertAdjacentElement("beforebegin", btn);
       }
 
 
