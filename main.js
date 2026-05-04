@@ -8,7 +8,7 @@ import {
   remove,
   ensureFirebaseReady,
 } from "./firebase.js";
-import { skills, characters } from "./data.js";
+import { skills, characters, commonSkillIds } from "./data.js";
 import { BATTLE_MODULE } from "./battle.js";
 import { ONLINE_MODULE } from "./online.js";
 import { UI_MODULE } from "./ui.js";
@@ -178,7 +178,7 @@ const modeSelect = document.getElementById("modeSelect");
 
       function getAvailableSkillsForCharacter(charName) {
         const c = characters[charName];
-        return ["basic", ...(c?.skillIds || [])];
+        return [...new Set(["basic", ...(commonSkillIds || []), ...(c?.skillIds || [])])];
       }
 
       function sanitizeLoadout(charName, loadout) {
