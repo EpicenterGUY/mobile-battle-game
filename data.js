@@ -286,6 +286,8 @@ export const characters = {
           def: 7,
           passiveName: "검의 호흡",
           passiveDesc: "공격 시 20% 확률로 추가 피해 8",
+          roleText: "안정형 딜러",
+          recommendedSkillIds: ["basic", "slash", "halfmoon", "double_slash"],
           skillIds: ["slash", "guard", "halfmoon", "double_slash"],
           subSkill: { id: "sub_warrior_cheer", name: "전열 격려", type: "allyAtkBuff", buff: 5, target: "allySingleMain", desc: "아군 메인 1명의 다음 공격 피해 +5" },
           ultimate: {
@@ -303,6 +305,8 @@ export const characters = {
           def: 3,
           passiveName: "마력 순환",
           passiveDesc: "자신의 3번째 행동마다 공격 스킬 피해 +10",
+          roleText: "고화력 마법 딜러",
+          recommendedSkillIds: ["basic", "fireball", "ice", "lightning"],
           skillIds: ["fireball", "ice", "heal", "lightning"],
           subSkill: { id: "sub_mage_mana", name: "마력 보조", type: "allyUltimateGauge", gain: 1, target: "allySingleMain", desc: "아군 메인 1명의 궁극기 게이지 +1" },
           ultimate: {
@@ -320,6 +324,8 @@ export const characters = {
           def: 5,
           passiveName: "그림자 걸음",
           passiveDesc: "공격받을 때 15% 확률로 공격 회피",
+          roleText: "독 연계 암살자",
+          recommendedSkillIds: ["basic", "poison", "weak", "ambush"],
           skillIds: ["poison", "weak", "smoke", "ambush"],
           subSkill: { id: "sub_rogue_ambush", name: "기습 지원", type: "enemyDamage", damage: 8, target: "enemySingleMain", desc: "적 메인 1명에게 8 피해" },
           ultimate: {
@@ -338,6 +344,8 @@ export const characters = {
           def: 13,
           passiveName: "불굴의 육체",
           passiveDesc: "HP가 40% 이하일 때 받는 피해 20% 감소",
+          roleText: "방어형 버티기",
+          recommendedSkillIds: ["basic", "shield_bash", "fortress", "taunt"],
           skillIds: ["shield_bash", "fortress", "heavy_strike", "taunt"],
           subSkill: { id: "sub_tanker_protect", name: "보호 태세", type: "allyGuard", guardRate: 0.3, target: "allySingleMain", desc: "아군 메인 1명이 다음에 받는 피해 30% 감소" },
           ultimate: {
@@ -355,6 +363,8 @@ export const characters = {
           def: 4,
           passiveName: "피의 갈망",
           passiveDesc: "HP가 50% 이하일 때 공격 피해 +10",
+          roleText: "고위험 고화력 딜러",
+          recommendedSkillIds: ["basic", "berserk_axe", "blood_slash", "battle_cry"],
           skillIds: ["berserk_axe", "blood_slash", "rage", "battle_cry"],
           subSkill: { id: "sub_berserker_rage", name: "분노 주입", type: "allyAtkBuffSelfHarm", buff: 8, selfDamage: 5, target: "allySingleMain", desc: "아군 메인 1명의 다음 공격 피해 +8, 대신 HP 5 감소" },
           ultimate: {
@@ -373,6 +383,8 @@ export const characters = {
           def: 7,
           passiveName: "성스러운 가호",
           passiveDesc: "회복 스킬의 회복량 20% 증가",
+          roleText: "회복 지원가",
+          recommendedSkillIds: ["basic", "priest_heal", "blessing", "barrier"],
           skillIds: ["priest_heal", "judgment", "blessing", "barrier"],
           subSkill: { id: "sub_priest_emergency_heal", name: "응급 치유", type: "allyHeal", heal: 18, target: "allySingleMain", desc: "아군 메인 1명 HP 18 회복" },
           ultimate: {
@@ -390,6 +402,8 @@ export const characters = {
           def: 5,
           passiveName: "매의 눈",
           passiveDesc: "공격 시 15% 확률로 추가 피해 10",
+          roleText: "안정형 원거리 딜러",
+          recommendedSkillIds: ["basic", "pierce_arrow", "focus_aim", "ankle_shot"],
           skillIds: ["pierce_arrow", "rapid_shot", "focus_aim", "ankle_shot"],
           subSkill: { id: "sub_archer_cover", name: "엄호 사격", type: "enemyDamage", damage: 10, target: "enemySingleMain", desc: "적 메인 1명에게 10 피해" },
           ultimate: {
@@ -407,6 +421,8 @@ export const characters = {
           def: 4,
           passiveName: "저주의 낙인",
           passiveDesc: "독 또는 공격감소 상태의 적에게 피해 +8",
+          roleText: "저주/독 디버퍼",
+          recommendedSkillIds: ["basic", "curse", "poison_mist", "dark_orb"],
           skillIds: ["curse", "soul_drain", "dark_orb", "poison_mist"],
           subSkill: { id: "sub_shaman_curse", name: "약화 저주", type: "enemyAtkDebuff", debuff: 5, target: "enemySingleMain", desc: "적 메인 1명의 다음 공격 피해 -5" },
           ultimate: {

@@ -689,6 +689,9 @@ const modeSelect = document.getElementById("modeSelect");
           const skillNames = c.skillIds
             .map((id) => `${tx(skills[id].name)} - ${tx(skills[id].powerText)}`)
             .join("<br>");
+          const recommendedSkillNames = (c.recommendedSkillIds || getDefaultLoadout(c.name))
+            .map((id) => tx(skills[id]?.name || id))
+            .join(" / ");
           const ultimateText = c.ultimate
             ? `${tx(c.ultimate.name)} - ${tx(c.ultimate.desc)}`
             : "한계 돌파 - 적 메인 1명에게 위력 35 피해";
@@ -704,6 +707,8 @@ const modeSelect = document.getElementById("modeSelect");
             HP ${c.hp} / 공격 ${c.atk} / 방어 ${c.def}<br>
             <span class="passive">${t("ui.passive")}: ${tx(c.passiveName)}</span><br>
             ${tx(c.passiveDesc)}<br>
+            역할: ${c.roleText || "-"}<br>
+            추천 세팅:<br>${recommendedSkillNames}<br>
             ${t("ui.skill")}:<br>${skillNames}
             <br>${t("ui.ultimate")}:<br>${ultimateText}
           </div>
