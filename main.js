@@ -826,6 +826,7 @@ const modeSelect = document.getElementById("modeSelect");
           selectedSkillLoadouts[charName] = selected;
           renderCharacterList();
           renderSingleStartButton();
+          renderOnlineSubmitButton();
         });
         editor.querySelector(".cancel-skill-btn")?.addEventListener("click", () => {
           editor.innerHTML = "";
@@ -849,6 +850,50 @@ const modeSelect = document.getElementById("modeSelect");
         });
 
         characterList.insertAdjacentElement("beforebegin", btn);
+      }
+
+      function renderOnlineSubmitButton() {
+        const existing = document.getElementById("onlineSubmitPartyBtn");
+        if (existing) existing.remove();
+
+        if (currentMode !== "online") return;
+        if (partySelection.length !== 4) return;
+        if (!currentRoomCode || !mySide) return;
+
+        const btn = document.createElement("button");
+        btn.id = "onlineSubmitPartyBtn";
+        btn.className = "green";
+        btn.type = "button";
+        btn.textContent = "파티 확정";
+        btn.addEventListener("click", () => {
+          submitOnlinePartySelection();
+        });
+
+        characterList.insertAdjacentElement("beforebegin", btn);
+      }
+
+      async function submitOnlinePartySelection() {
+        if (currentMode !== "online") return;
+        if (partySelection.length !== 4) return;
+        if (!currentRoomCode || !mySide) return;
+
+        const party = partySelection.map((charName) =>
+          makePlayerFromCharacter(
+            charName,
+            selectedSkillLoadouts[charName] || getDefaultLoadout(charName),
+          ),
+        );
+        const updates = {};
+
+        updates[`state/${mySide}Party`] = party;
+        updates["state/log"] = `${sideLabel(mySide)} 파티 선택 완료!`;
+        updates["updatedAt"] = Date.now();
+
+        await update(ref(db, "rooms/" + currentRoomCode), updates);
+
+        roomCodeView.textContent = currentRoomCode;
+        waitingText.textContent = "상대의 파티 선택을 기다리는 중...";
+        showScreen("waiting");
       }
 
 
@@ -880,29 +925,15 @@ const modeSelect = document.getElementById("modeSelect");
             "파티 4명 선택 완료! 다음 단계에서 전투 시작 버튼을 추가할 예정입니다.";
           renderCharacterList();
           renderSingleStartButton();
+          renderOnlineSubmitButton();
           return;
         }
 
         if (currentMode === "online") {
           myRoleText.textContent = `선택됨: ${partySelection.join(" / ")}`;
-
-          const party = partySelection.map((charName) =>
-            makePlayerFromCharacter(
-              charName,
-              selectedSkillLoadouts[charName] || getDefaultLoadout(charName),
-            ),
-          );
-          const updates = {};
-
-          updates[`state/${mySide}Party`] = party;
-          updates["state/log"] = `${sideLabel(mySide)} 파티 선택 완료!`;
-          updates["updatedAt"] = Date.now();
-
-          await update(ref(db, "rooms/" + currentRoomCode), updates);
-
-          roomCodeView.textContent = currentRoomCode;
-          waitingText.textContent = "상대의 파티 선택을 기다리는 중...";
-          showScreen("waiting");
+          renderCharacterList();
+          renderSingleStartButton();
+          renderOnlineSubmitButton();
         }
       }
 
@@ -1097,30 +1128,9 @@ const modeSelect = document.getElementById("modeSelect");
 
         if (currentMode === "online") {
           myRoleText.textContent = `선택됨: ${partySelection.join(" / ")}`;
-
-          if (partySelection.length < 4) {
-            renderCharacterList();
-            renderSingleStartButton();
-            return;
-          }
-
-          const party = partySelection.map((name) =>
-            makePlayerFromCharacter(
-              name,
-              selectedSkillLoadouts[name] || getDefaultLoadout(name),
-            ),
-          );
-          const updates = {};
-
-          updates[`state/${mySide}Party`] = party;
-          updates["state/log"] = `${sideLabel(mySide)} 파티 선택 완료!`;
-          updates["updatedAt"] = Date.now();
-
-          await update(ref(db, "rooms/" + currentRoomCode), updates);
-
-          roomCodeView.textContent = currentRoomCode;
-          waitingText.textContent = "상대의 파티 선택을 기다리는 중...";
-          showScreen("waiting");
+          renderCharacterList();
+          renderSingleStartButton();
+          renderOnlineSubmitButton();
         }
       }
 
