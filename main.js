@@ -160,6 +160,8 @@ const modeSelect = document.getElementById("modeSelect");
         if (name === "waiting") waiting.classList.remove("hidden");
         if (name === "select") selectCharacter.classList.remove("hidden");
         if (name === "partyBattle") partyBattle.classList.remove("hidden");
+
+        refreshLocalizedUI();
       }
 
       function makeRoomCode() {
@@ -833,7 +835,9 @@ const modeSelect = document.getElementById("modeSelect");
 
         myRoleText.textContent = partySelection.length
           ? `선택됨: ${partySelection.map(tx).join(" / ")}`
-          : "선택 순서대로 1,2번은 메인 / 3,4번은 서브입니다.";
+          : currentMode === "single"
+            ? t("select.orderGuideSingle")
+            : t("select.orderGuide");
       }
 
       function removeSelectedPartyMember(charName) {
@@ -1102,7 +1106,7 @@ const modeSelect = document.getElementById("modeSelect");
         await update(ref(db, "rooms/" + currentRoomCode), updates);
 
         roomCodeView.textContent = currentRoomCode;
-        waitingText.textContent = "상대의 파티 선택을 기다리는 중...";
+        waitingText.textContent = t("waiting.opponentSelecting");
         showScreen("waiting");
       }
 
@@ -1172,11 +1176,11 @@ const modeSelect = document.getElementById("modeSelect");
         pendingPartyAction = null;
         partyBusy = false;
 
-        selectTopLabel.textContent = "싱글 파티";
+        selectTopLabel.textContent = t("select.party");
         selectRoomCodeView.textContent = "0/4";
-        selectTitle.textContent = "파티 4명 선택";
+        selectTitle.textContent = t("select.party4");
         myRoleText.textContent =
-          "선택 순서대로 1,2번은 메인 / 3,4번은 서브가 됩니다.";
+          t("select.orderGuideSingle");
 
         renderCharacterList();
         renderSingleStartButton();
@@ -1223,11 +1227,11 @@ const modeSelect = document.getElementById("modeSelect");
         selectedSkillLoadouts = {};
 
         roomCodeView.textContent = code;
-        selectTopLabel.textContent = "방 코드";
+        selectTopLabel.textContent = t("lobby.code");
         selectRoomCodeView.textContent = code;
-        selectTitle.textContent = "1P 파티 4명 선택";
+        selectTitle.textContent = t("select.p1Party4");
         myRoleText.textContent =
-          "선택 순서대로 1,2번은 메인 / 3,4번은 서브입니다.";
+          t("select.orderGuide");
 
         renderCharacterList();
         renderSingleStartButton();
@@ -1292,11 +1296,11 @@ const modeSelect = document.getElementById("modeSelect");
         partySelection = [];
         selectedSkillLoadouts = {};
 
-        selectTopLabel.textContent = "방 코드";
+        selectTopLabel.textContent = t("lobby.code");
         selectRoomCodeView.textContent = code;
-        selectTitle.textContent = "2P 파티 4명 선택";
+        selectTitle.textContent = t("select.p2Party4");
         myRoleText.textContent =
-          "선택 순서대로 1,2번은 메인 / 3,4번은 서브입니다.";
+          t("select.orderGuide");
 
         renderCharacterList();
         renderSingleStartButton();
@@ -1426,7 +1430,7 @@ const modeSelect = document.getElementById("modeSelect");
 
         if (!state.started || !state.battle) {
           roomCodeView.textContent = currentRoomCode;
-          waitingText.textContent = "상대의 파티 선택을 기다리는 중...";
+          waitingText.textContent = t("waiting.opponentSelecting");
           showScreen("waiting");
           return;
         }
@@ -1987,29 +1991,50 @@ const modeSelect = document.getElementById("modeSelect");
       });
     
 
-      function applyI18nToUI() {
-  applyLanguage();
-  const title = document.querySelector("h1"); if (title) title.textContent = t("header.title");
-  const sub = document.querySelector(".subtitle"); if (sub) sub.textContent = t("header.subtitle");
-  const modeTitle = document.querySelector(".mode-title"); if (modeTitle) modeTitle.textContent = t("mode.select");
-  onlineModeBtn.textContent = t("mode.online");
-  singleModeBtn.textContent = t("mode.single");
-  createRoomBtn.textContent = t("lobby.create");
-  joinRoomBtn.textContent = t("lobby.join");
-  roomInput.placeholder = t("lobby.input");
-  copyCodeBtn.textContent = t("common.copyRoom");
-  waitingBackBtn.textContent = t("common.leave");
-  selectBackBtn.textContent = t("common.back");
-  if (!selectCharacter.classList.contains("hidden")) renderCharacterList();
-  renderSingleStartButton();
-  if (!partyBattle.classList.contains("hidden") || singlePartyState || latestOnlineBattle) renderPartyBattle();
-}
+      function refreshLocalizedUI() {
+        applyLanguage();
 
-function switchLanguage(lang) {
-  setLang(lang);
-  applyLanguage();
-  applyI18nToUI();
-}
+        const title = document.querySelector("h1");
+        if (title) title.textContent = t("header.title");
+        const sub = document.querySelector(".subtitle");
+        if (sub) sub.textContent = t("header.subtitle");
+        const modeTitle = document.querySelector(".mode-title");
+        if (modeTitle) modeTitle.textContent = t("mode.select");
 
-      applyI18nToUI();
+        if (onlineModeBtn) onlineModeBtn.textContent = t("mode.online");
+        if (singleModeBtn) singleModeBtn.textContent = t("mode.single");
+        if (createRoomBtn) createRoomBtn.textContent = t("lobby.create");
+        if (joinRoomBtn) joinRoomBtn.textContent = t("lobby.join");
+        if (roomInput) roomInput.placeholder = t("lobby.input");
+        if (backToModeBtn) backToModeBtn.textContent = t("common.backToMode");
+        if (copyCodeBtn) copyCodeBtn.textContent = t("common.copyRoom");
+        if (waitingBackBtn) waitingBackBtn.textContent = t("common.leave");
+        if (selectBackBtn) selectBackBtn.textContent = t("common.back");
+        if (partyResetBtn) partyResetBtn.textContent = t("common.restart");
+        if (partyLeaveBtn) partyLeaveBtn.textContent = t("common.leave");
+
+        if (selectTopLabel && currentMode === "single") selectTopLabel.textContent = t("select.party");
+        if (selectTitle && currentMode === "single") selectTitle.textContent = t("select.party4");
+
+        if (!selectCharacter.classList.contains("hidden")) {
+          renderRecommendedButtons();
+          renderCharacterList();
+          renderSelectedPartyPreview();
+          renderSingleStartButton();
+          renderOnlineSubmitButton();
+          if (myRoleText) {
+            myRoleText.textContent = currentMode === "single" ? t("select.orderGuideSingle") : t("select.orderGuide");
+          }
+        }
+
+        if (!waiting.classList.contains("hidden") && waitingText) {
+          waitingText.textContent = t("waiting.opponentSelecting");
+        }
+
+        if (!partyBattle.classList.contains("hidden") && (singlePartyState || latestOnlineBattle)) {
+          renderPartyBattle();
+        }
+      }
+
+      refreshLocalizedUI();
       renderRecommendedButtons();
