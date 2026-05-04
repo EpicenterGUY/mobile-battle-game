@@ -717,7 +717,6 @@ const modeSelect = document.getElementById("modeSelect");
         });
 
         renderSelectedPartyPreview();
-        renderPartyResetSelectionButton();
       }
 
       function resetPartySelection() {
@@ -737,26 +736,6 @@ const modeSelect = document.getElementById("modeSelect");
         renderSingleStartButton();
         renderOnlineSubmitButton();
       }
-
-      function renderPartyResetSelectionButton() {
-        const existing = document.getElementById("partySelectionResetBtn");
-        if (existing) existing.remove();
-
-        if (!selectCharacter || selectCharacter.classList.contains("hidden")) return;
-        if (partySelection.length <= 0) return;
-
-        const btn = document.createElement("button");
-        btn.id = "partySelectionResetBtn";
-        btn.className = "gray";
-        btn.type = "button";
-        btn.textContent = "파티 초기화";
-        btn.addEventListener("click", () => {
-          resetPartySelection();
-        });
-
-        characterList.insertAdjacentElement("beforebegin", btn);
-      }
-
 
       function renderSelectedPartyPreview() {
         const existing = document.getElementById("selectedPartyPreview");
@@ -785,12 +764,25 @@ const modeSelect = document.getElementById("modeSelect");
           </div>`;
         });
 
+        const resetButtonHtml =
+          partySelection.length > 0
+            ? `<button type="button" class="secondary" id="partySelectionResetBtn">파티 초기화</button>`
+            : "";
+
         preview.innerHTML = `
           <div><strong>선택 파티</strong></div>
+          ${resetButtonHtml}
           ${lines.join("")}
         `;
 
         characterList.insertAdjacentElement("beforebegin", preview);
+
+        const resetButton = preview.querySelector("#partySelectionResetBtn");
+        if (resetButton) {
+          resetButton.addEventListener("click", () => {
+            resetPartySelection();
+          });
+        }
 
         preview.querySelectorAll(".skill-edit-btn").forEach((button) => {
           button.addEventListener("click", () => {
