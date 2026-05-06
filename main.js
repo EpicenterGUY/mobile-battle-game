@@ -656,7 +656,12 @@ const modeSelect = document.getElementById("modeSelect");
           }
         } else if (skill.type === "focusSelf") {
           actor.focus = true;
-          log += "집중 상태가 되었다!";
+          if (skill.selfMark) {
+            actor.marked = true;
+            log += "집중 상태가 되었지만 자신에게 표식이 남았다!";
+          } else {
+            log += "집중 상태가 되었다!";
+          }
         } else if (skill.target === "enemyAllMain") {
           const enemySide = getEnemySide(state, info.side);
           const hitLogs = [];
