@@ -6,6 +6,7 @@ export const skills = {
           power: 10,
           powerText: "위력 10 / 적 메인 1명",
           desc: "기본 피해를 준다.",
+          tags: ["공격"],
         },
         common_jab: {
           id: "common_jab",
@@ -14,6 +15,7 @@ export const skills = {
           power: 12,
           powerText: "위력 12 / 적 메인 1명",
           desc: "가볍게 공격해 안정적인 피해를 준다.",
+          tags: ["공격", "견제"],
         },
         common_power_strike: {
           id: "common_power_strike",
@@ -22,6 +24,7 @@ export const skills = {
           power: 18,
           powerText: "위력 18 / 적 메인 1명",
           desc: "큰 피해를 주지만 특별한 효과는 없다.",
+          tags: ["공격", "강공격"],
         },
         common_shake: {
           id: "common_shake",
@@ -31,6 +34,7 @@ export const skills = {
           debuff: 5,
           powerText: "위력 8 / 다음 공격 피해 -5",
           desc: "피해를 주고 상대의 다음 공격을 약화한다.",
+          tags: ["공격", "견제"],
         },
         common_defend: {
           id: "common_defend",
@@ -39,6 +43,7 @@ export const skills = {
           guardRate: 0.35,
           powerText: "피해 감소 35% / 자신",
           desc: "다음에 받는 피해를 줄여 생존력을 높인다.",
+          tags: ["방어", "생존"],
         },
         common_dodge: {
           id: "common_dodge",
@@ -46,6 +51,7 @@ export const skills = {
           type: "evasion",
           powerText: "회피 40% / 자신",
           desc: "다음 공격을 40% 확률로 회피한다.",
+          tags: ["회피", "생존"],
         },
         common_first_aid: {
           id: "common_first_aid",
@@ -54,6 +60,7 @@ export const skills = {
           heal: 16,
           powerText: "회복 16 / 자신",
           desc: "자신의 HP를 소량 회복해 체력을 관리한다.",
+          tags: ["회복", "생존"],
         },
         slash: {
           id: "slash",
@@ -62,6 +69,7 @@ export const skills = {
           power: 20,
           powerText: "위력 20 / 적 메인 1명",
           desc: "빠르게 베어 큰 피해를 준다.",
+          tags: ["공격", "강공격"],
         },
         guard: {
           id: "guard",
@@ -70,6 +78,7 @@ export const skills = {
           guardRate: 0.5,
           powerText: "피해 감소 50% / 자신",
           desc: "다음에 받는 피해를 50% 줄인다.",
+          tags: ["방어", "생존"],
         },
         halfmoon: {
           id: "halfmoon",
@@ -79,6 +88,7 @@ export const skills = {
           buff: 7,
           powerText: "위력 12 / 다음 공격 +7",
           desc: "피해를 주고 다음 공격 피해를 강화한다.",
+          tags: ["공격", "버프"],
         },
         double_slash: {
           id: "double_slash",
@@ -87,6 +97,7 @@ export const skills = {
           power: 17,
           powerText: "위력 17 / 적 메인 1명",
           desc: "안정적인 연속 공격으로 꾸준한 피해를 준다.",
+          tags: ["공격"],
         },
         counter_guard: {
           id: "counter_guard",
@@ -95,6 +106,7 @@ export const skills = {
           guardRate: 0.4,
           powerText: "피해 감소 40% / 자신",
           desc: "다음에 받는 피해를 40% 줄인다.",
+          tags: ["방어", "생존"],
         },
         sword_wind: {
           id: "sword_wind",
@@ -103,6 +115,7 @@ export const skills = {
           power: 12,
           powerText: "위력 12 / 방어 일부 관통",
           desc: "검풍으로 방어를 일부 꿰뚫고 피해를 준다.",
+          tags: ["공격", "방어관통"],
         },
         defensive_shift: {
           id: "defensive_shift",
@@ -112,6 +125,7 @@ export const skills = {
           buff: 6,
           powerText: "위력 6 / 다음 공격 +6",
           desc: "가벼운 피해를 주고 다음 공격을 준비한다.",
+          tags: ["공격", "버프"],
         },
         shield_break: {
           id: "shield_break",
@@ -120,6 +134,7 @@ export const skills = {
           power: 14,
           powerText: "위력 14 / 방어 해제",
           desc: "피해를 주고 대상의 방어 효과를 제거한다. 방어형 적을 상대할 때 유용하다.",
+          tags: ["공격", "방어해제"],
         },
         fireball: {
           id: "fireball",
@@ -128,6 +143,7 @@ export const skills = {
           power: 23,
           powerText: "위력 23 / 적 메인 1명",
           desc: "높은 피해를 주는 주력 마법 공격.",
+          tags: ["공격"],
         },
         ice: {
           id: "ice",
@@ -137,6 +153,7 @@ export const skills = {
           debuff: 6,
           powerText: "위력 15 / 다음 공격 피해 -6",
           desc: "피해를 주고 상대의 다음 공격 피해를 줄인다.",
+          tags: ["견제"],
         },
         heal: {
           id: "heal",
@@ -145,6 +162,7 @@ export const skills = {
           heal: 25,
           powerText: "회복 25 / 자신",
           desc: "자신의 HP를 회복한다.",
+          tags: ["회복", "생존"],
         },
         lightning: {
           id: "lightning",
@@ -154,6 +172,7 @@ export const skills = {
           debuff: 4,
           powerText: "위력 13 / 다음 공격 피해 -4",
           desc: "번개로 피해를 주고 상대의 다음 공격을 약화한다.",
+          tags: ["견제"],
         },
         magic_bolt: {
           id: "magic_bolt",
@@ -162,6 +181,7 @@ export const skills = {
           power: 14,
           powerText: "위력 14 / 궁극기 게이지 +1",
           desc: "안정적인 피해를 주고 자신의 궁극기 게이지를 추가로 올린다.",
+          tags: ["공격", "운영"],
         },
         flame_burst: {
           id: "flame_burst",
@@ -170,6 +190,7 @@ export const skills = {
           power: 26,
           powerText: "위력 26 / 적 메인 1명",
           desc: "부가효과는 없지만 매우 강한 단일 화염 공격.",
+          tags: ["공격"],
         },
         frost_curse: {
           id: "frost_curse",
@@ -179,6 +200,7 @@ export const skills = {
           debuff: 9,
           powerText: "위력 10 / 다음 공격 피해 -9",
           desc: "냉기로 피해를 주고 상대의 다음 공격을 크게 약화한다.",
+          tags: ["견제"],
         },
         purify_mana: {
           id: "purify_mana",
@@ -186,6 +208,7 @@ export const skills = {
           type: "cleanse",
           powerText: "독/공격감소 제거 / 자신",
           desc: "마력으로 나쁜 상태를 정화한다.",
+          tags: ["정화", "생존"],
         },
         poison: {
           id: "poison",
@@ -194,6 +217,7 @@ export const skills = {
           power: 8,
           powerText: "위력 8 / 독 부여 또는 독 연장",
           desc: "독을 부여하고, 이미 독 상태라면 지속 시간을 늘린다.",
+          tags: ["독", "연계"],
         },
         weak: {
           id: "weak",
@@ -203,6 +227,7 @@ export const skills = {
           bonusIfPoison: 10,
           powerText: "위력 14 / 독 상태면 +10",
           desc: "독 상태의 적에게 추가 피해를 주는 기본 연계기.",
+          tags: ["공격", "연계"],
         },
         smoke: {
           id: "smoke",
@@ -210,6 +235,7 @@ export const skills = {
           type: "evasion",
           powerText: "회피 40% / 자신",
           desc: "다음 공격을 40% 확률로 회피한다.",
+          tags: ["회피", "생존"],
         },
         ambush: {
           id: "ambush",
@@ -219,6 +245,7 @@ export const skills = {
           bonusIfPoison: 12,
           powerText: "위력 12 / 독 상태면 +12",
           desc: "독 상태의 적을 노리는 암살형 공격.",
+          tags: ["공격", "연계"],
         },
         quick_stab: {
           id: "quick_stab",
@@ -227,6 +254,7 @@ export const skills = {
           power: 15,
           powerText: "위력 15 / 적 메인 1명",
           desc: "빠르게 찔러 안정적인 피해를 준다.",
+          tags: ["공격"],
         },
         shadow_cut: {
           id: "shadow_cut",
@@ -236,6 +264,7 @@ export const skills = {
           bonusIfPoison: 18,
           powerText: "위력 9 / 독 상태면 +18",
           desc: "기본 위력은 낮지만 독 상태의 적에게 매우 큰 추가 피해를 준다.",
+          tags: ["공격", "연계"],
         },
         hidden_step: {
           id: "hidden_step",
@@ -243,6 +272,7 @@ export const skills = {
           type: "evasion",
           powerText: "회피 40% / 자신",
           desc: "다음 공격을 40% 확률로 회피한다.",
+          tags: ["회피", "생존"],
         },
         execute: {
           id: "execute",
@@ -252,6 +282,7 @@ export const skills = {
           executeBonus: 12,
           powerText: "위력 13 / HP 35% 이하 추가 피해",
           desc: "HP가 낮은 적에게 추가 피해를 준다.",
+          tags: ["공격", "마무리"],
         },
         shield_bash: {
           id: "shield_bash",
@@ -261,6 +292,7 @@ export const skills = {
           debuff: 5,
           powerText: "위력 12 / 다음 공격 피해 -5",
           desc: "피해와 약한 공격 감소를 함께 주는 균형형 견제.",
+          tags: ["견제"],
         },
         fortress: {
           id: "fortress",
@@ -269,6 +301,7 @@ export const skills = {
           guardRate: 0.5,
           powerText: "피해 감소 50% / 자신",
           desc: "다음에 받는 피해를 절반 줄인다.",
+          tags: ["방어", "생존"],
         },
         heavy_strike: {
           id: "heavy_strike",
@@ -277,6 +310,7 @@ export const skills = {
           power: 16,
           powerText: "위력 16 / 적 메인 1명",
           desc: "느리지만 묵직한 일격을 가한다.",
+          tags: ["공격"],
         },
         taunt: {
           id: "taunt",
@@ -286,6 +320,7 @@ export const skills = {
           debuff: 8,
           powerText: "위력 8 / 다음 공격 피해 -8",
           desc: "낮은 피해와 중간 공격 감소를 주는 도발.",
+          tags: ["견제"],
         },
         pressure: {
           id: "pressure",
@@ -295,6 +330,7 @@ export const skills = {
           debuff: 10,
           powerText: "위력 6 / 다음 공격 피해 -10",
           desc: "낮은 피해 대신 상대 공격을 크게 약화하는 압박.",
+          tags: ["견제"],
         },
         iron_charge: {
           id: "iron_charge",
@@ -303,6 +339,7 @@ export const skills = {
           power: 14,
           powerText: "위력 14 / 적 메인 1명",
           desc: "단단한 몸으로 돌진해 피해를 준다.",
+          tags: ["공격"],
         },
         intimidation: {
           id: "intimidation",
@@ -312,6 +349,7 @@ export const skills = {
           debuff: 12,
           powerText: "위력 4 / 다음 공격 피해 -12",
           desc: "피해는 낮지만 상대의 다음 공격을 매우 크게 약화한다.",
+          tags: ["견제"],
         },
         armor_crush: {
           id: "armor_crush",
@@ -320,6 +358,7 @@ export const skills = {
           power: 10,
           powerText: "위력 10 / 방어 해제",
           desc: "피해를 주고 대상의 방어 효과를 제거한다. 방어형 적을 상대할 때 유용하다.",
+          tags: ["공격", "방어해제"],
         },
         berserk_axe: {
           id: "berserk_axe",
@@ -328,6 +367,7 @@ export const skills = {
           power: 24,
           powerText: "위력 24 / 적 메인 1명",
           desc: "안정적인 고화력 공격.",
+          tags: ["공격"],
         },
         blood_slash: {
           id: "blood_slash",
@@ -337,6 +377,7 @@ export const skills = {
           buff: 6,
           powerText: "위력 14 / 다음 공격 +6",
           desc: "피를 끓어오르게 해 다음 공격을 강화한다.",
+          tags: ["공격", "버프"],
         },
         rage: {
           id: "rage",
@@ -346,6 +387,7 @@ export const skills = {
           buff: 8,
           powerText: "위력 8 / 다음 공격 +8",
           desc: "약한 피해를 주고 다음 공격을 강화한다.",
+          tags: ["공격", "버프"],
         },
         battle_cry: {
           id: "battle_cry",
@@ -355,6 +397,7 @@ export const skills = {
           buff: 10,
           powerText: "위력 6 / 다음 공격 +10",
           desc: "약한 피해를 주고 다음 공격을 크게 강화한다.",
+          tags: ["공격", "버프"],
         },
         blood_craving: {
           id: "blood_craving",
@@ -364,6 +407,7 @@ export const skills = {
           buff: 12,
           powerText: "위력 10 / 다음 공격 +12",
           desc: "피를 갈망하며 다음 공격을 크게 강화한다.",
+          tags: ["공격", "버프"],
         },
         wild_swing: {
           id: "wild_swing",
@@ -373,6 +417,7 @@ export const skills = {
           selfDamage: 6,
           powerText: "위력 30 / 자신 6 피해",
           desc: "매우 강한 공격을 가하지만 자신도 피해를 받는 고위험 기술.",
+          tags: ["공격", "강공격"],
         },
         rage_stack: {
           id: "rage_stack",
@@ -382,6 +427,7 @@ export const skills = {
           buff: 14,
           powerText: "위력 4 / 다음 공격 +14",
           desc: "약한 피해를 주고 다음 공격을 크게 강화한다.",
+          tags: ["공격", "버프"],
         },
         blood_drain: {
           id: "blood_drain",
@@ -391,6 +437,7 @@ export const skills = {
           heal: 8,
           powerText: "위력 15 / 자신 HP 8 회복",
           desc: "피해를 주고 자신의 HP를 회복해 유지력 확보에 유용하다.",
+          tags: ["공격", "흡혈"],
         },
         priest_heal: {
           id: "priest_heal",
@@ -399,6 +446,7 @@ export const skills = {
           heal: 28,
           powerText: "회복 28 / 자신",
           desc: "자신의 HP를 크게 회복해 전투를 안정화한다.",
+          tags: ["회복", "생존"],
         },
         judgment: {
           id: "judgment",
@@ -407,6 +455,7 @@ export const skills = {
           power: 13,
           powerText: "위력 13 / 궁극기 게이지 +1",
           desc: "성스러운 피해를 주고 자신의 궁극기 게이지를 추가로 올린다.",
+          tags: ["공격", "운영"],
         },
         blessing: {
           id: "blessing",
@@ -416,6 +465,7 @@ export const skills = {
           buff: 8,
           powerText: "위력 5 / 다음 공격 +8",
           desc: "약한 피해를 주고 다음 공격을 강화한다.",
+          tags: ["공격", "버프"],
         },
         barrier: {
           id: "barrier",
@@ -424,6 +474,7 @@ export const skills = {
           guardRate: 0.45,
           powerText: "피해 감소 45% / 자신",
           desc: "다음에 받는 피해를 줄여 생존력을 높인다.",
+          tags: ["방어", "생존"],
         },
         holy_strike: {
           id: "holy_strike",
@@ -433,6 +484,7 @@ export const skills = {
           debuff: 5,
           powerText: "위력 10 / 다음 공격 피해 -5",
           desc: "성스러운 힘으로 피해를 주고 상대의 다음 공격을 약화한다.",
+          tags: ["견제"],
         },
         small_heal: {
           id: "small_heal",
@@ -441,6 +493,7 @@ export const skills = {
           heal: 18,
           powerText: "회복 18 / 자신",
           desc: "자신의 HP를 소량 회복해 체력을 관리한다.",
+          tags: ["회복", "생존"],
         },
         holy_mark: {
           id: "holy_mark",
@@ -450,6 +503,7 @@ export const skills = {
           debuff: 6,
           powerText: "위력 9 / 다음 공격 피해 -6",
           desc: "성스러운 낙인으로 상대의 다음 공격을 약화하는 견제 기술.",
+          tags: ["견제"],
         },
         cleanse: {
           id: "cleanse",
@@ -457,6 +511,7 @@ export const skills = {
           type: "cleanse",
           powerText: "독/공격감소 제거 / 자신",
           desc: "자신의 독과 공격 감소 상태를 제거해 상태이상에 대응한다.",
+          tags: ["정화", "생존"],
         },
         pierce_arrow: {
           id: "pierce_arrow",
@@ -465,6 +520,7 @@ export const skills = {
           power: 18,
           powerText: "위력 18 / 적 메인 1명",
           desc: "안정적인 원거리 피해를 주는 기본 공격기.",
+          tags: ["공격"],
         },
         rapid_shot: {
           id: "rapid_shot",
@@ -473,6 +529,7 @@ export const skills = {
           power: 16,
           powerText: "위력 16 / 적 메인 1명",
           desc: "빠른 사격으로 피해를 준다.",
+          tags: ["공격"],
         },
         focus_aim: {
           id: "focus_aim",
@@ -482,6 +539,7 @@ export const skills = {
           buff: 12,
           powerText: "위력 7 / 다음 공격 +12",
           desc: "가벼운 피해를 주고 다음 공격을 크게 강화한다.",
+          tags: ["공격", "버프"],
         },
         ankle_shot: {
           id: "ankle_shot",
@@ -491,6 +549,7 @@ export const skills = {
           debuff: 7,
           powerText: "위력 11 / 다음 공격 피해 -7",
           desc: "상대를 견제해 다음 공격을 약화한다.",
+          tags: ["견제"],
         },
         precision_shot: {
           id: "precision_shot",
@@ -499,6 +558,7 @@ export const skills = {
           power: 17,
           powerText: "위력 17 / 방어 일부 관통",
           desc: "정확한 사격으로 방어를 일부 꿰뚫는다.",
+          tags: ["공격", "방어관통"],
         },
         aimed_shot: {
           id: "aimed_shot",
@@ -508,6 +568,7 @@ export const skills = {
           executeBonus: 12,
           powerText: "위력 13 / HP 35% 이하 추가 피해",
           desc: "약해진 적을 노려 추가 피해를 주는 마무리 사격.",
+          tags: ["공격", "마무리"],
         },
         suppress_shot: {
           id: "suppress_shot",
@@ -517,6 +578,7 @@ export const skills = {
           debuff: 8,
           powerText: "위력 9 / 다음 공격 피해 -8",
           desc: "상대를 견제해 다음 공격을 약화한다.",
+          tags: ["견제"],
         },
         finishing_shot: {
           id: "finishing_shot",
@@ -526,6 +588,7 @@ export const skills = {
           executeBonus: 16,
           powerText: "위력 10 / HP 35% 이하 +16",
           desc: "기본 피해는 낮지만 빈사 상태의 적을 끝내는 데 강하다.",
+          tags: ["공격", "마무리"],
         },
         curse: {
           id: "curse",
@@ -535,6 +598,7 @@ export const skills = {
           debuff: 8,
           powerText: "위력 8 / 다음 공격 피해 -8",
           desc: "저주를 걸어 상대의 다음 공격을 약화하는 견제 기술.",
+          tags: ["견제"],
         },
         soul_drain: {
           id: "soul_drain",
@@ -543,6 +607,7 @@ export const skills = {
           power: 17,
           powerText: "위력 17 / 적 메인 1명",
           desc: "영혼을 갉아먹는 피해를 준다.",
+          tags: ["공격"],
         },
         soul_leech: {
           id: "soul_leech",
@@ -552,6 +617,7 @@ export const skills = {
           heal: 10,
           powerText: "위력 12 / 자신 HP 10 회복",
           desc: "영혼을 빼앗아 피해를 주고 HP를 회복해 유지력을 확보한다.",
+          tags: ["공격", "흡혈"],
         },
         dark_orb: {
           id: "dark_orb",
@@ -560,6 +626,7 @@ export const skills = {
           power: 22,
           powerText: "위력 22 / 적 메인 1명",
           desc: "어둠의 구체로 강한 단일 피해를 준다.",
+          tags: ["공격"],
         },
         poison_mist: {
           id: "poison_mist",
@@ -568,6 +635,7 @@ export const skills = {
           power: 6,
           powerText: "위력 6 / 독 부여 또는 독 연장",
           desc: "약한 피해와 함께 독을 부여하거나 독 지속 시간을 늘린다.",
+          tags: ["독", "연계"],
         },
         spirit_guard: {
           id: "spirit_guard",
@@ -576,6 +644,7 @@ export const skills = {
           guardRate: 0.4,
           powerText: "피해 감소 40% / 자신",
           desc: "혼령의 힘으로 다음에 받는 피해를 줄인다.",
+          tags: ["방어", "생존"],
         },
         dark_mark: {
           id: "dark_mark",
@@ -585,6 +654,7 @@ export const skills = {
           buff: 10,
           powerText: "위력 5 / 다음 공격 +10",
           desc: "어둠의 낙인으로 다음 공격을 강화하는 연계 기술.",
+          tags: ["공격", "버프"],
         },
         spirit_shield: {
           id: "spirit_shield",
@@ -593,6 +663,7 @@ export const skills = {
           guardRate: 0.45,
           powerText: "피해 감소 45% / 자신",
           desc: "혼령의 방패로 다음 피해를 줄여 생존력을 높인다.",
+          tags: ["방어", "생존"],
         },
       };
 
@@ -623,7 +694,8 @@ export const characters = {
             type: "attack",
             power: 42,
             target: "enemySingle",
-          },
+            tags: ["운영"],
+        },
         },
         마법사: {
           name: "마법사",
@@ -642,7 +714,8 @@ export const characters = {
             type: "attack",
             power: 24,
             target: "enemyAllMain",
-          },
+            tags: ["운영"],
+        },
         },
         도적: {
           name: "도적",
@@ -662,7 +735,8 @@ export const characters = {
             power: 30,
             bonusIfPoison: 15,
             target: "enemySingle",
-          },
+            tags: ["운영"],
+        },
         },
         탱커: {
           name: "탱커",
@@ -681,7 +755,8 @@ export const characters = {
             type: "teamGuard",
             guardRate: 0.5,
             target: "allyAllMain",
-          },
+            tags: ["운영"],
+        },
         },
         광전사: {
           name: "광전사",
@@ -701,7 +776,8 @@ export const characters = {
             power: 48,
             selfDamage: 10,
             target: "enemySingle",
-          },
+            tags: ["운영"],
+        },
         },
         성직자: {
           name: "성직자",
@@ -720,7 +796,8 @@ export const characters = {
             type: "teamHeal",
             heal: 35,
             target: "allyAllMain",
-          },
+            tags: ["운영"],
+        },
         },
         궁수: {
           name: "궁수",
@@ -739,7 +816,8 @@ export const characters = {
             type: "attack",
             power: 22,
             target: "enemyAllMain",
-          },
+            tags: ["운영"],
+        },
         },
         주술사: {
           name: "주술사",
@@ -760,6 +838,7 @@ export const characters = {
             debuff: 10,
             poison: 3,
             target: "enemySingle",
-          },
+            tags: ["운영"],
+        },
         },
       };

@@ -319,6 +319,22 @@
         color: #d1d5db;
       }
 
+      .skill-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        margin-top: 4px;
+      }
+
+      .skill-tag {
+        font-size: 11px;
+        padding: 2px 6px;
+        border-radius: 999px;
+        background: rgba(250, 204, 21, 0.16);
+        color: #facc15;
+        font-weight: 800;
+      }
+
       .skill-select-count {
         margin-top: 6px;
         font-size: 13px;
