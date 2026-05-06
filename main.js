@@ -1000,6 +1000,10 @@ const modeSelect = document.getElementById("modeSelect");
 
         const makeSkillOptionCard = (skillId) => {
           const skill = skills[skillId];
+          const tags = skill?.tags || [];
+          const tagHtml = tags.length
+            ? `<div class="skill-tags">${tags.map((tag) => `<span class="skill-tag">${tx(tag)}</span>`).join("")}</div>`
+            : "";
           const checked = selectedSet.has(skillId) ? "checked" : "";
           return `<label class="skill-option-card ${checked ? "selected-skill-option" : ""}">
             <input type="checkbox" value="${skillId}" ${checked}>
@@ -1007,6 +1011,7 @@ const modeSelect = document.getElementById("modeSelect");
               <div class="skill-option-name">${tx(skill?.name || skillId)}</div>
               <div class="skill-option-power">${tx(skill?.powerText || "")}</div>
               <div class="skill-option-desc">${tx(skill?.desc || "")}</div>
+              ${tagHtml}
             </div>
           </label>`;
         };
