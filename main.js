@@ -279,6 +279,9 @@ const modeSelect = document.getElementById("modeSelect");
           "shieldBreakAttack",
           "executeAttack",
           "selfHarmAttack",
+          "gaugeAttack",
+          "poisonExtendAttack",
+          "guardPierceAttack",
         ].includes(skill.type);
       }
 
@@ -443,7 +446,10 @@ const modeSelect = document.getElementById("modeSelect");
         }
 
         if (defender.guardRate > 0) {
-          damage = Math.floor(damage * (1 - defender.guardRate));
+          const guardRate = extra.guardPierceRate
+            ? defender.guardRate * (1 - extra.guardPierceRate)
+            : defender.guardRate;
+          damage = Math.floor(damage * (1 - guardRate));
           defender.guardRate = 0;
           logs.push(
             `${defenderLabel} ${defender.character}이 방어로 피해를 줄였다!`,
@@ -611,7 +617,7 @@ const modeSelect = document.getElementById("modeSelect");
           [0, 1].forEach((slot) => {
             const defender = getTeam(state, enemySide)[slot];
             const result = applyDamageCore(
-              actor, defender, skill.power, { bonusIfPoison: skill.bonusIfPoison }, hitLogs, sideLabel(info.side), sideLabel(enemySide),
+              actor, defender, skill.power, { bonusIfPoison: skill.bonusIfPoison, guardPierceRate: skill.type === "guardPierceAttack" ? 0.5 : 0 }, hitLogs, sideLabel(info.side), sideLabel(enemySide),
             );
             if (result.hit) {
               log += `${sideLabel(enemySide)} 메인${slot + 1} ${defender.character}에게 ${result.damage} 데미지!\n`;
@@ -628,7 +634,7 @@ const modeSelect = document.getElementById("modeSelect");
             actor,
             defender,
             basePower,
-            { bonusIfPoison: skill.bonusIfPoison },
+            { bonusIfPoison: skill.bonusIfPoison, guardPierceRate: skill.type === "guardPierceAttack" ? 0.5 : 0 },
             logs,
             sideLabel(info.side),
             sideLabel(targetSide),
@@ -655,6 +661,15 @@ const modeSelect = document.getElementById("modeSelect");
               defender.poison = 3;
               log += `\n${sideLabel(targetSide)} ${defender.character}이 독 상태가 되었다! (${defender.poison}턴)`;
             }
+            if (skill.type === "poisonExtendAttack") {
+              if (defender.poison > 0) {
+                defender.poison += 1;
+                log += "\n독 지속 시간이 1턴 늘어났다!";
+              } else {
+                defender.poison = 2;
+                log += "\n독 상태가 되었다! (2턴)";
+              }
+            }
             if (skill.type === "poisonDebuffAttack") {
               defender.atkDebuff += skill.debuff || 0;
               defender.poison = skill.poison || 0;
@@ -673,6 +688,13 @@ const modeSelect = document.getElementById("modeSelect");
             if (skill.type === "shieldBreakAttack") {
               defender.guardRate = 0;
               log += "\n방어 태세를 무너뜨렸다!";
+            }
+            if (skill.type === "guardPierceAttack") {
+              log += "\n방어를 꿰뚫었다!";
+            }
+            if (skill.type === "gaugeAttack") {
+              increaseUltimateGauge(actor);
+              log += "\n궁극기 게이지가 추가로 증가했다!";
             }
             if (executeTriggered) {
               log += "\n약해진 대상을 처형했다!";

@@ -99,11 +99,10 @@ export const skills = {
         sword_wind: {
           id: "sword_wind",
           name: "검풍참",
-          type: "attackDebuff",
-          power: 9,
-          debuff: 6,
-          powerText: "위력 9 / 다음 공격 피해 -6",
-          desc: "검풍으로 피해를 주고 상대의 다음 공격을 약화한다.",
+          type: "guardPierceAttack",
+          power: 12,
+          powerText: "위력 12 / 방어 일부 관통",
+          desc: "검풍으로 방어를 일부 꿰뚫고 피해를 준다.",
         },
         defensive_shift: {
           id: "defensive_shift",
@@ -120,7 +119,7 @@ export const skills = {
           type: "shieldBreakAttack",
           power: 14,
           powerText: "위력 14 / 방어 해제",
-          desc: "피해를 주고 대상의 방어 효과를 제거한다. 방어 상태인 적을 상대할 때 유용하다.",
+          desc: "피해를 주고 대상의 방어 효과를 제거한다. 방어형 적을 상대할 때 유용하다.",
         },
         fireball: {
           id: "fireball",
@@ -159,10 +158,10 @@ export const skills = {
         magic_bolt: {
           id: "magic_bolt",
           name: "마력탄",
-          type: "attack",
-          power: 16,
-          powerText: "위력 16 / 적 메인 1명",
-          desc: "안정적인 마법 피해를 주는 기본 공격형 기술.",
+          type: "gaugeAttack",
+          power: 14,
+          powerText: "위력 14 / 궁극기 게이지 +1",
+          desc: "안정적인 피해를 주고 자신의 궁극기 게이지를 추가로 올린다.",
         },
         flame_burst: {
           id: "flame_burst",
@@ -191,10 +190,10 @@ export const skills = {
         poison: {
           id: "poison",
           name: "독침",
-          type: "poisonAttack",
-          power: 10,
-          powerText: "위력 10 / 독 3턴",
-          desc: "피해를 주고 상대를 독 상태로 만든다.",
+          type: "poisonExtendAttack",
+          power: 8,
+          powerText: "위력 8 / 독 부여 또는 독 연장",
+          desc: "독을 부여하고, 이미 독 상태라면 지속 시간을 늘린다.",
         },
         weak: {
           id: "weak",
@@ -320,7 +319,7 @@ export const skills = {
           type: "shieldBreakAttack",
           power: 10,
           powerText: "위력 10 / 방어 해제",
-          desc: "피해를 주고 대상의 방어 효과를 제거한다. 방어 상태인 적을 상대할 때 유용하다.",
+          desc: "피해를 주고 대상의 방어 효과를 제거한다. 방어형 적을 상대할 때 유용하다.",
         },
         berserk_axe: {
           id: "berserk_axe",
@@ -373,7 +372,7 @@ export const skills = {
           power: 30,
           selfDamage: 6,
           powerText: "위력 30 / 자신 6 피해",
-          desc: "매우 강한 공격을 가하지만 자신도 피해를 받는다.",
+          desc: "매우 강한 공격을 가하지만 자신도 피해를 받는 고위험 기술.",
         },
         rage_stack: {
           id: "rage_stack",
@@ -404,10 +403,10 @@ export const skills = {
         judgment: {
           id: "judgment",
           name: "빛의 심판",
-          type: "attack",
-          power: 18,
-          powerText: "위력 18 / 적 메인 1명",
-          desc: "성스러운 빛으로 피해를 준다.",
+          type: "gaugeAttack",
+          power: 13,
+          powerText: "위력 13 / 궁극기 게이지 +1",
+          desc: "성스러운 피해를 주고 자신의 궁극기 게이지를 추가로 올린다.",
         },
         blessing: {
           id: "blessing",
@@ -496,10 +495,10 @@ export const skills = {
         precision_shot: {
           id: "precision_shot",
           name: "정밀 사격",
-          type: "attack",
-          power: 21,
-          powerText: "위력 21 / 적 메인 1명",
-          desc: "높은 피해를 주는 정밀 공격.",
+          type: "guardPierceAttack",
+          power: 17,
+          powerText: "위력 17 / 방어 일부 관통",
+          desc: "정확한 사격으로 방어를 일부 꿰뚫는다.",
         },
         aimed_shot: {
           id: "aimed_shot",
@@ -565,10 +564,10 @@ export const skills = {
         poison_mist: {
           id: "poison_mist",
           name: "독안개",
-          type: "poisonAttack",
-          power: 7,
-          powerText: "위력 7 / 독 3턴",
-          desc: "독안개로 피해를 주고 상대를 독 상태로 만든다.",
+          type: "poisonExtendAttack",
+          power: 6,
+          powerText: "위력 6 / 독 부여 또는 독 연장",
+          desc: "약한 피해와 함께 독을 부여하거나 독 지속 시간을 늘린다.",
         },
         spirit_guard: {
           id: "spirit_guard",
