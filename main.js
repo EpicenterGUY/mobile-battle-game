@@ -272,6 +272,49 @@ const modeSelect = document.getElementById("modeSelect");
         );
       }
 
+      function applyEntryEffect(unit, team, state, side, slot, logs) {
+        if (!alive(unit)) return;
+
+        switch (unit.character) {
+          case "검사":
+            unit.atkBuff += 5;
+            logs.push("검사의 출전 효과! 다음 공격 피해 +5");
+            break;
+          case "마법사":
+            increaseUltimateGauge(unit);
+            logs.push("마법사의 출전 효과! 궁극기 게이지 +1");
+            break;
+          case "도적":
+            unit.evasion = true;
+            logs.push("도적의 출전 효과! 회피 준비");
+            break;
+          case "탱커":
+            unit.shield += 14;
+            logs.push("탱커의 출전 효과! 보호막 14");
+            break;
+          case "광전사":
+            unit.focus = true;
+            logs.push("광전사의 출전 효과! 집중");
+            break;
+          case "성직자":
+            unit.hp = Math.min(unit.maxHp, unit.hp + 12);
+            logs.push("성직자의 출전 효과! HP 12 회복");
+            break;
+          case "궁수":
+            unit.atkBuff += 3;
+            unit.focus = true;
+            logs.push("궁수의 출전 효과! 집중과 다음 공격 피해 +3");
+            break;
+          case "주술사":
+            unit.shield += 8;
+            unit.atkBuff += 4;
+            logs.push("주술사의 출전 효과! 보호막 8, 다음 공격 피해 +4");
+            break;
+          default:
+            break;
+        }
+      }
+
       function isTargetSkill(skill) {
         return [
           "attack",
@@ -807,10 +850,15 @@ const modeSelect = document.getElementById("modeSelect");
           log += `${sub?.character || "빈 자리"}은 쓰러져 로테이션할 수 없습니다.`;
         } else {
           [team[info.slot], team[subIndex]] = [team[subIndex], team[info.slot]];
-          team[info.slot].atkBuff += 3;
           increaseUltimateGauge(team[subIndex]);
           log += `로테이션! ${sideLabel(info.side)} 메인${info.slot + 1} ${actor.character} ↔ 서브${subIndex - 1} ${sub.character}`;
-          log += "\n출전 보너스! 다음 공격 피해 +3";
+          const entryLogs = [];
+          applyEntryEffect(team[info.slot], team, state, info.side, info.slot, entryLogs);
+          if (entryLogs.length > 0) {
+            log += `
+${entryLogs.join("
+")}`;
+          }
         }
 
         state.log = log;
