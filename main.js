@@ -278,6 +278,7 @@ const modeSelect = document.getElementById("modeSelect");
           "lifestealAttack",
           "shieldBreakAttack",
           "executeAttack",
+          "selfHarmAttack",
         ].includes(skill.type);
       }
 
