@@ -39,7 +39,7 @@ const recommendedParties = [
     loadouts: {
       검사: ["basic", "slash", "guard", "double_slash"],
       탱커: ["basic", "shield_bash", "fortress", "taunt"],
-      성직자: ["basic", "priest_heal", "blessing", "barrier"],
+      성직자: ["basic", "priest_heal", "barrier", "cleanse"],
       궁수: ["basic", "pierce_arrow", "focus_aim", "ankle_shot"],
     },
   },
@@ -48,10 +48,10 @@ const recommendedParties = [
     description: "높은 피해로 빠르게 승부를 보는 고위험 조합",
     members: ["광전사", "마법사", "궁수", "도적"],
     loadouts: {
-      광전사: ["basic", "berserk_axe", "blood_slash", "battle_cry"],
+      광전사: ["basic", "berserk_axe", "blood_slash", "wild_swing"],
       마법사: ["basic", "fireball", "ice", "lightning"],
       궁수: ["basic", "pierce_arrow", "rapid_shot", "focus_aim"],
-      도적: ["basic", "poison", "weak", "ambush"],
+      도적: ["basic", "poison", "weak", "execute"],
     },
   },
   {
@@ -59,10 +59,10 @@ const recommendedParties = [
     description: "독과 약점 공격, 디버프로 상대를 압박하는 조합",
     members: ["도적", "주술사", "탱커", "성직자"],
     loadouts: {
-      도적: ["basic", "poison", "weak", "ambush"],
+      도적: ["basic", "poison", "weak", "execute"],
       주술사: ["basic", "curse", "poison_mist", "dark_orb"],
       탱커: ["basic", "taunt", "fortress", "shield_bash"],
-      성직자: ["basic", "priest_heal", "blessing", "barrier"],
+      성직자: ["basic", "priest_heal", "barrier", "cleanse"],
     },
   },
   {
@@ -71,7 +71,7 @@ const recommendedParties = [
     members: ["탱커", "성직자", "검사", "궁수"],
     loadouts: {
       탱커: ["basic", "fortress", "taunt", "shield_bash"],
-      성직자: ["basic", "priest_heal", "blessing", "barrier"],
+      성직자: ["basic", "priest_heal", "barrier", "cleanse"],
       검사: ["basic", "guard", "halfmoon", "double_slash"],
       궁수: ["basic", "pierce_arrow", "ankle_shot", "focus_aim"],
     },
@@ -83,7 +83,7 @@ const recommendedParties = [
     loadouts: {
       마법사: ["basic", "fireball", "ice", "lightning"],
       검사: ["basic", "slash", "halfmoon", "double_slash"],
-      성직자: ["basic", "priest_heal", "blessing", "barrier"],
+      성직자: ["basic", "priest_heal", "barrier", "cleanse"],
       주술사: ["basic", "curse", "poison_mist", "dark_orb"],
     },
   },
@@ -103,8 +103,8 @@ const recommendedParties = [
     description: "몸은 약하지만 상태이상과 폭딜을 노리는 재미용 조합",
     members: ["광전사", "도적", "주술사", "마법사"],
     loadouts: {
-      광전사: ["basic", "berserk_axe", "rage", "battle_cry"],
-      도적: ["basic", "poison", "smoke", "ambush"],
+      광전사: ["basic", "berserk_axe", "blood_slash", "wild_swing"],
+      도적: ["basic", "poison", "weak", "execute"],
       주술사: ["basic", "curse", "poison_mist", "dark_orb"],
       마법사: ["basic", "fireball", "lightning", "heal"],
     },
