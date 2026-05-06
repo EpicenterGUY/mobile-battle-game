@@ -275,40 +275,42 @@ const modeSelect = document.getElementById("modeSelect");
       function applyEntryEffect(unit, team, state, side, slot, logs) {
         if (!alive(unit)) return;
 
+        const entryPrefix = `${sideLabel(side)} 메인${slot + 1} ${unit.character}`;
+
         switch (unit.character) {
           case "검사":
             unit.atkBuff += 5;
-            logs.push("검사의 출전 효과! 다음 공격 피해 +5");
+            logs.push(`${entryPrefix}의 출전 효과! 다음 공격 피해 +5`);
             break;
           case "마법사":
             increaseUltimateGauge(unit);
-            logs.push("마법사의 출전 효과! 궁극기 게이지 +1");
+            logs.push(`${entryPrefix}의 출전 효과! 궁극기 게이지 +1`);
             break;
           case "도적":
             unit.evasion = true;
-            logs.push("도적의 출전 효과! 회피 준비");
+            logs.push(`${entryPrefix}의 출전 효과! 회피 준비`);
             break;
           case "탱커":
             unit.shield += 14;
-            logs.push("탱커의 출전 효과! 보호막 14");
+            logs.push(`${entryPrefix}의 출전 효과! 보호막 14`);
             break;
           case "광전사":
             unit.focus = true;
-            logs.push("광전사의 출전 효과! 집중");
+            logs.push(`${entryPrefix}의 출전 효과! 집중`);
             break;
           case "성직자":
             unit.hp = Math.min(unit.maxHp, unit.hp + 12);
-            logs.push("성직자의 출전 효과! HP 12 회복");
+            logs.push(`${entryPrefix}의 출전 효과! HP 12 회복`);
             break;
           case "궁수":
             unit.atkBuff += 3;
             unit.focus = true;
-            logs.push("궁수의 출전 효과! 집중과 다음 공격 피해 +3");
+            logs.push(`${entryPrefix}의 출전 효과! 집중과 다음 공격 피해 +3`);
             break;
           case "주술사":
             unit.shield += 8;
             unit.atkBuff += 4;
-            logs.push("주술사의 출전 효과! 보호막 8, 다음 공격 피해 +4");
+            logs.push(`${entryPrefix}의 출전 효과! 보호막 8, 다음 공격 피해 +4`);
             break;
           default:
             break;
@@ -354,7 +356,7 @@ const modeSelect = document.getElementById("modeSelect");
         const list = [];
 
         if (player.guardRate > 0) list.push("방어");
-        if (player.evasion) list.push("연막");
+        if (player.evasion) list.push("회피");
         if (player.atkBuff > 0) list.push(`공격강화 +${player.atkBuff}`);
         if (player.atkDebuff > 0) list.push(`공격감소 -${player.atkDebuff}`);
         if (player.poison > 0) list.push(`독 ${player.poison}`);
