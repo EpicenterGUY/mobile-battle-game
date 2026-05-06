@@ -402,9 +402,19 @@ const modeSelect = document.getElementById("modeSelect");
           logs.push("독 상태의 약점을 찔렀다!");
         }
 
+        if (extra.bonusIfShield && attacker.shield > 0) {
+          damage += extra.bonusIfShield;
+          logs.push("보호막을 앞세워 추가 피해!");
+        }
+
         if (attacker.focus) {
-          damage += 6;
-          logs.push("집중 효과로 피해가 증가했다!");
+          if (extra.bonusIfFocus) {
+            damage += extra.bonusIfFocus;
+            logs.push("집중 타격이 강화되었다!");
+          } else {
+            damage += 6;
+            logs.push("집중 효과로 피해가 증가했다!");
+          }
           attacker.focus = false;
         }
 
@@ -685,7 +695,12 @@ const modeSelect = document.getElementById("modeSelect");
             actor,
             defender,
             basePower,
-            { bonusIfPoison: skill.bonusIfPoison, guardPierceRate: skill.type === "guardPierceAttack" ? 0.5 : 0 },
+            {
+              bonusIfPoison: skill.bonusIfPoison,
+              bonusIfShield: skill.bonusIfShield,
+              bonusIfFocus: skill.bonusIfFocus,
+              guardPierceRate: skill.type === "guardPierceAttack" ? 0.5 : 0,
+            },
             logs,
             sideLabel(info.side),
             sideLabel(targetSide),
