@@ -855,9 +855,7 @@ const modeSelect = document.getElementById("modeSelect");
           const entryLogs = [];
           applyEntryEffect(team[info.slot], team, state, info.side, info.slot, entryLogs);
           if (entryLogs.length > 0) {
-            log += `
-${entryLogs.join("
-")}`;
+            log += "\n" + entryLogs.join("\n");
           }
         }
 
