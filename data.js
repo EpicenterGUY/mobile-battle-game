@@ -633,7 +633,7 @@ export const skills = {
           type: "shieldSelf",
           shield: 12,
           powerText: "보호막 12 / 자신",
-          desc: "혼령의 힘으로 다음 피해를 흡수하는 보호막을 얻는다.",
+          desc: "혼령의 힘으로 다음 피해를 흡수하는 안정적인 보호막을 얻는다.",
           tags: ["방어", "생존"],
         },
         dark_mark: {
@@ -649,10 +649,11 @@ export const skills = {
           id: "spirit_shield",
           name: "혼령 방패",
           type: "shieldSelf",
-          shield: 16,
-          powerText: "보호막 16 / 자신",
-          desc: "강한 보호막을 얻어 피해를 흡수한다.",
-          tags: ["방어", "생존"],
+          shield: 24,
+          selfMark: true,
+          powerText: "보호막 24 / 자신에게 표식",
+          desc: "큰 보호막을 얻지만 자신에게 표식이 남아 다음에 받는 피해가 증가할 수 있다.",
+          tags: ["방어", "생존", "리스크"],
         },
       };
 
