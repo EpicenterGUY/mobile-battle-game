@@ -650,6 +650,10 @@ const modeSelect = document.getElementById("modeSelect");
         } else if (skill.type === "shieldSelf") {
           actor.shield += skill.shield || 0;
           log += "보호막을 얻었다!";
+          if (skill.selfMark) {
+            actor.marked = true;
+            log += "\n큰 보호막을 얻었지만 자신에게 표식이 남았다!";
+          }
         } else if (skill.type === "focusSelf") {
           actor.focus = true;
           log += "집중 상태가 되었다!";
