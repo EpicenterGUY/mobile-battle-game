@@ -222,6 +222,10 @@ const modeSelect = document.getElementById("modeSelect");
           atkBuff: 0,
           atkDebuff: 0,
           poison: 0,
+          marked: false,
+          bleed: 0,
+          shield: 0,
+          focus: false,
           ultimateGauge: 0,
         };
       }
@@ -282,6 +286,8 @@ const modeSelect = document.getElementById("modeSelect");
           "gaugeAttack",
           "poisonExtendAttack",
           "guardPierceAttack",
+          "markAttack",
+          "bleedAttack",
         ].includes(skill.type);
       }
 
@@ -309,6 +315,10 @@ const modeSelect = document.getElementById("modeSelect");
         if (player.atkBuff > 0) list.push(`공격강화 +${player.atkBuff}`);
         if (player.atkDebuff > 0) list.push(`공격감소 -${player.atkDebuff}`);
         if (player.poison > 0) list.push(`독 ${player.poison}`);
+        if (player.marked) list.push("표식");
+        if (player.bleed > 0) list.push(`출혈 ${player.bleed}`);
+        if (player.shield > 0) list.push(`보호막 ${player.shield}`);
+        if (player.focus) list.push("집중");
         list.push(
           `궁극기 게이지 ${clampUltimateGauge(player.ultimateGauge)}/${ULTIMATE_READY_GAUGE}`,
         );
@@ -392,6 +402,18 @@ const modeSelect = document.getElementById("modeSelect");
           logs.push("독 상태의 약점을 찔렀다!");
         }
 
+        if (attacker.focus) {
+          damage += 6;
+          logs.push("집중 효과로 피해가 증가했다!");
+          attacker.focus = false;
+        }
+
+        if (defender.marked) {
+          damage += 5;
+          logs.push("표식이 폭발해 추가 피해!");
+          defender.marked = false;
+        }
+
         if (attacker.atkBuff > 0) {
           damage += attacker.atkBuff;
           logs.push(`${attackerLabel} ${attacker.character}의 공격 강화 효과!`);
@@ -457,6 +479,14 @@ const modeSelect = document.getElementById("modeSelect");
         }
 
         damage = Math.max(1, damage);
+
+        if ((defender.shield || 0) > 0) {
+          const absorbed = Math.min(defender.shield, damage);
+          defender.shield -= absorbed;
+          damage -= absorbed;
+          logs.push(`보호막이 ${absorbed} 피해를 흡수했다!`);
+        }
+
         defender.hp = Math.max(0, defender.hp - damage);
         increaseUltimateGauge(defender);
 
@@ -471,6 +501,12 @@ const modeSelect = document.getElementById("modeSelect");
           actor.poison -= 1;
           actor.hp = Math.max(0, actor.hp - 5);
           log += `${sideLabel(side)} ${actor.character}은 독으로 5 피해를 받았다!\n`;
+        }
+
+        if (actor && actor.bleed > 0) {
+          actor.hp = Math.max(0, actor.hp - 4);
+          actor.bleed -= 1;
+          log += `${sideLabel(side)} ${actor.character}은 출혈로 4 피해를 받았다!\n`;
         }
 
         return log;
@@ -611,6 +647,12 @@ const modeSelect = document.getElementById("modeSelect");
           actor.poison = 0;
           actor.atkDebuff = 0;
           log += "나쁜 상태를 정화했다!";
+        } else if (skill.type === "shieldSelf") {
+          actor.shield += skill.shield || 0;
+          log += "보호막을 얻었다!";
+        } else if (skill.type === "focusSelf") {
+          actor.focus = true;
+          log += "집중 상태가 되었다!";
         } else if (skill.target === "enemyAllMain") {
           const enemySide = getEnemySide(state, info.side);
           const hitLogs = [];
@@ -657,6 +699,14 @@ const modeSelect = document.getElementById("modeSelect");
               log += `\n${sideLabel(targetSide)} ${defender.character}의 다음 공격 피해 -${skill.debuff || 0}`;
             }
 
+            if (skill.type === "markAttack") {
+              defender.marked = true;
+              log += "\n대상에게 표식을 남겼다!";
+            }
+            if (skill.type === "bleedAttack") {
+              defender.bleed = Math.max(defender.bleed || 0, skill.bleed || 2);
+              log += "\n대상이 출혈 상태가 되었다!";
+            }
             if (skill.type === "poisonAttack") {
               defender.poison = 3;
               log += `\n${sideLabel(targetSide)} ${defender.character}이 독 상태가 되었다! (${defender.poison}턴)`;
