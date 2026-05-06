@@ -934,9 +934,6 @@ ${entryLogs.join("
           const div = document.createElement("div");
           div.className = "character-card";
 
-          const skillNames = c.skillIds
-            .map((id) => `${tx(skills[id].name)} - ${tx(skills[id].powerText)}`)
-            .join("<br>");
           const recommendedSkillText = (c.recommendedSkillIds || [])
             .map((id) => tx(skills[id]?.name || id))
             .join(" / ");
@@ -953,12 +950,11 @@ ${entryLogs.join("
           <div class="character-name">${tx(c.name)}</div>
           <div class="character-info">
             HP ${c.hp} / 공격 ${c.atk} / 방어 ${c.def}<br>
+            역할: ${tx(c.roleText || "역할 미정")}<br>
             <span class="passive">${t("ui.passive")}: ${tx(c.passiveName)}</span><br>
             ${tx(c.passiveDesc)}<br>
-            역할: ${tx(c.roleText || "역할 미정")}<br>
             추천 세팅:<br>${recommendedSkillText || "추천 세팅 없음"}<br>
-            ${t("ui.skill")}:<br>${skillNames}
-            <br>${t("ui.ultimate")}:<br>${ultimateText}
+            ${t("ui.ultimate")}:<br>${ultimateText}
           </div>
           <button class="green" ${selected ? "disabled" : ""}>${buttonText}</button>
         `;
