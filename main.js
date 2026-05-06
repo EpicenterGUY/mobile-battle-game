@@ -710,8 +710,10 @@ const modeSelect = document.getElementById("modeSelect");
           log += `${sub?.character || "빈 자리"}은 쓰러져 로테이션할 수 없습니다.`;
         } else {
           [team[info.slot], team[subIndex]] = [team[subIndex], team[info.slot]];
+          team[info.slot].atkBuff += 3;
           increaseUltimateGauge(team[subIndex]);
           log += `로테이션! ${sideLabel(info.side)} 메인${info.slot + 1} ${actor.character} ↔ 서브${subIndex - 1} ${sub.character}`;
+          log += "\n출전 보너스! 다음 공격 피해 +3";
         }
 
         state.log = log;
