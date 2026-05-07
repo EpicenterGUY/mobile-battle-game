@@ -28,6 +28,7 @@ let singlePartyState = null;
 let latestOnlineBattle = null;
 let pendingPartyAction = null;
 let partyBusy = false;
+let selectedRecommendedParty = null;
 const ULTIMATE_READY_GAUGE = 4;
 const ULTIMATE_SKILL_ID = "__ultimate__";
 
@@ -35,6 +36,7 @@ const recommendedParties = [
   {
     label: "초보 추천 조합",
     description: "공격/방어/회복/원거리 딜이 모두 있는 안정 조합",
+    strategy: "검사와 궁수가 안정적으로 피해를 넣고, 탱커와 성직자가 버티는 기본 조합입니다.",
     members: ["검사", "탱커", "성직자", "궁수"],
     loadouts: {
       검사: ["basic", "slash", "guard", "double_slash"],
@@ -46,6 +48,7 @@ const recommendedParties = [
   {
     label: "극딜 조합",
     description: "높은 피해로 빠르게 승부를 보는 고위험 조합",
+    strategy: "광전사와 마법사의 높은 피해로 빠르게 승부를 봅니다. 방어가 약하므로 빠른 마무리가 중요합니다.",
     members: ["광전사", "마법사", "궁수", "도적"],
     loadouts: {
       광전사: ["basic", "berserk_axe", "blood_slash", "wild_swing"],
@@ -57,6 +60,7 @@ const recommendedParties = [
   {
     label: "독살 조합",
     description: "독과 약점 공격, 디버프로 상대를 압박하는 조합",
+    strategy: "도적과 주술사로 독을 부여하고, 독 연계 공격으로 큰 피해를 노립니다.",
     members: ["도적", "주술사", "탱커", "성직자"],
     loadouts: {
       도적: ["basic", "poison", "weak", "execute"],
@@ -68,6 +72,7 @@ const recommendedParties = [
   {
     label: "철벽 버티기 조합",
     description: "방어와 회복으로 버티면서 안정적으로 싸우는 조합",
+    strategy: "탱커와 성직자로 버티면서 보호막, 회복, 방어를 활용해 장기전을 노립니다.",
     members: ["탱커", "성직자", "검사", "궁수"],
     loadouts: {
       탱커: ["basic", "fortress", "taunt", "shield_bash"],
@@ -79,6 +84,7 @@ const recommendedParties = [
   {
     label: "궁극기 러시 조합",
     description: "마력 보조와 안정적인 전열로 궁극기 회전을 노리는 조합",
+    strategy: "마법사와 보조 효과로 궁극기 게이지를 빠르게 모아 강한 궁극기를 노립니다.",
     members: ["마법사", "검사", "성직자", "주술사"],
     loadouts: {
       마법사: ["basic", "fireball", "ice", "lightning"],
@@ -90,6 +96,7 @@ const recommendedParties = [
   {
     label: "견제 조합",
     description: "공격 감소와 독, 견제 기술로 상대 화력을 낮추는 조합",
+    strategy: "공격 감소와 독, 방어 관통으로 상대의 화력을 낮추며 천천히 유리해지는 조합입니다.",
     members: ["궁수", "주술사", "탱커", "마법사"],
     loadouts: {
       궁수: ["basic", "ankle_shot", "pierce_arrow", "focus_aim"],
@@ -101,6 +108,7 @@ const recommendedParties = [
   {
     label: "예능 조합",
     description: "몸은 약하지만 상태이상과 폭딜을 노리는 재미용 조합",
+    strategy: "상태이상과 고위험 스킬을 섞어 폭발력을 노리는 재미용 조합입니다.",
     members: ["광전사", "도적", "주술사", "마법사"],
     loadouts: {
       광전사: ["basic", "berserk_axe", "blood_slash", "wild_swing"],
@@ -1010,6 +1018,7 @@ const modeSelect = document.getElementById("modeSelect");
 
         partySelection = partySelection.filter((name) => name !== charName);
         delete selectedSkillLoadouts[charName];
+        selectedRecommendedParty = null;
 
         updatePartySelectionStatus();
         renderCharacterList();
@@ -1020,6 +1029,7 @@ const modeSelect = document.getElementById("modeSelect");
       function resetPartySelection() {
         partySelection = [];
         selectedSkillLoadouts = {};
+        selectedRecommendedParty = null;
 
         updatePartySelectionStatus();
 
@@ -1083,8 +1093,14 @@ const modeSelect = document.getElementById("modeSelect");
             ? `<button type="button" class="secondary" id="partySelectionResetBtn">파티 초기화</button>`
             : "";
 
+        const selectedStrategy = tx(selectedRecommendedParty?.strategy || selectedRecommendedParty?.comboText || "");
+        const selectedPresetInfo = selectedRecommendedParty
+          ? `<div class="selected-party-strategy"><div><strong>선택한 조합: ${tx(selectedRecommendedParty.label)}</strong></div><div>운영법: ${selectedStrategy}</div></div>`
+          : "";
+
         preview.innerHTML = `
           <div><strong>선택 파티</strong></div>
+          ${selectedPresetInfo}
           ${resetButtonHtml}
           ${lines.join("")}
         `;
@@ -1289,7 +1305,16 @@ const modeSelect = document.getElementById("modeSelect");
           button.className = "recommend-btn";
           button.type = "button";
           const membersText = preset.members.map(tx).join(" / ");
-          button.innerHTML = `<strong>${tx(preset.label)}</strong><br>${tx(preset.description)}<br>${membersText}`;
+          const strategyText = tx(preset.strategy || preset.comboText || "");
+          const shortStrategy = strategyText
+            ? strategyText.length > 54
+              ? `${strategyText.slice(0, 54)}...`
+              : strategyText
+            : "";
+          const strategyHtml = shortStrategy
+            ? `<div class="recommended-strategy">운영: ${shortStrategy}</div>`
+            : "";
+          button.innerHTML = `<strong>${tx(preset.label)}</strong><br>${tx(preset.description)}<br>${strategyHtml}<div>${membersText}</div>`;
           button.addEventListener("click", () => {
             applyRecommendedParty(preset);
           });
@@ -1300,6 +1325,7 @@ const modeSelect = document.getElementById("modeSelect");
       async function applyRecommendedParty(preset) {
         if (!preset || !Array.isArray(preset.members)) return;
         const members = preset.members;
+        selectedRecommendedParty = preset;
         partySelection = [...members];
         selectedSkillLoadouts = {};
         members.forEach((charName) => {
@@ -1332,6 +1358,7 @@ const modeSelect = document.getElementById("modeSelect");
         partySelection = [];
         selectedSkillLoadouts = {};
         latestOnlineBattle = null;
+        selectedRecommendedParty = null;
         roomInput.value = "";
         showScreen("lobby");
       }
@@ -1345,6 +1372,7 @@ const modeSelect = document.getElementById("modeSelect");
         singlePartyState = null;
         pendingPartyAction = null;
         partyBusy = false;
+        selectedRecommendedParty = null;
 
         selectTopLabel.textContent = "싱글 파티";
         selectRoomCodeView.textContent = "0/4";
@@ -1465,6 +1493,7 @@ const modeSelect = document.getElementById("modeSelect");
         mySide = "p2";
         partySelection = [];
         selectedSkillLoadouts = {};
+        selectedRecommendedParty = null;
 
         selectTopLabel.textContent = "방 코드";
         selectRoomCodeView.textContent = code;
@@ -1483,6 +1512,7 @@ const modeSelect = document.getElementById("modeSelect");
         if (partySelection.length >= 4) return;
 
         partySelection.push(charName);
+        selectedRecommendedParty = null;
         selectedSkillLoadouts[charName] =
           selectedSkillLoadouts[charName] || getDefaultLoadout(charName);
 
