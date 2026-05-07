@@ -280,37 +280,37 @@ const modeSelect = document.getElementById("modeSelect");
         switch (unit.character) {
           case "검사":
             unit.atkBuff += 5;
-            logs.push(`${entryPrefix}의 출전 효과! 다음 공격 피해 +5`);
+            logs.push(tagged("출전 효과", `${entryPrefix} - 다음 공격 피해 +5`));
             break;
           case "마법사":
             increaseUltimateGauge(unit);
-            logs.push(`${entryPrefix}의 출전 효과! 궁극기 게이지 +1`);
+            logs.push(tagged("출전 효과", `${entryPrefix} - 궁극기 게이지 +1`));
             break;
           case "도적":
             unit.evasion = true;
-            logs.push(`${entryPrefix}의 출전 효과! 회피 준비`);
+            logs.push(tagged("출전 효과", `${entryPrefix} - 회피 준비`));
             break;
           case "탱커":
             unit.shield += 14;
-            logs.push(`${entryPrefix}의 출전 효과! 보호막 14`);
+            logs.push(tagged("출전 효과", `${entryPrefix} - 보호막 14`));
             break;
           case "광전사":
             unit.focus = true;
-            logs.push(`${entryPrefix}의 출전 효과! 집중`);
+            logs.push(tagged("출전 효과", `${entryPrefix} - 집중`));
             break;
           case "성직자":
             unit.hp = Math.min(unit.maxHp, unit.hp + 12);
-            logs.push(`${entryPrefix}의 출전 효과! HP 12 회복`);
+            logs.push(tagged("출전 효과", `${entryPrefix} - HP 12 회복`));
             break;
           case "궁수":
             unit.atkBuff += 3;
             unit.focus = true;
-            logs.push(`${entryPrefix}의 출전 효과! 집중과 다음 공격 피해 +3`);
+            logs.push(tagged("출전 효과", `${entryPrefix} - 집중, 다음 공격 피해 +3`));
             break;
           case "주술사":
             unit.shield += 8;
             unit.atkBuff += 4;
-            logs.push(`${entryPrefix}의 출전 효과! 보호막 8, 다음 공격 피해 +4`);
+            logs.push(tagged("출전 효과", `${entryPrefix} - 보호막 8, 다음 공격 피해 +4`));
             break;
           default:
             break;
@@ -350,6 +350,10 @@ const modeSelect = document.getElementById("modeSelect");
         if (side === "p1") return t("party.p1");
         if (side === "p2") return t("party.p2");
         return side;
+      }
+
+      function tagged(tag, message) {
+        return `[${tag}] ${message}`;
       }
 
       function getStateText(player) {
@@ -465,7 +469,7 @@ const modeSelect = document.getElementById("modeSelect");
 
         if (defender.marked) {
           damage += 5;
-          logs.push("표식이 폭발해 추가 피해!");
+          logs.push(tagged("표식", "표식이 폭발해 추가 피해"));
           defender.marked = false;
         }
 
@@ -539,7 +543,7 @@ const modeSelect = document.getElementById("modeSelect");
           const absorbed = Math.min(defender.shield, damage);
           defender.shield -= absorbed;
           damage -= absorbed;
-          logs.push(`보호막이 ${absorbed} 피해를 흡수했다!`);
+          logs.push(tagged("보호막", `보호막이 ${absorbed} 피해를 흡수했다`));
         }
 
         defender.hp = Math.max(0, defender.hp - damage);
@@ -555,13 +559,13 @@ const modeSelect = document.getElementById("modeSelect");
         if (actor && actor.poison > 0) {
           actor.poison -= 1;
           actor.hp = Math.max(0, actor.hp - 5);
-          log += `${sideLabel(side)} ${actor.character}은 독으로 5 피해를 받았다!\n`;
+          log += tagged("독", `${sideLabel(side)} ${actor.character}은 독으로 5 피해를 받았다`) + "\n";
         }
 
         if (actor && actor.bleed > 0) {
           actor.hp = Math.max(0, actor.hp - 4);
           actor.bleed -= 1;
-          log += `${sideLabel(side)} ${actor.character}은 출혈로 4 피해를 받았다!\n`;
+          log += tagged("출혈", `${sideLabel(side)} ${actor.character}은 출혈로 4 피해를 받았다`) + "\n";
         }
 
         return log;
@@ -577,7 +581,7 @@ const modeSelect = document.getElementById("modeSelect");
               const incoming = team[subIndex].character;
 
               [team[slot], team[subIndex]] = [team[subIndex], team[slot]];
-              logs.push(`${fallen} 대신 ${incoming}이 메인으로 출전!`);
+              logs.push(tagged("출전", `${fallen} 대신 ${incoming}가 메인으로 출전`));
             }
           }
         }
@@ -663,11 +667,11 @@ const modeSelect = document.getElementById("modeSelect");
 
         actor.turnCount = (actor.turnCount || 0) + 1;
         increaseUltimateGauge(actor);
-        log += `${sideLabel(info.side)} 메인${info.slot + 1} ${actor.character}의 [${tx(skill.name)}]!\n`;
+        log += tagged(usingUltimate ? "궁극기" : "공격", `${sideLabel(info.side)} 메인${info.slot + 1} ${actor.character} - ${tx(skill.name)}`) + "\n";
 
         if (skill.type === "guard") {
           actor.guardRate = skill.guardRate;
-          log += `다음 피해 ${Math.round((skill.guardRate || 0) * 100)}% 감소`;
+          log += tagged("방어", `다음 피해 ${Math.round((skill.guardRate || 0) * 100)}% 감소`);
         } else if (skill.type === "heal") {
           let healAmount = skill.heal;
 
@@ -678,7 +682,7 @@ const modeSelect = document.getElementById("modeSelect");
 
           const before = actor.hp;
           actor.hp = Math.min(actor.maxHp, actor.hp + healAmount);
-          log += `${actor.character} HP ${actor.hp - before} 회복`;
+          log += tagged("회복", `${actor.character} HP ${actor.hp - before} 회복`);
         } else if (skill.type === "evasion") {
           actor.evasion = true;
           log += "다음 공격을 회피할 준비를 했다!";
@@ -687,7 +691,7 @@ const modeSelect = document.getElementById("modeSelect");
             const ally = getTeam(state, info.side)[slot];
             if (alive(ally)) ally.guardRate = Math.max(ally.guardRate || 0, skill.guardRate || 0);
           });
-          log += "아군 메인 전원이 피해 감소 효과를 얻었다!";
+          log += tagged("방어", "아군 메인 전원이 피해 감소 효과를 얻었다");
         } else if (skill.type === "teamHeal") {
           let totalHeal = 0;
           [0, 1].forEach((slot) => {
@@ -697,17 +701,17 @@ const modeSelect = document.getElementById("modeSelect");
             ally.hp = Math.min(ally.maxHp, ally.hp + (skill.heal || 0));
             totalHeal += ally.hp - before;
           });
-          log += `아군 메인 전원의 HP를 총 ${totalHeal} 회복했다!`;
+          log += tagged("회복", `아군 메인 전원의 HP를 총 ${totalHeal} 회복했다`);
         } else if (skill.type === "cleanse") {
           actor.poison = 0;
           actor.atkDebuff = 0;
           log += "나쁜 상태를 정화했다!";
         } else if (skill.type === "shieldSelf") {
           actor.shield += skill.shield || 0;
-          log += "보호막을 얻었다!";
+          log += tagged("보호막", "보호막을 얻었다");
           if (skill.selfMark) {
             actor.marked = true;
-            log += "\n큰 보호막을 얻었지만 자신에게 표식이 남았다!";
+            log += "\n" + tagged("표식", "큰 보호막을 얻었지만 자신에게 표식이 남았다");
           }
         } else if (skill.type === "focusSelf") {
           actor.focus = true;
@@ -726,7 +730,7 @@ const modeSelect = document.getElementById("modeSelect");
               actor, defender, skill.power, { bonusIfPoison: skill.bonusIfPoison, guardPierceRate: skill.type === "guardPierceAttack" ? 0.5 : 0 }, hitLogs, sideLabel(info.side), sideLabel(enemySide),
             );
             if (result.hit) {
-              log += `${sideLabel(enemySide)} 메인${slot + 1} ${defender.character}에게 ${result.damage} 데미지!\n`;
+              log += tagged("피해", `${sideLabel(enemySide)} 메인${slot + 1} ${defender.character}에게 ${result.damage} 피해`) + "\n";
             }
           });
           if (hitLogs.length) log += hitLogs.join("\n");
@@ -756,7 +760,7 @@ const modeSelect = document.getElementById("modeSelect");
           }
 
           if (result.hit) {
-            log += `${sideLabel(targetSide)} 메인${targetSlot + 1} ${defender.character}에게 ${result.damage} 데미지!`;
+            log += tagged("피해", `${sideLabel(targetSide)} 메인${targetSlot + 1} ${defender.character}에게 ${result.damage} 피해`);
 
             if (skill.type === "attackBuff") {
               actor.atkBuff += skill.buff;
@@ -765,35 +769,35 @@ const modeSelect = document.getElementById("modeSelect");
 
             if (skill.type === "attackDebuff") {
               defender.atkDebuff += skill.debuff;
-              log += `\n${sideLabel(targetSide)} ${defender.character}의 다음 공격 피해 -${skill.debuff || 0}`;
+              log += "\n" + tagged("상태", `${sideLabel(targetSide)} ${defender.character}의 다음 공격 피해 -${skill.debuff || 0}`);
             }
 
             if (skill.type === "markAttack") {
               defender.marked = true;
-              log += "\n대상에게 표식을 남겼다!";
+              log += "\n" + tagged("표식", "대상에게 표식을 남겼다");
             }
             if (skill.type === "bleedAttack") {
               defender.bleed = Math.max(defender.bleed || 0, skill.bleed || 2);
-              log += "\n대상이 출혈 상태가 되었다!";
+              log += "\n" + tagged("출혈", "대상이 출혈 상태가 되었다");
             }
             if (skill.type === "poisonAttack") {
               defender.poison = 3;
-              log += `\n${sideLabel(targetSide)} ${defender.character}이 독 상태가 되었다! (${defender.poison}턴)`;
+              log += "\n" + tagged("독", `${sideLabel(targetSide)} ${defender.character}이 독 상태가 되었다 (${defender.poison}턴)`);
             }
             if (skill.type === "poisonExtendAttack") {
               if (defender.poison > 0) {
                 defender.poison += 1;
-                log += "\n독 지속 시간이 1턴 늘어났다!";
+                log += "\n" + tagged("독", "독 지속 시간이 1턴 늘어났다");
               } else {
                 defender.poison = 2;
-                log += "\n독 상태가 되었다! (2턴)";
+                log += "\n" + tagged("독", "독 상태가 되었다 (2턴)");
               }
             }
             if (skill.type === "poisonDebuffAttack") {
               defender.atkDebuff += skill.debuff || 0;
               defender.poison = skill.poison || 0;
-              log += `\n${sideLabel(targetSide)} ${defender.character}의 다음 공격 피해 -${skill.debuff || 0}`;
-              log += `\n${sideLabel(targetSide)} ${defender.character}이 독 상태가 되었다! (${defender.poison}턴)`;
+              log += "\n" + tagged("상태", `${sideLabel(targetSide)} ${defender.character}의 다음 공격 피해 -${skill.debuff || 0}`);
+              log += "\n" + tagged("독", `${sideLabel(targetSide)} ${defender.character}이 독 상태가 되었다 (${defender.poison}턴)`);
             }
             if (skill.type === "selfHarmAttack") {
               actor.hp = Math.max(0, actor.hp - (skill.selfDamage || 0));
@@ -802,7 +806,7 @@ const modeSelect = document.getElementById("modeSelect");
             if (skill.type === "lifestealAttack") {
               const beforeHp = actor.hp;
               actor.hp = Math.min(actor.maxHp, actor.hp + (skill.heal || 0));
-              log += `\nHP를 ${actor.hp - beforeHp} 회복했다!`;
+              log += "\n" + tagged("회복", `HP를 ${actor.hp - beforeHp} 회복했다`);
             }
             if (skill.type === "shieldBreakAttack") {
               defender.guardRate = 0;
@@ -830,7 +834,7 @@ const modeSelect = document.getElementById("modeSelect");
         autoPromoteAll(state);
 
         if (checkWinner(state)) {
-          state.log += `\n${sideLabel(state.winner)} 승리!`;
+          state.log += "\n" + tagged("승리", `${sideLabel(state.winner)} 승리!`);
         } else {
           advanceTurn(state);
         }
@@ -853,7 +857,7 @@ const modeSelect = document.getElementById("modeSelect");
         } else {
           [team[info.slot], team[subIndex]] = [team[subIndex], team[info.slot]];
           increaseUltimateGauge(team[subIndex]);
-          log += `로테이션! ${sideLabel(info.side)} 메인${info.slot + 1} ${actor.character} ↔ 서브${subIndex - 1} ${sub.character}`;
+          log += tagged("로테이션", `${sideLabel(info.side)} 메인${info.slot + 1} ${actor.character} ↔ 서브${subIndex - 1} ${sub.character}`);
           const entryLogs = [];
           applyEntryEffect(team[info.slot], team, state, info.side, info.slot, entryLogs);
           if (entryLogs.length > 0) {
@@ -920,7 +924,7 @@ const modeSelect = document.getElementById("modeSelect");
         state.log = log;
         autoPromoteAll(state);
         if (checkWinner(state)) {
-          state.log += `\n${sideLabel(state.winner)} 승리!`;
+          state.log += "\n" + tagged("승리", `${sideLabel(state.winner)} 승리!`);
         } else {
           advanceTurn(state);
         }
