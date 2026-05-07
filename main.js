@@ -29,6 +29,7 @@ let latestOnlineBattle = null;
 let pendingPartyAction = null;
 let partyBusy = false;
 let selectedRecommendedParty = null;
+let singleAiDifficulty = "normal";
 const ULTIMATE_READY_GAUGE = 4;
 const ULTIMATE_SKILL_ID = "__ultimate__";
 
@@ -1252,6 +1253,31 @@ const modeSelect = document.getElementById("modeSelect");
         characterList.insertAdjacentElement("beforebegin", btn);
       }
 
+      function renderSingleDifficultySelector() {
+        const existing = document.getElementById("singleDifficultySelector");
+        if (existing) existing.remove();
+        if (currentMode !== "single") return;
+
+        const wrap = document.createElement("div");
+        wrap.id = "singleDifficultySelector";
+        wrap.className = "single-difficulty-wrap";
+        wrap.innerHTML = `
+          <div class="single-difficulty-title">AI 난이도</div>
+          <div class="single-difficulty-buttons">
+            <button type="button" class="single-difficulty-btn ${singleAiDifficulty === "easy" ? "selected-difficulty" : ""}" data-difficulty="easy">쉬움</button>
+            <button type="button" class="single-difficulty-btn ${singleAiDifficulty === "normal" ? "selected-difficulty" : ""}" data-difficulty="normal">보통</button>
+            <button type="button" class="single-difficulty-btn ${singleAiDifficulty === "hard" ? "selected-difficulty" : ""}" data-difficulty="hard">어려움</button>
+          </div>
+        `;
+        wrap.querySelectorAll(".single-difficulty-btn").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            singleAiDifficulty = btn.dataset.difficulty || "normal";
+            renderSingleDifficultySelector();
+          });
+        });
+        characterList.insertAdjacentElement("beforebegin", wrap);
+      }
+
       function renderOnlineSubmitButton() {
         const existing = document.getElementById("onlineSubmitPartyBtn");
         if (existing) existing.remove();
@@ -1381,6 +1407,7 @@ const modeSelect = document.getElementById("modeSelect");
           "선택 순서대로 1,2번은 메인 / 3,4번은 서브가 됩니다.";
 
         renderCharacterList();
+        renderSingleDifficultySelector();
         renderSingleStartButton();
         showScreen("select");
       }
@@ -1432,6 +1459,7 @@ const modeSelect = document.getElementById("modeSelect");
           "선택 순서대로 1,2번은 메인 / 3,4번은 서브입니다.";
 
         renderCharacterList();
+        renderSingleDifficultySelector();
         renderSingleStartButton();
         showScreen("select");
         listenRoom(code);
@@ -1502,6 +1530,7 @@ const modeSelect = document.getElementById("modeSelect");
           "선택 순서대로 1,2번은 메인 / 3,4번은 서브입니다.";
 
         renderCharacterList();
+        renderSingleDifficultySelector();
         renderSingleStartButton();
         showScreen("select");
         listenRoom(code);
@@ -2005,7 +2034,7 @@ const modeSelect = document.getElementById("modeSelect");
         }
       }
 
-      function chooseAiSkill(actor) {
+      function chooseAiSkillNormal(actor) {
         if (canUseUltimate(actor)) {
           return ULTIMATE_SKILL_ID;
         }
@@ -2024,6 +2053,66 @@ const modeSelect = document.getElementById("modeSelect");
         }
 
         return list[Math.floor(Math.random() * list.length)];
+      }
+
+      function chooseAiSkillEasy(actor) {
+        const list = getSkillListForPlayer(actor);
+        const canUltimate = canUseUltimate(actor);
+        const hasHeal = list.find((id) => skills[id].type === "heal");
+
+        if (canUltimate && Math.random() < 0.3) return ULTIMATE_SKILL_ID;
+        if (hasHeal && actor.hp <= actor.maxHp * 0.2 && Math.random() < 0.25) return hasHeal;
+        return list[Math.floor(Math.random() * list.length)];
+      }
+
+      function chooseAiSkillHard(actor, state, aiSide, enemySide) {
+        const list = getSkillListForPlayer(actor);
+        const aiMain = [0, 1].map((i) => state.teams[aiSide][i]).filter(alive);
+        const enemyMain = [0, 1].map((i) => state.teams[enemySide][i]).filter(alive);
+        const actorHpRate = actor.maxHp > 0 ? actor.hp / actor.maxHp : 1;
+
+        if (canUseUltimate(actor)) return ULTIMATE_SKILL_ID;
+
+        const heal = list.find((id) => skills[id].type === "heal");
+        if (heal && actorHpRate <= 0.4) return heal;
+
+        const enemyLowHp = enemyMain.find((u) => u.hp / u.maxHp <= 0.35);
+        if (enemyLowHp) {
+          const execute = list.find((id) => skills[id].type === "executeAttack");
+          if (execute) return execute;
+          const strongAttack = list.find((id) => ["guardPierceAttack", "selfHarmAttack", "gaugeAttack", "shieldBreakAttack", "attackDebuff", "lifestealAttack", "attack"].includes(skills[id].type));
+          if (strongAttack) return strongAttack;
+        }
+
+        const poisonedEnemy = enemyMain.find((u) => u.poison > 0);
+        if (poisonedEnemy) {
+          const weakAttack = list.find((id) => skills[id].type === "weakAttack");
+          if (weakAttack) return weakAttack;
+        }
+
+        if (actor.atkDebuff > 0 || actor.poison > 0) {
+          const cleanse = list.find((id) => skills[id].type === "cleanse");
+          if (cleanse) return cleanse;
+        }
+
+        const danger = actorHpRate <= 0.45 || aiMain.some((unit) => unit.hp / unit.maxHp <= 0.35);
+        if (!actor.shield) {
+          const shieldSelf = list.find((id) => skills[id].type === "shieldSelf");
+          if (shieldSelf && danger) return shieldSelf;
+        }
+        if (danger) {
+          const safetySkill = list.find((id) => ["guard", "evasion", "focusSelf"].includes(skills[id].type));
+          if (safetySkill) return safetySkill;
+        }
+
+        const offensive = list.find((id) => isTargetSkill(skills[id]));
+        return offensive || list[Math.floor(Math.random() * list.length)];
+      }
+
+      function chooseAiSkill(actor, state, aiSide, enemySide) {
+        if (singleAiDifficulty === "easy") return chooseAiSkillEasy(actor);
+        if (singleAiDifficulty === "hard") return chooseAiSkillHard(actor, state, aiSide, enemySide);
+        return chooseAiSkillNormal(actor);
       }
 
       function tryAiRotate() {
@@ -2070,7 +2159,7 @@ const modeSelect = document.getElementById("modeSelect");
         }
 
         const actor = singlePartyState.teams.ai[info.slot];
-        const skillId = chooseAiSkill(actor);
+        const skillId = chooseAiSkill(actor, singlePartyState, "ai", "player");
         const skill =
           skillId === ULTIMATE_SKILL_ID
             ? { type: "attack" }

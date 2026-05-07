@@ -142,6 +142,41 @@
         background: #22d3ee;
       }
 
+      .single-difficulty-wrap {
+        margin: 10px 0 8px;
+        padding: 10px;
+        border: 1px solid #374151;
+        border-radius: 12px;
+        background: #0f172a;
+      }
+
+      .single-difficulty-title {
+        font-size: 13px;
+        color: #d1d5db;
+        margin-bottom: 8px;
+        font-weight: 800;
+      }
+
+      .single-difficulty-buttons {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .single-difficulty-btn {
+        margin: 0;
+        padding: 10px 8px;
+        font-size: 13px;
+        background: #334155;
+        color: #e5e7eb;
+      }
+
+      .selected-difficulty {
+        background: #facc15;
+        color: #111827;
+        box-shadow: 0 0 0 2px rgba(250, 204, 21, 0.4);
+      }
+
       .character-card,
       .unit-row {
         background: #111827;
