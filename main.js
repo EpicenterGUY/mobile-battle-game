@@ -375,6 +375,28 @@ const modeSelect = document.getElementById("modeSelect");
         return list.length ? list.join(" / ") : "상태 없음";
       }
 
+      function renderStateBadges(player) {
+        const badges = [];
+
+        if (player.guardRate > 0) badges.push({ text: "방어", type: "good" });
+        if (player.evasion) badges.push({ text: "회피", type: "good" });
+        if (player.atkBuff > 0) badges.push({ text: `공격강화 +${player.atkBuff}`, type: "good" });
+        if (player.atkDebuff > 0) badges.push({ text: `공격감소 -${player.atkDebuff}`, type: "bad" });
+        if (player.poison > 0) badges.push({ text: `독 ${player.poison}`, type: "bad" });
+        if (player.bleed > 0) badges.push({ text: `출혈 ${player.bleed}`, type: "bad" });
+        if (player.marked) badges.push({ text: "표식", type: "bad" });
+        if (player.shield > 0) badges.push({ text: `보호막 ${player.shield}`, type: "good" });
+        if (player.focus) badges.push({ text: "집중", type: "good" });
+        badges.push({
+          text: `궁극기 ${clampUltimateGauge(player.ultimateGauge)}/${ULTIMATE_READY_GAUGE}`,
+          type: "special",
+        });
+
+        return `<div class="status-badges">${badges
+          .map((badge) => `<span class="status-badge ${badge.type}">${badge.text}</span>`)
+          .join("")}</div>`;
+      }
+
       function createBattleState(
         leftSide,
         rightSide,
@@ -1608,6 +1630,7 @@ const modeSelect = document.getElementById("modeSelect");
         const stateText = isDead
           ? "행동 불가 / 로테이션 불가"
           : getStateText(unit);
+        const badgesHtml = isDead ? "" : renderStateBadges(unit);
 
         return `
         <div class="${classes.join(" ")}">
@@ -1617,6 +1640,7 @@ const modeSelect = document.getElementById("modeSelect");
             공격 ${unit.atk} / 방어 ${unit.def}<br>
             ${stateText}
           </div>
+          ${badgesHtml}
           <div class="hpbar"><div class="hpfill" style="width:${hpPercent}%"></div></div>
         </div>
       `;
