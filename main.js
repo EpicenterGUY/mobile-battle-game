@@ -422,6 +422,10 @@ const modeSelect = document.getElementById("modeSelect");
             [leftSide]: leftParty,
             [rightSide]: rightParty,
           },
+          subSkillUsedRound: {
+            [leftSide]: 0,
+            [rightSide]: 0,
+          },
           log,
         };
       }
@@ -917,6 +921,8 @@ const modeSelect = document.getElementById("modeSelect");
           log += `${sub?.character || "빈 자리"}은 쓰러져 서브스킬을 사용할 수 없습니다.`;
         } else if (!subSkill) {
           log += `${sub?.character || "빈 자리"}의 서브스킬이 없습니다.`;
+        } else if ((state.subSkillUsedRound?.[info.side] || 0) === state.round) {
+          log += "이번 라운드에는 이미 서브스킬을 사용했습니다.";
         } else {
           const target = state.teams[targetSide]?.[targetSlot];
           if (!alive(target)) {
@@ -949,6 +955,8 @@ const modeSelect = document.getElementById("modeSelect");
               target.atkDebuff += subSkill.debuff || 0;
               log += `\n${sideLabel(targetSide)} 메인${targetSlot + 1} ${target.character}의 다음 공격 피해 -${subSkill.debuff || 0}`;
             }
+            state.subSkillUsedRound = state.subSkillUsedRound || {};
+            state.subSkillUsedRound[info.side] = state.round;
           }
         }
 
@@ -1886,6 +1894,8 @@ const modeSelect = document.getElementById("modeSelect");
           const subLabel = `서브${subIndex - 1}`;
           const canRotate = alive(sub);
           const subSkill = getSubSkillForPlayer(sub);
+          const usedRound = state.subSkillUsedRound?.[info.side] || 0;
+          const canUseSubSkillThisRound = usedRound !== state.round;
 
           rotateBtn.className = "rotate-button secondary";
           rotateBtn.disabled = !canRotate || !alive(actor);
@@ -1902,10 +1912,10 @@ const modeSelect = document.getElementById("modeSelect");
           partyActionButtons.appendChild(rotateBtn);
 
           subSkillBtn.className = "skill-button secondary";
-          subSkillBtn.disabled = !canRotate || !alive(actor) || !subSkill;
+          subSkillBtn.disabled = !canRotate || !alive(actor) || !subSkill || !canUseSubSkillThisRound;
           subSkillBtn.innerHTML = `
             <div class="skill-name">서브${subIndex - 1} ${t("ui.skill")}: ${tx(subSkill?.name || "없음")}</div>
-            <div class="skill-desc">${tx(subSkill?.desc || t("state.unavailable"))}</div>
+            <div class="skill-desc">${!subSkill ? t("state.unavailable") : canUseSubSkillThisRound ? tx(subSkill?.desc || t("state.unavailable")) : "이번 라운드 사용 완료"}</div>
           `;
           if (!subSkillBtn.disabled) {
             subSkillBtn.addEventListener("click", () => {
